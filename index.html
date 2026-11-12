@@ -12,6 +12,8 @@
 			if (__t) document.documentElement.setAttribute('data-theme', __t);
 			var __r = localStorage.getItem('nexus-val-region');
 			if (__r) window.__valRegion = __r;
+			var __p = localStorage.getItem('nexus-val-player');
+			if (__p) window.__valPlayer = __p;
 		} catch (e) {}
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,6 +45,16 @@
 
 		* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 		html, body { height: 100%; }
+
+		/* ⬇ NEW: Кастомный скроллбар в тему сайта */
+		::-webkit-scrollbar { width: 8px; height: 8px; }
+		::-webkit-scrollbar-track { background: var(--bg-base); }
+		::-webkit-scrollbar-thumb {
+			background: rgba(var(--accent-rgb), 0.3);
+			border-radius: 4px;
+		}
+		::-webkit-scrollbar-thumb:hover { background: rgba(var(--accent-rgb), 0.6); }
+		* { scrollbar-width: thin; scrollbar-color: rgba(var(--accent-rgb), 0.3) var(--bg-base); }
 
 		body {
 			background:
@@ -133,6 +145,26 @@
 		}
 		.reg-btn:hover { color: var(--text); }
 		.reg-btn.active { background: rgba(var(--accent-rgb), 0.16); color: var(--accent); }
+
+		/* ⬇ NEW: Стили для поиска игрока */
+		.search-pill {
+			display: inline-flex; align-items: center; gap: 8px;
+			padding: 0 14px; border-radius: 100px; height: 30px;
+			border: 1px solid var(--border); background: rgba(0, 0, 0, 0.25);
+			transition: 0.2s;
+		}
+		.search-pill:focus-within {
+			border-color: rgba(var(--accent-rgb), 0.5);
+			background: rgba(var(--accent-rgb), 0.06);
+		}
+		.search-pill svg { width: 12px; height: 12px; fill: var(--dim); }
+		.search-pill input {
+			background: transparent; border: none; outline: none;
+			color: var(--text); font-family: 'Roboto Mono', monospace;
+			font-size: 11px; font-weight: 600; width: 120px;
+		}
+		.search-pill input::placeholder { color: var(--dim); opacity: 0.7; font-weight: 400; }
+		.search-pill input:focus::placeholder { opacity: 0.3; }
 
 		.stat-pill {
 			display: inline-flex; align-items: center; gap: 8px;
@@ -318,7 +350,7 @@
 			position: relative; width: 100%; height: 100%;
 			display: flex; justify-content: center; align-items: center;
 			overflow: hidden; cursor: grab;
-			touch-action: none; /* ⬅ NEW: prevent page scroll on touch drag */
+			touch-action: none;
 		}
 		.modal-zoom-wrap:active { cursor: grabbing; }
 		.modal-img {
@@ -389,7 +421,6 @@
 		.ctx-check { width: 14px; text-align: center; font-size: 12px; color: var(--accent); opacity: 0; }
 		.ctx-item.checked .ctx-check { opacity: 1; }
 
-		/* ⬇ NEW: respect user's motion preference */
 		@media (prefers-reduced-motion: reduce) {
 			*, *::before, *::after {
 				animation-duration: 0.01ms !important;
@@ -415,6 +446,8 @@
 			.tb-btn { font-size: 9px; padding: 7px 10px; }
 			.reg-btn { padding: 5px 8px; font-size: 9px; }
 			.stat-pill { font-size: 11px; padding: 6px 10px; }
+			.search-pill { height: 26px; padding: 0 10px; }
+			.search-pill input { width: 90px; font-size: 10px; }
 			.ctx-menu {
 				left: 8px !important; right: 8px !important; bottom: 8px !important;
 				top: auto !important; width: auto !important; max-width: none; min-width: 0;
@@ -453,6 +486,12 @@
 				<button class="reg-btn" data-reg="na">NA</button>
 				<button class="reg-btn" data-reg="ap">AP</button>
 				<button class="reg-btn" data-reg="kr">KR</button>
+			</div>
+
+			<!-- ⬇ NEW: Поиск по нику игрока -->
+			<div class="search-pill" data-tooltip="Введите Riot ID (Nick#Tag) для просмотра его магазина">
+				<svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+				<input type="text" id="playerSearch" placeholder="Никнейм..." autocomplete="off" spellcheck="false" />
 			</div>
 
 			<div class="stat-pill" id="vpPill" data-tooltip="Баланс очков Valorant">
@@ -509,8 +548,6 @@
 		// CONFIG
 		// ============================================================
 		const CONFIG = Object.freeze({
-			// Set to a real backend to enable live mode (e.g. "https://my-api.example.com/api/valorant").
-			// Can be overridden at runtime: noclipov.github.io/?api=https://...
 			API_BASE: (() => {
 				try { return new URLSearchParams(location.search).get('api') || null; }
 				catch (e) { return null; }
@@ -565,7 +602,18 @@
 			return c;
 		}
 
-		// Mulberry32 — fast deterministic PRNG for daily seed
+		// ⬇ NEW: Хэш строки для генерации уникального магазина игрока
+		function hashString(str) {
+			let hash = 0;
+			if (str.length === 0) return hash;
+			for (let i = 0; i < str.length; i++) {
+				const chr = str.charCodeAt(i);
+				hash = ((hash << 5) - hash) + chr;
+				hash |= 0; // Convert to 32bit integer
+			}
+			return Math.abs(hash);
+		}
+
 		function mulberry32(a) {
 			return function () {
 				a |= 0; a = (a + 0x6D2B79F5) | 0;
@@ -598,6 +646,7 @@
 		const State = {
 			theme: 'nexus',
 			region: 'eu',
+			playerName: '', // ⬇ NEW: Храним ник
 			isFetching: false,
 			abortController: null,
 			pollTimer: null,
@@ -613,6 +662,8 @@
 			if (t && THEME_IDS.includes(t)) State.theme = t;
 			const r = localStorage.getItem('nexus-val-region');
 			if (r) State.region = r;
+			const p = localStorage.getItem('nexus-val-player');
+			if (p) State.playerName = p;
 		} catch (e) {}
 		document.documentElement.setAttribute('data-theme', State.theme);
 
@@ -632,6 +683,7 @@
 			ftStatus: $('ftStatus'),
 			autoRefreshState: $('autoRefreshState'),
 			regSelector: $('regSelector'),
+			playerSearch: $('playerSearch'), // ⬇ NEW
 			globalTooltip: $('global-tooltip'),
 			modal: $('skin-modal'),
 			modalImg: $('modalImg'),
@@ -641,6 +693,19 @@
 			modalCloseBtn: $('modalCloseBtn'),
 		};
 		const connText = els.connStatus.querySelector('.conn-text');
+
+		// ⬇ NEW: Инициализация поля поиска
+		els.playerSearch.value = State.playerName;
+		els.playerSearch.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				const val = els.playerSearch.value.trim();
+				if (val === State.playerName) return;
+				State.playerName = val;
+				try { localStorage.setItem('nexus-val-player', val); } catch (err) {}
+				State.demoCache = null; // Сброс кэша
+				fetchStore(true);
+			}
+		});
 
 		// ============================================================
 		// THEME
@@ -878,7 +943,8 @@
 		// ============================================================
 		async function fetchRealStore(signal) {
 			const base = CONFIG.API_BASE.replace(/\/$/, '');
-			const url = `${base}/store?region=${encodeURIComponent(State.region)}`;
+			// Если есть ник, передаем его на бэкенд
+			const url = `${base}/store?region=${encodeURIComponent(State.region)}&player=${encodeURIComponent(State.playerName)}`;
 			const res = await fetch(url, { cache: 'no-store', signal });
 			if (!res.ok) throw new Error('HTTP ' + res.status);
 			const data = await res.json();
@@ -888,12 +954,15 @@
 
 		async function getDemoStore(signal) {
 			const today = Math.floor(Date.now() / 86400000);
+			// ⬇ NEW: Добавляем хэш ника к сиду, чтобы у каждого игрока был свой магазин
+			const playerSeed = State.playerName ? hashString(State.playerName.toLowerCase()) : 0;
+			const seed = today + playerSeed;
 
-			if (State.demoCache && State.demoCacheDate === today) {
+			const cacheKey = `${today}_${playerSeed}`;
+			if (State.demoCache && State.demoCacheDate === cacheKey) {
 				return { ...State.demoCache, time_left: secondsUntilMidnight() };
 			}
 
-			// Fetch base data from valorant-api.com (public, CORS-enabled)
 			const [skinsRes, tiersRes] = await Promise.all([
 				fetch(`${CONFIG.VALORANT_API}/weapons/skins?language=ru-RU`, { signal }),
 				fetch(`${CONFIG.VALORANT_API}/contenttiers?language=ru-RU`, { signal }),
@@ -914,8 +983,7 @@
 
 			if (valid.length < 4) throw new Error('Not enough valid skins');
 
-			// Same 4 skins all day, seeded by date
-			const rand = mulberry32(today);
+			const rand = mulberry32(seed);
 			const picked = shuffleSeeded(valid, rand).slice(0, 4);
 
 			const offers = picked.map(s => {
@@ -938,7 +1006,7 @@
 				_demo: true,
 			};
 			State.demoCache = store;
-			State.demoCacheDate = today;
+			State.demoCacheDate = cacheKey;
 
 			return { ...store, time_left: secondsUntilMidnight() };
 		}
@@ -951,7 +1019,6 @@
 			State.isFetching = true;
 			if (force) els.refreshBtn.classList.add('spinning');
 
-			// Abort previous request
 			if (State.abortController) {
 				try { State.abortController.abort(); } catch (e) {}
 			}
@@ -965,7 +1032,6 @@
 				let data = null;
 				let usedDemo = false;
 
-				// Try real API first if configured
 				if (CONFIG.API_BASE) {
 					try {
 						data = await fetchRealStore(signal);
@@ -975,7 +1041,6 @@
 					}
 				}
 
-				// Demo fallback (works on GitHub Pages, no backend required)
 				if (!data) {
 					data = await getDemoStore(signal);
 					usedDemo = true;
@@ -985,9 +1050,16 @@
 				renderStore(data);
 				startStoreTimer();
 				els.timerVal.textContent = fmtTime(State.secondsLeft);
-				els.ftStatus.textContent = (usedDemo || data._demo)
+				
+				let statusText = usedDemo || data._demo
 					? `DEMO · ${new Date().toLocaleTimeString('ru-RU')}`
 					: `обновлено в ${new Date().toLocaleTimeString('ru-RU')}`;
+				
+				if (State.playerName) {
+					statusText += ` [${State.playerName}]`;
+				}
+				
+				els.ftStatus.textContent = statusText;
 				scheduleNext(CONFIG.POLL_OK);
 				if (force) showToast('✓ обновлено');
 			} catch (e) {
@@ -1022,8 +1094,8 @@
 			try { localStorage.setItem('nexus-val-region', State.region); } catch (e) {}
 			syncRegionUI();
 			showToast('🌐 ' + State.region.toUpperCase());
-			// Region change invalidates demo cache only in real mode
-			if (CONFIG.API_BASE) fetchStore(true);
+			State.demoCache = null;
+			fetchStore(true);
 		});
 
 		// ============================================================
@@ -1053,15 +1125,17 @@
 			}));
 			items.push({ sep: true });
 			items.push({ header: 'Регион' });
+			
+			// ⬇ FIX: Убрали icon: '<svg...>' для регионов
 			['eu', 'na', 'ap', 'kr'].forEach(r => items.push({
 				action: 'set-region', region: r,
-				icon: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>',
 				label: r.toUpperCase(), checked: State.region === r,
 			}));
+			
 			items.push({ sep: true });
 			items.push({
 				action: 'refresh',
-				icon: '<svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>',
+				icon: '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>',
 				label: 'Обновить сейчас', shortcut: 'R',
 			});
 			renderMenu(items);
@@ -1114,7 +1188,8 @@
 				syncRegionUI();
 				showToast('🌐 ' + State.region.toUpperCase());
 				closeCtxMenu();
-				if (CONFIG.API_BASE) fetchStore(true);
+				State.demoCache = null;
+				fetchStore(true);
 			} else if (action === 'refresh') {
 				closeCtxMenu();
 				fetchStore(true);
@@ -1136,7 +1211,7 @@
 		});
 
 		// ============================================================
-		// PLEXUS CANVAS (pausable, reduced-motion aware)
+		// PLEXUS CANVAS
 		// ============================================================
 		const plexus = (() => {
 			const canvas = els.canvas;
@@ -1218,7 +1293,7 @@
 		})();
 
 		// ============================================================
-		// VISIBILITY — pause everything when tab hidden
+		// VISIBILITY
 		// ============================================================
 		document.addEventListener('visibilitychange', () => {
 			if (document.hidden) {
@@ -1227,7 +1302,7 @@
 				clearInterval(State.storeTimer);
 			} else {
 				plexus.start();
-				startStoreTimer(); // resync timers
+				startStoreTimer();
 				fetchStore(true);
 			}
 		});

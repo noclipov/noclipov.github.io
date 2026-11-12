@@ -12,8 +12,6 @@
 			if (__t) document.documentElement.setAttribute('data-theme', __t);
 			var __r = localStorage.getItem('nexus-val-region');
 			if (__r) window.__valRegion = __r;
-			var __p = localStorage.getItem('nexus-val-player');
-			if (__p) window.__valPlayer = __p;
 		} catch (e) {}
 	</script>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -46,7 +44,6 @@
 		* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 		html, body { height: 100%; }
 
-		/* ⬇ NEW: Запрет выделения текста на всей странице */
 		body {
 			background:
 				radial-gradient(circle at 12% 0%, rgba(var(--accent-rgb), 0.09) 0%, transparent 42%),
@@ -71,7 +68,7 @@
 		img {
 			-webkit-user-drag: none;
 			user-drag: none;
-			pointer-events: none; /* картинки не перехватывают перетаскивание */
+			pointer-events: none;
 		}
 		@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
@@ -527,7 +524,7 @@
 			PLEXUS_DIST: 140,
 			PLEXUS_MAX_DESKTOP: 45,
 			PLEXUS_MAX_MOBILE: 20,
-			DEMO_VP_BALANCE: 12500, // только для отображения, API не отдаёт баланс игрока
+			DEMO_VP_BALANCE: 12500,
 		});
 
 		const THEMES = [
@@ -579,7 +576,6 @@
 		const State = {
 			theme: 'nexus',
 			region: 'eu',
-			playerName: '',
 			isFetching: false,
 			abortController: null,
 			pollTimer: null,
@@ -593,8 +589,6 @@
 			if (t && THEME_IDS.includes(t)) State.theme = t;
 			const r = localStorage.getItem('nexus-val-region');
 			if (r) State.region = r;
-			const p = localStorage.getItem('nexus-val-player');
-			if (p) State.playerName = p;
 		} catch (e) {}
 		document.documentElement.setAttribute('data-theme', State.theme);
 
@@ -712,7 +706,6 @@
 			isDragging = false;
 			try { els.modalZoomWrap.releasePointerCapture(e.pointerId); } catch (er) {}
 		});
-		// Дополнительный запрет выделения внутри модального окна
 		els.modal.addEventListener('selectstart', (e) => e.preventDefault());
 
 		// ============================================================
@@ -874,7 +867,6 @@
 				throw new Error('Неверный формат ответа API');
 			}
 
-			// Собираем все предметы из всех секций
 			const allItems = [];
 			for (const section of shop.sections) {
 				if (Array.isArray(section.items)) {
@@ -882,7 +874,6 @@
 				}
 			}
 
-			// Преобразуем в формат, который ожидает renderStore
 			const offers = allItems.map(item => {
 				const priceObj = item.price || {};
 				const rarity = item.rarity || {};
@@ -898,7 +889,6 @@
 				};
 			});
 
-			// Вычисляем оставшееся время до конца ротации
 			let timeLeft = secondsUntilMidnight();
 			if (shop.expiresAt) {
 				const diff = Math.floor((new Date(shop.expiresAt) - Date.now()) / 1000);
@@ -906,7 +896,7 @@
 			}
 
 			return {
-				vp_balance: CONFIG.DEMO_VP_BALANCE, // API не отдаёт баланс игрока
+				vp_balance: CONFIG.DEMO_VP_BALANCE,
 				offers,
 				time_left: timeLeft,
 				_demo: false,

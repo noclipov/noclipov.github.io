@@ -462,7 +462,6 @@ class BackgroundEngine {
       if (p.x > this.w + 20) p.x = -20;
 
       if (this.effect === 'rain') {
-        // Rain streaks with gradient
         const gradient = this.ctx.createLinearGradient(p.x, p.y, p.x, p.y + 25);
         gradient.addColorStop(0, 'rgba(129,140,248,0)');
         gradient.addColorStop(1, 'rgba(129,140,248,0.4)');
@@ -574,7 +573,6 @@ class AudioEngine {
   }
 
   buildRain() {
-    // Deep rumble noise
     const bufferSize = this.ac.sampleRate * 2;
     const buffer = this.ac.createBuffer(1, bufferSize, this.ac.sampleRate);
     const data = buffer.getChannelData(0);
@@ -596,9 +594,14 @@ class AudioEngine {
     const hp = this.ac.createBiquadFilter();
     hp.type = "highpass"; hp.frequency.value = 100;
 
+    // Уменьшаем громкость фонового шума дождя
+    const noiseVol = this.ac.createGain();
+    noiseVol.gain.value = 0.05;
+
     this.rainNode.connect(lp);
     lp.connect(hp);
-    hp.connect(this.rainGain);
+    hp.connect(noiseVol);
+    noiseVol.connect(this.rainGain);
 
     this.rainNode.start(0);
   }
@@ -610,24 +613,25 @@ class AudioEngine {
     const gain = this.ac.createGain();
     
     osc.type = 'sine';
-    // Deeper drops
-    osc.frequency.setValueAtTime(200 + Math.random() * 400, t0);
+    // Сделал капли глубже (100-200 Гц)
+    osc.frequency.setValueAtTime(100 + Math.random() * 100, t0);
     
-    gain.gain.setValueAtTime(0.15, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.15);
+    // Сделал капли громче
+    gain.gain.setValueAtTime(0.6, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.2);
 
     osc.connect(gain);
     gain.connect(this.rainGain);
     
     osc.start(t0);
-    osc.stop(t0 + 0.2);
+    osc.stop(t0 + 0.25);
   }
 
   startRainDrops() {
     if (!this.playingRain) return;
     this.playDrop();
-    // Random timing for drops (200ms to 1000ms)
-    const nextDrop = 200 + Math.random() * 800;
+    // Сделал капли чаще (50-200 мс вместо 200-1000 мс)
+    const nextDrop = 50 + Math.random() * 150;
     this.dropTimer = setTimeout(() => this.startRainDrops(), nextDrop);
   }
 
@@ -638,7 +642,7 @@ class AudioEngine {
       const osc2 = this.ac.createOscillator();
       osc1.type = osc2.type = "sine";
       osc1.frequency.value = f;
-      osc2.frequency.value = f + 0.5; // Detune for chorus
+      osc2.frequency.value = f + 0.5; 
       
       this.oscs.push(osc1, osc2);
 
@@ -761,7 +765,7 @@ class AudioEngine {
     
     if (isOn) {
       this.playingRain = true;
-      this.rainGain.gain.linearRampToValueAtTime(0.25, now + 2.0);
+      this.rainGain.gain.linearRampToValueAtTime(0.4, now + 2.0); // Увеличил общую громкость дождя, чтобы капли было слышно
       this.startRainDrops();
     } else {
       this.playingRain = false;

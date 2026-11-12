@@ -331,8 +331,9 @@
   </section>
 </div>
 
+<!-- Обновленная ссылка на стабильный трек (Lo-Fi) -->
 <audio id="webAudio" loop crossorigin="anonymous">
-  <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -594,7 +595,6 @@ class AudioEngine {
     const hp = this.ac.createBiquadFilter();
     hp.type = "highpass"; hp.frequency.value = 100;
 
-    // Уменьшаем громкость фонового шума дождя
     const noiseVol = this.ac.createGain();
     noiseVol.gain.value = 0.05;
 
@@ -613,10 +613,8 @@ class AudioEngine {
     const gain = this.ac.createGain();
     
     osc.type = 'sine';
-    // Сделал капли глубже (100-200 Гц)
     osc.frequency.setValueAtTime(100 + Math.random() * 100, t0);
     
-    // Сделал капли громче
     gain.gain.setValueAtTime(0.6, t0);
     gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.2);
 
@@ -630,7 +628,6 @@ class AudioEngine {
   startRainDrops() {
     if (!this.playingRain) return;
     this.playDrop();
-    // Сделал капли чаще (50-200 мс вместо 200-1000 мс)
     const nextDrop = 50 + Math.random() * 150;
     this.dropTimer = setTimeout(() => this.startRainDrops(), nextDrop);
   }
@@ -743,7 +740,7 @@ class AudioEngine {
       setTimeout(() => {
         if (this.vibe === 'internet') {
           this.webAudio.volume = parseFloat(document.getElementById('volSlider').value);
-          this.webAudio.play();
+          this.webAudio.play().catch(e => console.log("Playback error:", e));
           UI.updatePlayState(true);
         } else {
           this.startGen();
@@ -765,7 +762,7 @@ class AudioEngine {
     
     if (isOn) {
       this.playingRain = true;
-      this.rainGain.gain.linearRampToValueAtTime(0.4, now + 2.0); // Увеличил общую громкость дождя, чтобы капли было слышно
+      this.rainGain.gain.linearRampToValueAtTime(0.4, now + 2.0);
       this.startRainDrops();
     } else {
       this.playingRain = false;
@@ -778,7 +775,7 @@ class AudioEngine {
     if (this.vibe === 'internet') {
       if (this.webAudio.paused) {
         this.webAudio.volume = parseFloat(document.getElementById('volSlider').value);
-        this.webAudio.play();
+        this.webAudio.play().catch(e => console.log("Playback error:", e));
         return true;
       } else {
         this.webAudio.pause();
@@ -791,10 +788,10 @@ class AudioEngine {
   }
 
   setVolume(val) {
-    if (!this.ac) return;
     if (this.vibe === 'internet') {
       this.webAudio.volume = val;
     } else {
+      if (!this.ac) return;
       this.musicGain.gain.setTargetAtTime(val * 0.35, this.ac.currentTime, 0.1);
     }
   }
@@ -818,7 +815,8 @@ const UI = {
       vibeBtns: document.querySelectorAll('.vibe-btn'),
       effectBtns: document.querySelectorAll('.effect-btn'),
       ctxMenu: document.getElementById('ctx-menu'),
-      copyLinkBtn: document.getElementById('copyLinkBtn')
+      copyLinkBtn: document.getElementById('copyLinkBtn'),
+      webAudio: document.getElementById('webAudio')
     };
 
     this.bindEvents();
@@ -863,6 +861,14 @@ const UI = {
     });
 
     els.volSlider.addEventListener('input', () => this.handleVolume());
+
+    // Синхронизация UI с тегом <audio>
+    els.webAudio.addEventListener('play', () => this.updatePlayState(true));
+    els.webAudio.addEventListener('pause', () => this.updatePlayState(false));
+    els.webAudio.addEventListener('error', () => {
+      console.log("Ошибка загрузки аудио. Возможно, ссылка устарела или заблокирована.");
+      this.updatePlayState(false);
+    });
 
     document.addEventListener("contextmenu", (e) => {
       e.preventDefault();

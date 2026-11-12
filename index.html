@@ -16,7 +16,7 @@
     --txt:#e2e8f0;
     --muted:#94a3b8;
     --bg:#05060a;
-    --card-bg:rgba(15, 18, 30, 0.6);
+    --card-bg:rgba(15, 18, 30, 0.65);
   }
 
   *{ box-sizing:border-box; margin:0; padding:0; }
@@ -29,9 +29,7 @@
     border-radius: 10px;
     border: 2px solid var(--bg);
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--pink), var(--violet));
-  }
+  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--pink), var(--violet)); }
 
   html,body{ height:100%; }
 
@@ -52,7 +50,8 @@
   /* ---------- ФОН ---------- */
   .aurora{
     position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0;
-    filter:blur(100px); opacity:.3;
+    filter:blur(100px); opacity:.25;
+    will-change: transform;
   }
   .blob{ position:absolute; border-radius:50%; mix-blend-mode:screen; will-change:transform; }
   .b1{ width:500px; height:500px; background:#4c1d95; top:-150px; left:-100px; animation:drift1 22s ease-in-out infinite; }
@@ -64,6 +63,115 @@
   @keyframes drift3 { 0%,100%{ transform:translate3d(0,0,0) scale(.98); } 50%{ transform:translate3d(-80px,90px,0) scale(1.15); } }
 
   #bg{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+  /* ---------- ШЕСТЕРЕНКА И НАСТРОЙКИ ---------- */
+  .settings-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  .settings-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--muted);
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: all .3s;
+    backdrop-filter: blur(10px);
+  }
+  .settings-btn:hover {
+    color: #fff;
+    background: rgba(255,255,255,.1);
+    transform: rotate(90deg);
+  }
+  .settings-btn svg { width: 20px; height: 20px; }
+
+  .settings-menu {
+    position: absolute;
+    top: 50px; right: 0;
+    width: 220px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px;
+    padding: 16px;
+    backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: 0 10px 30px rgba(0,0,0,.8);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .settings-menu.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .settings-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .effect-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .effect-btn {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--muted);
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .effect-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .effect-btn.active {
+    background: rgba(139,92,246,.2);
+    border-color: rgba(139,92,246,.5);
+    color: #fff;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--txt);
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  
+  /* Свитч */
+  .switch {
+    position: relative; display: inline-block;
+    width: 36px; height: 20px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255,255,255,.1);
+    transition: .3s; border-radius: 20px;
+  }
+  .slider:before {
+    position: absolute; content: "";
+    height: 14px; width: 14px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .3s; border-radius: 50%;
+  }
+  input:checked + .slider { background-color: var(--cyan); }
+  input:checked + .slider:before { transform: translateX(16px); }
 
   /* ---------- КАРТОЧКА ---------- */
   .wrap{ position:relative; z-index:2; animation:rise 1s cubic-bezier(.2,.85,.25,1) both; }
@@ -86,24 +194,21 @@
       0 0 0 1px rgba(255,255,255,.03) inset,
       0 1px 0 rgba(255,255,255,.1) inset;
     transform-style:preserve-3d;
-    transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
     overflow:hidden;
     display:flex;
     flex-direction:column;
   }
 
-  /* Шумовая текстура (делает стекло премиальным) */
   .card::before {
     content: "";
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.04;
+    opacity: 0.03;
     pointer-events: none;
     z-index: 0;
   }
 
-  /* Блик от курсора */
   .card::after{
     content:"";
     position:absolute; inset:0; border-radius:inherit; pointer-events:none;
@@ -113,14 +218,10 @@
   }
   .card:hover::after{ opacity:1; }
 
-  /* Контент внутри карточки (поверх текстур) */
   .card-content {
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
     padding: 36px 28px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex; flex-direction: column; align-items: center;
   }
 
   /* ---------- АВАТАР ---------- */
@@ -156,6 +257,7 @@
     width:100%; height:100%; object-fit:cover;
     border-radius:50%;
     filter: brightness(.95);
+    loading: lazy;
   }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
@@ -166,8 +268,7 @@
   }
 
   .name{
-    font-size:26px;
-    font-weight:700;
+    font-size:26px; font-weight:700;
     letter-spacing:-.03em;
     background:linear-gradient(100deg, #fff 10%, #c4b5fd 40%, #67e8f9 60%, #fff 90%);
     background-size:250% 100%;
@@ -178,8 +279,7 @@
   @keyframes shimmer{ to{ background-position:-250% 0; } }
 
   .status-dot{
-    width:8px; height:8px;
-    border-radius:50%;
+    width:8px; height:8px; border-radius:50%;
     background:var(--cyan);
     box-shadow: 0 0 10px var(--cyan);
     animation: pulse 2s ease-in-out infinite;
@@ -187,10 +287,8 @@
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
 
   .tagline{
-    margin-top:8px;
-    font-size:13px;
-    color:var(--muted);
-    letter-spacing:.01em;
+    margin-top:8px; font-size:13px;
+    color:var(--muted); letter-spacing:.01em;
     transform:translateZ(18px);
   }
 
@@ -227,120 +325,72 @@
   }
 
   .now-playing {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    height: 14px;
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 10px; height: 14px;
+    opacity: 0; transition: opacity 0.3s;
   }
   .now-playing.visible { opacity: 1; }
   .now-playing span { color: var(--txt); font-weight: 600; }
 
-  /* Визуализатор (эквалайзер) */
   .visualizer {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    height: 10px;
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: flex; align-items: flex-end; gap: 2px;
+    height: 10px; opacity: 0; transition: opacity 0.3s;
   }
   .now-playing.visible .visualizer { opacity: 1; }
   .visualizer div {
-    width: 3px;
-    background: var(--cyan);
-    border-radius: 2px;
-    height: 100%;
+    width: 3px; background: var(--cyan); border-radius: 2px; height: 100%;
     transform-origin: bottom;
   }
   .playing .visualizer div:nth-child(1) { animation: eq 0.8s ease-in-out infinite alternate; }
   .playing .visualizer div:nth-child(2) { animation: eq 0.6s ease-in-out infinite alternate 0.1s; background: var(--violet); }
   .playing .visualizer div:nth-child(3) { animation: eq 0.9s ease-in-out infinite alternate 0.2s; }
   .playing .visualizer div:nth-child(4) { animation: eq 0.7s ease-in-out infinite alternate 0.15s; background: var(--pink); }
-  
-  @keyframes eq {
-    0% { transform: scaleY(0.2); }
-    100% { transform: scaleY(1); }
-  }
+  @keyframes eq { 0% { transform: scaleY(0.2); } 100% { transform: scaleY(1); } }
 
   .player{
     display:flex; align-items:center; gap:12px;
-    padding:8px 12px;
-    border-radius:16px;
+    padding:8px 12px; border-radius:16px;
     background:rgba(0,0,0,.2);
     border:1px solid rgba(255,255,255,.04);
     box-shadow: inset 0 2px 4px rgba(0,0,0,.2);
   }
 
   .music-btn{
-    flex-shrink:0;
-    width:36px; height:36px;
+    flex-shrink:0; width:36px; height:36px;
     display:grid; place-items:center;
-    border-radius:50%;
-    color:#fff;
+    border-radius:50%; color:#fff;
     background:linear-gradient(135deg, var(--violet), var(--cyan));
-    border:none;
-    cursor:pointer;
+    border:none; cursor:pointer;
     transition:all .2s;
     box-shadow: 0 4px 12px rgba(139,92,246,.4);
   }
-  .music-btn:hover{
-    transform:scale(1.05);
-    box-shadow: 0 6px 16px rgba(139,92,246,.6);
-  }
+  .music-btn:hover{ transform:scale(1.05); box-shadow: 0 6px 16px rgba(139,92,246,.6); }
   .music-btn:active{ transform:scale(.95); }
   .music-btn svg{ width:14px; height:14px; }
   .music-btn.playing { background: linear-gradient(135deg, var(--pink), var(--violet)); box-shadow: 0 4px 12px rgba(236,72,153,.4); }
 
-  /* Ползунок громкости */
-  .vol-wrap{
-    flex-grow:1;
-    display:flex; align-items:center;
-    padding: 0 4px;
-  }
+  .vol-wrap{ flex-grow:1; display:flex; align-items:center; padding: 0 4px; }
   
   input[type=range]{
-    -webkit-appearance:none;
-    width:100%;
-    background:transparent;
-    height: 16px;
+    -webkit-appearance:none; width:100%;
+    background:transparent; height: 16px;
   }
   input[type=range]:focus{ outline:none; }
-  
   input[type=range]::-webkit-slider-runnable-track{
-    width:100%;
-    height:4px;
-    cursor:pointer;
+    width:100%; height:4px; cursor:pointer;
     background: linear-gradient(to right, var(--violet), var(--cyan), var(--pink)) 0 0 / var(--vol-pct, 50%) 100% no-repeat, rgba(255,255,255,.1);
     border-radius:2px;
   }
-  
   input[type=range]::-webkit-slider-thumb{
-    height:12px; width:12px;
-    border-radius:50%;
-    background:#fff;
-    cursor:pointer;
-    -webkit-appearance:none;
-    margin-top:-4px;
+    height:12px; width:12px; border-radius:50%;
+    background:#fff; cursor:pointer; -webkit-appearance:none; margin-top:-4px;
     box-shadow:0 0 8px rgba(255,255,255,.6);
     transition:transform .2s;
   }
   input[type=range]:hover::-webkit-slider-thumb{ transform:scale(1.2); }
-
-  input[type=range]::-moz-range-track{
-    width:100%; height:4px; cursor:pointer;
-    background:rgba(255,255,255,.1); border-radius:2px;
-  }
-  input[type=range]::-moz-range-progress{
-    height:4px; background: linear-gradient(to right, var(--violet), var(--cyan), var(--pink)); border-radius:2px;
-  }
+  input[type=range]::-moz-range-track{ width:100%; height:4px; cursor:pointer; background:rgba(255,255,255,.1); border-radius:2px; }
+  input[type=range]::-moz-range-progress{ height:4px; background: linear-gradient(to right, var(--violet), var(--cyan), var(--pink)); border-radius:2px; }
   input[type=range]::-moz-range-thumb{
     height:12px; width:12px; border-radius:50%;
     background:#fff; cursor:pointer; border:none;
@@ -349,64 +399,36 @@
   }
   input[type=range]:hover::-moz-range-thumb{ transform:scale(1.2); }
 
-  /* Segmented Control (Выбор вайба) */
   .vibe-selector {
-    display: flex;
-    background: rgba(0,0,0,.3);
+    display: flex; background: rgba(0,0,0,.3);
     border: 1px solid rgba(255,255,255,.05);
-    border-radius: 12px;
-    padding: 3px;
-    margin-top: 12px;
-    position: relative;
+    border-radius: 12px; padding: 3px; margin-top: 12px;
   }
-  
   .vibe-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 6px 0;
-    border-radius: 9px;
-    cursor: pointer;
+    flex: 1; background: transparent; border: none;
+    color: var(--muted); font-family: inherit;
+    font-size: 11px; font-weight: 500;
+    padding: 6px 0; border-radius: 9px; cursor: pointer;
     transition: all .3s;
-    position: relative;
-    z-index: 1;
   }
   .vibe-btn:hover { color: var(--txt); }
-  .vibe-btn.active {
-    color: #fff;
-    background: rgba(255,255,255,.08);
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
-  }
+  .vibe-btn.active { color: #fff; background: rgba(255,255,255,.08); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
 
   /* ---------- КАСТОМНОЕ КОНТЕКСТНОЕ МЕНЮ ---------- */
   #ctx-menu {
-    display: none;
-    position: fixed;
-    z-index: 9999;
+    display: none; position: fixed; z-index: 9999;
     background: rgba(15, 17, 26, 0.9);
-    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,.1);
-    border-radius: 14px;
-    padding: 6px;
-    min-width: 160px;
+    border-radius: 14px; padding: 6px; min-width: 160px;
     box-shadow: 0 10px 30px rgba(0,0,0,.9);
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: column; gap: 2px;
     animation: ctxIn 0.15s cubic-bezier(.2,.8,.2,1);
   }
-  @keyframes ctxIn {
-    from { opacity: 0; transform: scale(0.95) translateY(-5px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
+  @keyframes ctxIn { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   .ctx-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 8px 12px;
-    color: var(--txt);
+    padding: 8px 12px; color: var(--txt);
     font-size: 12px; font-weight: 500;
     text-decoration: none; border-radius: 8px;
     cursor: pointer; transition: background .2s;
@@ -420,15 +442,44 @@
 
   @media (max-width:380px){
     .vibe-btn { font-size: 10px; }
+    .settings-container { top: 10px; right: 10px; }
   }
 </style>
 </head>
 <body>
 
+<!-- Настройки -->
+<div class="settings-container">
+  <button class="settings-btn" id="settingsBtn" aria-label="Настройки">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  
+  <div class="settings-menu" id="settingsMenu">
+    <div class="settings-title">Фоновый эффект</div>
+    <div class="effect-grid">
+      <button class="effect-btn active" data-effect="stars">Звезды</button>
+      <button class="effect-btn" data-effect="snow">Снег</button>
+      <button class="effect-btn" data-effect="rain">Дождь</button>
+      <button class="effect-btn" data-effect="vertices">Нейросеть</button>
+    </div>
+    
+    <div class="toggle-row">
+      <span>Шум дождя</span>
+      <label class="switch">
+        <input type="checkbox" id="rainSoundToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
 <!-- Контекстное меню -->
 <div id="ctx-menu">
   <button class="ctx-item" onclick="location.reload()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.6-6.3L21 8"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.6-6.3L21 8"/></svg>
     Обновить
   </button>
   <button class="ctx-item" onclick="navigator.clipboard.writeText(window.location.href); this.innerText='Скопировано!'; setTimeout(()=>this.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\'/><path d=\'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\'/></svg> Копировать ссылку\';, 2000)">
@@ -478,12 +529,9 @@
         </a>
       </div>
 
-      <!-- Плеер -->
       <div class="player-section">
         <div class="now-playing" id="nowPlaying">
-          <div class="visualizer">
-            <div></div><div></div><div></div><div></div>
-          </div>
+          <div class="visualizer"><div></div><div></div><div></div><div></div></div>
           <span id="vibeName">Ambient</span>
         </div>
 
@@ -494,7 +542,7 @@
           </button>
           
           <div class="vol-wrap">
-            <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.6">
+            <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.5">
           </div>
         </div>
 
@@ -519,8 +567,22 @@
   "use strict";
 
   /* =========================================================
-     1. КАСТОМНОЕ КОНТЕКСТНОЕ МЕНЮ
+     1. НАСТРОЙКИ И КОНТЕКСТНОЕ МЕНЮ
      ========================================================= */
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
+  
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsMenu.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+      settingsMenu.classList.remove('open');
+    }
+  });
+
   const ctxMenu = document.getElementById("ctx-menu");
   document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
@@ -536,54 +598,158 @@
   });
 
   /* =========================================================
-     2. ФОН
+     2. ФОНОВЫЕ ЭФФЕКТЫ (Canvas)
      ========================================================= */
   const canvas = document.getElementById("bg");
-  const c2d = canvas.getContext("2d");
-  const DPR = Math.min(window.devicePixelRatio || 1, 2);
-  let W = 0, H = 0, parts = [];
+  const c2d = canvas.getContext("2d", { alpha: true });
+  let W = 0, H = 0;
+  let particles = [];
+  let currentEffect = 'stars';
+  let animationFrameId;
+  let isTabActive = true;
+
+  // Остановка рендера при скрытой вкладке (Оптимизация)
+  document.addEventListener("visibilitychange", () => {
+    isTabActive = !document.hidden;
+    if (isTabActive) loop();
+  });
 
   function resizeCanvas() {
-    W = canvas.width = Math.floor(innerWidth * DPR);
-    H = canvas.height = Math.floor(innerHeight * DPR);
+    W = canvas.width = Math.floor(innerWidth * Math.min(window.devicePixelRatio || 1, 2));
+    H = canvas.height = Math.floor(innerHeight * Math.min(window.devicePixelRatio || 1, 2));
     canvas.style.width = innerWidth + "px";
     canvas.style.height = innerHeight + "px";
-
-    const count = Math.round(Math.min(60, Math.max(25, innerWidth / 22)));
-    parts = Array.from({ length: count }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      r: (Math.random() * 1.1 + 0.4) * DPR,
-      vy: -(Math.random() * 0.12 + 0.03) * DPR,
-      vx: (Math.random() - 0.5) * 0.06 * DPR,
-      a: Math.random() * 0.3 + 0.1,
-      ph: Math.random() * Math.PI * 2,
-      sp: Math.random() * 0.01 + 0.002
-    }));
+    initEffect(currentEffect);
   }
 
-  function drawStars() {
+  function initEffect(mode) {
+    currentEffect = mode;
+    particles = [];
+    
+    // Оптимизированное количество частиц
+    let count = 0;
+    if (mode === 'stars' || mode === 'snow') count = Math.min(80, Math.max(30, innerWidth / 20));
+    if (mode === 'rain') count = Math.min(150, Math.max(60, innerWidth / 10));
+    if (mode === 'vertices') count = Math.min(50, Math.max(20, innerWidth / 30)); // Меньше частиц для O(N^2) связей
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * (mode === 'vertices' ? 0.5 : 0.1) * (innerWidth / 1000),
+        vy: (mode === 'rain' ? (Math.random() * 8 + 8) : (mode === 'snow' ? (Math.random() * 0.5 + 0.2) : -(Math.random() * 0.2 + 0.05))) * (innerWidth / 1000),
+        r: (Math.random() * 1.5 + 0.5) * (mode === 'snow' ? 2 : 1),
+        a: Math.random() * 0.5 + 0.1,
+        ph: Math.random() * Math.PI * 2,
+        sp: Math.random() * 0.02 + 0.01
+      });
+    }
+  }
+
+  function draw() {
     c2d.clearRect(0, 0, W, H);
-    for (const p of parts) {
-      p.x += p.vx; p.y += p.vy; p.ph += p.sp;
+    
+    if (currentEffect === 'stars' || currentEffect === 'snow' || currentEffect === 'vertices') {
+      c2d.fillStyle = currentEffect === 'snow' ? "rgba(255,255,255,0.7)" : "rgba(180,190,230,0.6)";
+      c2d.shadowBlur = 8;
+      c2d.shadowColor = "rgba(139,92,246,0.3)";
+    } else if (currentEffect === 'rain') {
+      c2d.strokeStyle = "rgba(160,180,220,0.3)";
+      c2d.lineWidth = 1;
+    }
+
+    for (let i = 0; i < particles.length; i++) {
+      let p = particles[i];
+      
+      // Логика движения
+      if (currentEffect === 'snow') {
+        p.ph += p.sp;
+        p.x += p.vx + Math.sin(p.ph) * 0.5;
+        p.y += p.vy;
+      } else if (currentEffect === 'rain') {
+        p.x += p.vx;
+        p.y += p.vy;
+      } else if (currentEffect === 'vertices') {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      } else {
+        p.ph += p.sp;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+
+      // Сброс позиции
+      if (p.y > H + 20) { p.y = -20; p.x = Math.random() * W; }
       if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
       if (p.x < -20) p.x = W + 20;
       if (p.x > W + 20) p.x = -20;
 
-      const alpha = p.a * (0.6 + 0.4 * Math.sin(p.ph));
-      c2d.beginPath();
-      c2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      c2d.fillStyle = `rgba(180,190,230,${alpha.toFixed(3)})`;
-      c2d.shadowBlur = 8 * DPR;
-      c2d.shadowColor = "rgba(139,92,246,0.4)";
-      c2d.fill();
+      // Отрисовка
+      if (currentEffect === 'rain') {
+        c2d.beginPath();
+        c2d.moveTo(p.x, p.y);
+        c2d.lineTo(p.x, p.y + 15);
+        c2d.stroke();
+      } else if (currentEffect === 'snow') {
+        c2d.beginPath();
+        c2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        c2d.fill();
+      } else if (currentEffect === 'stars') {
+        const alpha = p.a * (0.6 + 0.4 * Math.sin(p.ph));
+        c2d.globalAlpha = alpha;
+        c2d.beginPath();
+        c2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        c2d.fill();
+        c2d.globalAlpha = 1;
+      } else if (currentEffect === 'vertices') {
+        c2d.globalAlpha = 0.6;
+        c2d.beginPath();
+        c2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        c2d.fill();
+        
+        // Соединение линиями
+        for (let j = i + 1; j < particles.length; j++) {
+          let p2 = particles[j];
+          let dx = p.x - p2.x;
+          let dy = p.y - p2.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < W * 0.15) { // Радиус связи
+            c2d.beginPath();
+            c2d.moveTo(p.x, p.y);
+            c2d.lineTo(p2.x, p2.y);
+            c2d.strokeStyle = `rgba(139,92,246,${0.2 * (1 - dist / (W * 0.15))})`;
+            c2d.stroke();
+          }
+        }
+        c2d.globalAlpha = 1;
+      }
     }
+    
     c2d.shadowBlur = 0;
-    requestAnimationFrame(drawStars);
+    if (isTabActive) animationFrameId = requestAnimationFrame(draw);
+  }
+
+  function loop() {
+    cancelAnimationFrame(animationFrameId);
+    if (isTabActive) draw();
   }
 
   resizeCanvas();
-  drawStars();
   addEventListener("resize", resizeCanvas);
+  loop();
+
+  // Переключение эффектов
+  document.querySelectorAll('.effect-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.effect-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      initEffect(e.target.dataset.effect);
+      loop();
+    });
+  });
 
   /* =========================================================
      3. 3D-НАКЛОН
@@ -621,43 +787,32 @@
   }
 
   /* =========================================================
-     4. МУЗЫКА (Исправленное переключение)
+     4. АУДИО СИСТЕМА (Музыка + Дождь)
      ========================================================= */
   const webAudio = document.getElementById('webAudio');
   const nowPlaying = document.getElementById('nowPlaying');
   const vibeName = document.getElementById('vibeName');
+  const rainToggle = document.getElementById('rainSoundToggle');
 
-  const Music = (() => {
+  const AudioSystem = (() => {
     let ac = null;
     let masterGain = null;
-    let volumeGain = null;
+    let musicVolumeGain = null;
+    let rainVolumeGain = null;
     let sendBus = null;
     let playing = false;
     let chordTimer = null;
     let noteTimer = null;
     let step = 0;
     let currentVibe = "ambient";
-    let activeOscs = []; // Трекинг активных осцилляторов
+    let activeOscs = [];
+    let rainSource = null;
+    let isRainPlaying = false;
 
     const VIBES = {
-      ambient: {
-        name: "Ambient",
-        chords: [[174.61, 220.00, 261.63], [130.81, 164.81, 196.00], [196.00, 246.94, 293.66], [146.83, 174.61, 220.00]],
-        scale: [523.25, 587.33, 659.25, 783.99, 880.00],
-        filter: 1800, chordDur: 10.0, chordInt: 8000, bellInt: 3500
-      },
-      deep: {
-        name: "Deep Space",
-        chords: [[110.00, 130.81, 164.81], [87.31, 110.00, 130.81], [98.00, 123.47, 146.83], [116.54, 146.83, 174.61]],
-        scale: [261.63, 293.66, 329.63, 392.00, 440.00],
-        filter: 800, chordDur: 14.0, chordInt: 10000, bellInt: 6000
-      },
-      rain: {
-        name: "Lo-Fi Rain",
-        chords: [[146.83, 174.61, 220.00], [130.81, 164.81, 196.00], [110.00, 130.81, 164.81], [98.00, 123.47, 146.83]],
-        scale: [440.00, 523.25, 587.33, 659.25, 783.99],
-        filter: 1200, chordDur: 8.0, chordInt: 6000, bellInt: 2000
-      },
+      ambient: { name: "Ambient", chords: [[174.61, 220.00, 261.63], [130.81, 164.81, 196.00], [196.00, 246.94, 293.66], [146.83, 174.61, 220.00]], scale: [523.25, 587.33, 659.25, 783.99, 880.00], filter: 1800, chordDur: 10.0, chordInt: 8000, bellInt: 3500 },
+      deep: { name: "Deep Space", chords: [[110.00, 130.81, 164.81], [87.31, 110.00, 130.81], [98.00, 123.47, 146.83], [116.54, 146.83, 174.61]], scale: [261.63, 293.66, 329.63, 392.00, 440.00], filter: 800, chordDur: 14.0, chordInt: 10000, bellInt: 6000 },
+      rain: { name: "Lo-Fi Rain", chords: [[146.83, 174.61, 220.00], [130.81, 164.81, 196.00], [110.00, 130.81, 164.81], [98.00, 123.47, 146.83]], scale: [440.00, 523.25, 587.33, 659.25, 783.99], filter: 1200, chordDur: 8.0, chordInt: 6000, bellInt: 2000 },
       internet: { name: "Internet Stream" }
     };
 
@@ -667,36 +822,75 @@
       ac = new AC();
 
       masterGain = ac.createGain();
-      masterGain.gain.value = 0;
-      volumeGain = ac.createGain();
-      volumeGain.gain.value = parseFloat(document.getElementById('volSlider').value) * 0.35;
+      masterGain.gain.value = 1.0;
 
-      const lp = ac.createBiquadFilter();
-      lp.type = "lowpass";
-      lp.frequency.value = VIBES[currentVibe].filter || 1800;
-      lp.Q.value = 0.2;
+      musicVolumeGain = ac.createGain();
+      musicVolumeGain.gain.value = parseFloat(document.getElementById('volSlider').value) * 0.35;
 
-      masterGain.connect(lp);
-      lp.connect(volumeGain);
-      volumeGain.connect(ac.destination);
+      rainVolumeGain = ac.createGain();
+      rainVolumeGain.gain.value = 0; // По умолчанию выключен
 
+      masterGain.connect(ac.destination);
+      musicVolumeGain.connect(masterGain);
+      rainVolumeGain.connect(masterGain);
+
+      // Шина эффектов для музыки
       const delay = ac.createDelay(1.5);
-      delay.delayTime.value = currentVibe === 'deep' ? 0.9 : 0.5;
+      delay.delayTime.value = 0.5;
       const fb = ac.createGain(); fb.gain.value = 0.4;
       const damp = ac.createBiquadFilter(); damp.type = "lowpass"; damp.frequency.value = 1000;
       const wet = ac.createGain(); wet.gain.value = 0.6;
 
-      delay.connect(damp); damp.connect(fb); fb.connect(delay); damp.connect(wet); wet.connect(masterGain);
+      delay.connect(damp); damp.connect(fb); fb.connect(delay); damp.connect(wet); wet.connect(musicVolumeGain);
       sendBus = delay;
+
+      // Генератор шума дождя (Pink Noise)
+      createRainNoise();
+    }
+
+    function createRainNoise() {
+      if (!ac || rainSource) return;
+      
+      const bufferSize = ac.sampleRate * 2;
+      const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+      const data = buffer.getChannelData(0);
+      
+      let lastOut = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        let white = Math.random() * 2 - 1;
+        data[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = data[i];
+        data[i] *= 3.5;
+      }
+
+      rainSource = ac.createBufferSource();
+      rainSource.buffer = buffer;
+      rainSource.loop = true;
+
+      // Фильтр для дождя
+      const rainFilter = ac.createBiquadFilter();
+      rainFilter.type = "lowpass";
+      rainFilter.frequency.value = 400; // Глухой звук
+
+      const rainHighpass = ac.createBiquadFilter();
+      rainHighpass.type = "highpass";
+      rainHighpass.frequency.value = 200;
+
+      rainSource.connect(rainFilter);
+      rainFilter.connect(rainHighpass);
+      rainHighpass.connect(rainVolumeGain);
+      
+      rainSource.start(0);
     }
 
     function playChord(freqs, dur) {
+      if (!ac) return;
       const t0 = ac.currentTime + 0.05;
       freqs.forEach((f, i) => {
         const osc = ac.createOscillator();
         osc.type = "sine";
         osc.frequency.value = f;
-        activeOscs.push(osc); // Запоминаем
+        activeOscs.push(osc);
 
         const g = ac.createGain();
         const peak = 0.15 / (1 + i * 0.5);
@@ -707,20 +901,20 @@
         const pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
         if (pan) {
           pan.pan.value = (i % 2 ? 0.6 : -0.6);
-          osc.connect(g); g.connect(pan); pan.connect(masterGain); pan.connect(sendBus);
+          osc.connect(g); g.connect(pan); pan.connect(musicVolumeGain); pan.connect(sendBus);
         } else {
-          osc.connect(g); g.connect(masterGain); g.connect(sendBus);
+          osc.connect(g); g.connect(musicVolumeGain); g.connect(sendBus);
         }
         osc.start(t0); osc.stop(t0 + dur + 0.5);
       });
     }
 
     function playBell(scale) {
+      if (!ac) return;
       const t0 = ac.currentTime + 0.05;
       const f = scale[Math.floor(Math.random() * scale.length)];
       const o1 = ac.createOscillator();
-      o1.type = "sine";
-      o1.frequency.value = f;
+      o1.type = "sine"; o1.frequency.value = f;
       activeOscs.push(o1);
 
       const env = ac.createGain();
@@ -728,30 +922,29 @@
       env.gain.exponentialRampToValueAtTime(0.03, t0 + 0.8);
       env.gain.exponentialRampToValueAtTime(0.0001, t0 + 4.0);
 
-      o1.connect(env); env.connect(masterGain); env.connect(sendBus);
+      o1.connect(env); env.connect(musicVolumeGain); env.connect(sendBus);
       o1.start(t0); o1.stop(t0 + 4.5);
     }
 
-    function killAllSounds() {
-      activeOscs.forEach(o => {
-        try { o.stop(); o.disconnect(); } catch(e){}
-      });
+    function killAllMusic() {
+      activeOscs.forEach(o => { try { o.stop(); o.disconnect(); } catch(e){} });
       activeOscs = [];
-      if (masterGain) masterGain.gain.cancelScheduledValues(ac.currentTime);
+      if (musicVolumeGain) musicVolumeGain.gain.cancelScheduledValues(ac.currentTime);
     }
 
     function startGen() {
       init();
       if (ac.state === "suspended") ac.resume();
-
       playing = true;
       step = 0;
       const cfg = VIBES[currentVibe];
 
       const now = ac.currentTime;
-      masterGain.gain.cancelScheduledValues(now);
-      masterGain.gain.setValueAtTime(0.0001, now);
-      masterGain.gain.linearRampToValueAtTime(1.0, now + 2.0);
+      musicVolumeGain.gain.cancelScheduledValues(now);
+      musicVolumeGain.gain.setValueAtTime(0.0001, now);
+      // Восстанавливаем громкость с учетом ползунка
+      const targetVol = parseFloat(document.getElementById('volSlider').value) * 0.35;
+      musicVolumeGain.gain.linearRampToValueAtTime(targetVol, now + 2.0);
 
       playChord(cfg.chords[0], cfg.chordDur);
       step = 1;
@@ -774,21 +967,17 @@
 
       if (!ac) return;
       const now = ac.currentTime;
-      masterGain.gain.cancelScheduledValues(now);
-      masterGain.gain.setValueAtTime(masterGain.gain.value, now);
-      // Быстрое затухание (0.15 сек) вместо 2 сек, чтобы не было каши
-      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+      musicVolumeGain.gain.cancelScheduledValues(now);
+      musicVolumeGain.gain.setValueAtTime(musicVolumeGain.gain.value, now);
+      musicVolumeGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
       
-      setTimeout(() => {
-        killAllSounds();
-      }, 200);
+      setTimeout(killAllMusic, 200);
     }
 
     function setVibe(vibe) {
       const wasPlaying = playing || !webAudio.paused;
       stopGen();
       webAudio.pause();
-      
       currentVibe = vibe;
       vibeName.textContent = VIBES[vibe].name;
 
@@ -802,7 +991,7 @@
             startGen();
             updatePlayState(true);
           }
-        }, 250); // Небольшая пауза для плавности
+        }, 250);
       } else {
         updatePlayState(false);
       }
@@ -811,24 +1000,36 @@
     return {
       toggle() {
         if (currentVibe === 'internet') {
-          if (webAudio.paused) {
-            webAudio.volume = parseFloat(document.getElementById('volSlider').value);
-            webAudio.play();
-            return true;
-          } else {
-            webAudio.pause();
-            return false;
-          }
+          if (webAudio.paused) { webAudio.volume = parseFloat(document.getElementById('volSlider').value); webAudio.play(); return true; }
+          else { webAudio.pause(); return false; }
         } else {
           if (playing) { stopGen(); return false; }
           startGen(); return true;
         }
       },
       setVolume(val) {
+        if (!ac) return;
         if (currentVibe === 'internet') {
           webAudio.volume = val;
-        } else if (ac && volumeGain) {
-          volumeGain.gain.setTargetAtTime(val * 0.35, ac.currentTime, 0.1);
+        } else {
+          musicVolumeGain.gain.setTargetAtTime(val * 0.35, ac.currentTime, 0.1);
+        }
+      },
+      toggleRain(isOn) {
+        init(); // На случай, если AudioContext еще не создан
+        if (ac.state === "suspended") ac.resume();
+        
+        isRainPlaying = isOn;
+        const now = ac.currentTime;
+        rainVolumeGain.gain.cancelScheduledValues(now);
+        rainVolumeGain.gain.setValueAtTime(rainVolumeGain.gain.value, now);
+        
+        if (isOn) {
+          // Плавно включаем дождь
+          rainVolumeGain.gain.linearRampToValueAtTime(0.15, now + 2.0);
+        } else {
+          // Плавно выключаем
+          rainVolumeGain.gain.linearRampToValueAtTime(0.0001, now + 1.5);
         }
       },
       setVibe
@@ -836,7 +1037,7 @@
   })();
 
   /* =========================================================
-     5. UI ПЛЕЕРА
+     5. UI ПЛЕЕРА И НАСТРОЕК
      ========================================================= */
   const btn = document.getElementById("musicBtn");
   const iconPlay = document.getElementById("iconPlay");
@@ -847,7 +1048,7 @@
   function handleVolumeChange() {
     const val = volSlider.value;
     volSlider.style.setProperty('--vol-pct', `${val * 100}%`);
-    Music.setVolume(val);
+    AudioSystem.setVolume(val);
   }
   volSlider.addEventListener('input', handleVolumeChange);
   handleVolumeChange();
@@ -861,7 +1062,6 @@
     } else {
       btn.classList.remove("playing");
       nowPlaying.classList.remove("playing");
-      // Оставляем надпись Now Playing видимой, если пользователь взаимодействовал
       if (vibeName.textContent) nowPlaying.classList.add("visible");
       iconPlay.style.display = "block";
       iconPause.style.display = "none";
@@ -869,7 +1069,7 @@
   }
 
   btn.addEventListener("click", () => {
-    const isOn = Music.toggle();
+    const isOn = AudioSystem.toggle();
     updatePlayState(isOn);
   });
 
@@ -877,14 +1077,19 @@
     b.addEventListener("click", () => {
       vibeBtns.forEach(x => x.classList.remove("active"));
       b.classList.add("active");
-      Music.setVibe(b.dataset.vibe);
+      AudioSystem.setVibe(b.dataset.vibe);
     });
   });
 
   webAudio.addEventListener('play', () => updatePlayState(true));
   webAudio.addEventListener('pause', () => updatePlayState(false));
 
-  // Инициализация надписи
+  // Обработка переключателя дождя
+  rainToggle.addEventListener('change', (e) => {
+    AudioSystem.toggleRain(e.target.checked);
+  });
+
+  // Инициализация
   nowPlaying.classList.add("visible");
 
 })();

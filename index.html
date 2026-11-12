@@ -38,7 +38,7 @@
   /* ---------- фон ---------- */
   .aurora{
     position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0;
-    filter:blur(80px); opacity:.55;
+    filter:blur(90px); opacity:.55;
   }
   .blob{ position:absolute; border-radius:50%; mix-blend-mode:screen; will-change:transform; }
   .b1{ width:520px; height:520px; background:#6d28d9; top:-160px; left:-120px; animation:drift1 20s ease-in-out infinite; }
@@ -70,200 +70,242 @@
 
   .card{
     position:relative;
-    width:min(92vw, 400px);
-    padding:38px 30px 28px;
-    border-radius:30px;
-    background:linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.02) 45%, rgba(255,255,255,.045));
-    border:1px solid rgba(255,255,255,.09);
-    -webkit-backdrop-filter:blur(22px) saturate(150%);
-    backdrop-filter:blur(22px) saturate(150%);
+    width:min(92vw, 360px);
+    padding:40px 32px 32px;
+    border-radius:32px;
+    background:linear-gradient(165deg, rgba(255,255,255,.06), rgba(255,255,255,.01) 40%, rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08);
+    -webkit-backdrop-filter:blur(24px) saturate(160%);
+    backdrop-filter:blur(24px) saturate(160%);
     box-shadow:
-      0 40px 90px -30px rgba(0,0,0,.95),
+      0 40px 100px -20px rgba(0,0,0,.95),
       0 0 0 1px rgba(255,255,255,.03) inset,
-      0 1px 0 rgba(255,255,255,.12) inset;
+      0 1px 0 rgba(255,255,255,.1) inset;
     transform-style:preserve-3d;
-    transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
     text-align:center;
   }
 
   .card::before{
     content:"";
     position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-    background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%), rgba(139,92,246,.20), transparent 62%);
+    background:radial-gradient(360px circle at var(--mx,50%) var(--my,0%), rgba(139,92,246,.18), transparent 65%);
     opacity:0; transition:opacity .45s;
   }
   .card:hover::before{ opacity:1; }
 
   .card::after{
     content:"";
-    position:absolute; left:15%; right:15%; top:-1px; height:1px; pointer-events:none;
-    background:linear-gradient(90deg, transparent, rgba(167,139,250,.9), rgba(34,211,238,.7), transparent);
-    filter:blur(.5px); opacity:.75;
+    position:absolute; left:20%; right:20%; top:-1px; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, transparent, rgba(167,139,250,.8), rgba(34,211,238,.6), transparent);
+    filter:blur(.5px); opacity:.7;
   }
 
   /* ---------- аватар ---------- */
   .avatar{
     position:relative;
     width:104px; height:104px;
-    margin:0 auto 20px;
+    margin:0 auto 24px;
     transform:translateZ(40px);
   }
   .avatar::before{
-    content:""; position:absolute; inset:-4px; border-radius:50%;
+    content:""; position:absolute; inset:-5px; border-radius:50%;
     background:conic-gradient(from 0deg, var(--violet), var(--cyan), var(--pink), var(--violet));
-    filter:blur(12px); opacity:.7;
-    animation:spin 9s linear infinite;
+    filter:blur(14px); opacity:.65;
+    animation:spin 10s linear infinite;
   }
   .avatar::after{
     content:""; position:absolute; inset:-1px; border-radius:50%;
     background:conic-gradient(from 0deg, var(--violet), var(--cyan), var(--pink), var(--violet));
-    animation:spin 9s linear infinite;
+    animation:spin 10s linear infinite;
   }
   .avatar-inner{
     position:absolute; inset:3px; border-radius:50%; z-index:1;
+    background:#0a0b16;
+    overflow:hidden;
     display:grid; place-items:center;
-    background:radial-gradient(circle at 32% 26%, #2b2d4d, #0a0b16 72%);
-    font-size:44px; font-weight:700; letter-spacing:-.05em;
+    font-size:40px; font-weight:700;
     color:#fff;
-    text-shadow:0 0 24px rgba(139,92,246,.95), 0 0 46px rgba(34,211,238,.45);
-    user-select:none;
+    text-shadow:0 0 24px rgba(139,92,246,.95);
+  }
+  .avatar-inner img{
+    width:100%; height:100%; object-fit:cover;
+    border-radius:50%;
   }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
-  /* ---------- текст ---------- */
-  .name{
-    font-size:29px;
-    font-weight:700;
-    letter-spacing:-.025em;
-    background:linear-gradient(100deg, #ffffff 8%, #a78bfa 34%, #22d3ee 56%, #ffffff 84%);
-    background-size:260% 100%;
-    -webkit-background-clip:text; background-clip:text;
-    color:transparent;
-    animation:shimmer 7s linear infinite;
+  /* ---------- профиль ---------- */
+  .name-row{
+    display:flex; align-items:center; justify-content:center; gap:8px;
     transform:translateZ(26px);
   }
-  @keyframes shimmer{ to{ background-position:-260% 0; } }
+
+  .name{
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-.03em;
+    background:linear-gradient(100deg, #ffffff 10%, #a78bfa 40%, #22d3ee 60%, #ffffff 90%);
+    background-size:250% 100%;
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent;
+    animation:shimmer 6s linear infinite;
+  }
+  @keyframes shimmer{ to{ background-position:-250% 0; } }
+
+  .status-dot{
+    width:10px; height:10px;
+    border-radius:50%;
+    background:#22d3ee;
+    box-shadow: 0 0 12px #22d3ee, 0 0 20px rgba(34,211,238,.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(.85); opacity:.7; }
+  }
 
   .tagline{
     margin-top:10px;
     font-size:13.5px;
-    line-height:1.55;
+    line-height:1.6;
     color:var(--muted);
     letter-spacing:.01em;
     transform:translateZ(18px);
   }
 
-  /* ---------- теги ---------- */
-  .tags{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
-    margin:22px 0 26px;
-    transform:translateZ(14px);
-  }
-  .tag{
-    font-size:11.5px; font-weight:500; letter-spacing:.04em;
-    padding:6px 13px;
-    border-radius:999px;
-    color:#b9bcd6;
-    background:rgba(255,255,255,.045);
-    border:1px solid rgba(255,255,255,.08);
-    transition:transform .3s cubic-bezier(.2,.8,.2,1), color .3s, border-color .3s, box-shadow .3s, background .3s;
-    cursor:default;
-  }
-  .tag:hover{
-    transform:translateY(-3px);
-    color:#fff;
-    background:rgba(139,92,246,.16);
-    border-color:rgba(167,139,250,.55);
-    box-shadow:0 8px 24px -8px rgba(139,92,246,.85), 0 0 0 1px rgba(167,139,250,.2) inset;
-  }
-
   /* ---------- соц-кнопки ---------- */
   .socials{
     display:flex; gap:12px; justify-content:center;
+    margin:28px 0 24px;
     transform:translateZ(22px);
   }
   .soc{
     width:44px; height:44px;
     display:grid; place-items:center;
-    border-radius:14px;
+    border-radius:15px;
     color:#9ea2c0;
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.07);
     text-decoration:none;
     transition:transform .3s cubic-bezier(.2,.8,.2,1), color .3s, background .3s, border-color .3s, box-shadow .3s;
   }
   .soc:hover{
-    transform:translateY(-4px) scale(1.06);
+    transform:translateY(-4px) scale(1.05);
     color:#fff;
-    background:rgba(34,211,238,.14);
-    border-color:rgba(34,211,238,.5);
-    box-shadow:0 10px 28px -10px rgba(34,211,238,.9);
+    background:rgba(34,211,238,.12);
+    border-color:rgba(34,211,238,.45);
+    box-shadow:0 10px 28px -10px rgba(34,211,238,.8);
   }
   .soc:active{ transform:translateY(-1px) scale(.98); }
   .soc svg{ width:19px; height:19px; }
 
-  /* ---------- музыка ---------- */
-  .music{
-    margin-top:26px;
+  /* ---------- аудио-плеер ---------- */
+  .player{
+    display:flex; align-items:center; gap:16px;
     width:100%;
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    padding:13px 20px;
-    border-radius:16px;
-    font-family:inherit;
-    font-size:13px; font-weight:600; letter-spacing:.02em;
-    color:#cfd2e8;
-    background:linear-gradient(120deg, rgba(139,92,246,.14), rgba(34,211,238,.10));
-    border:1px solid rgba(167,139,250,.28);
-    cursor:pointer;
-    overflow:hidden;
-    position:relative;
-    transition:color .3s, border-color .3s, box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1);
+    padding:12px 16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
     transform:translateZ(30px);
+    transition:border-color .3s, background .3s;
   }
-  .music::before{
-    content:"";
-    position:absolute; inset:0;
-    background:linear-gradient(120deg, rgba(139,92,246,.5), rgba(34,211,238,.42), rgba(244,114,182,.42));
-    opacity:0; transition:opacity .35s;
-    z-index:-1;
+  .player:hover{
+    background:rgba(255,255,255,.05);
+    border-color:rgba(255,255,255,.12);
   }
-  .music:hover{
+
+  .music-btn{
+    flex-shrink:0;
+    width:36px; height:36px;
+    display:grid; place-items:center;
+    border-radius:50%;
+    color:#cfd2e8;
+    background:linear-gradient(135deg, rgba(139,92,246,.2), rgba(34,211,238,.15));
+    border:1px solid rgba(167,139,250,.3);
+    cursor:pointer;
+    transition:all .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .music-btn:hover{
     color:#fff;
-    border-color:rgba(167,139,250,.65);
-    box-shadow:0 14px 40px -14px rgba(139,92,246,.95);
-    transform:translateZ(30px) translateY(-2px);
+    border-color:rgba(167,139,250,.8);
+    box-shadow:0 0 20px rgba(139,92,246,.4);
+    transform:scale(1.05);
   }
-  .music:hover::before{ opacity:.35; }
-  .music:active{ transform:translateZ(30px) translateY(0) scale(.985); }
+  .music-btn:active{ transform:scale(.95); }
+  .music-btn svg{ width:14px; height:14px; margin-left:2px; }
+  
+  .music-btn.playing svg{ margin-left:0; }
 
-  .eq{ display:inline-flex; align-items:flex-end; gap:3px; height:16px; }
-  .eq i{
-    display:block;
-    width:3px; height:16px;
+  /* Ползунок громкости */
+  .vol-wrap{
+    flex-grow:1;
+    display:flex; align-items:center;
+  }
+  
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    background:transparent;
+  }
+  input[type=range]:focus{
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    width:100%;
+    height:4px;
+    cursor:pointer;
+    background:rgba(255,255,255,.1);
     border-radius:2px;
-    background:linear-gradient(180deg, #a78bfa, #22d3ee);
-    transform-origin:bottom;
-    transform:scaleY(.28);
-    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    transition:background .3s;
   }
-  .music.playing .eq i{ animation:eqb .95s ease-in-out infinite; }
-  .music.playing .eq i:nth-child(2){ animation-delay:.14s; }
-  .music.playing .eq i:nth-child(3){ animation-delay:.30s; }
-  .music.playing .eq i:nth-child(4){ animation-delay:.08s; }
-
-  @keyframes eqb{
-    0%,100%{ transform:scaleY(.28); }
-    50%    { transform:scaleY(1); }
+  input[type=range]::-webkit-slider-thumb{
+    height:12px;
+    width:12px;
+    border-radius:50%;
+    background:#fff;
+    cursor:pointer;
+    -webkit-appearance:none;
+    margin-top:-4px;
+    box-shadow:0 0 10px rgba(139,92,246,.8);
+    transition:transform .2s, box-shadow .2s;
+  }
+  input[type=range]:hover::-webkit-slider-runnable-track{
+    background:rgba(255,255,255,.2);
+  }
+  input[type=range]:hover::-webkit-slider-thumb{
+    transform:scale(1.2);
+    box-shadow:0 0 16px rgba(34,211,238,.9);
   }
 
-  .music .label{ pointer-events:none; }
+  input[type=range]::-moz-range-track{
+    width:100%;
+    height:4px;
+    cursor:pointer;
+    background:rgba(255,255,255,.1);
+    border-radius:2px;
+  }
+  input[type=range]::-moz-range-thumb{
+    height:12px;
+    width:12px;
+    border-radius:50%;
+    background:#fff;
+    cursor:pointer;
+    border:none;
+    box-shadow:0 0 10px rgba(139,92,246,.8);
+    transition:transform .2s, box-shadow .2s;
+  }
+  input[type=range]:hover::-moz-range-thumb{
+    transform:scale(1.2);
+    box-shadow:0 0 16px rgba(34,211,238,.9);
+  }
 
   /* ---------- адаптив ---------- */
   @media (max-width:420px){
-    .card{ padding:32px 22px 24px; border-radius:26px; }
+    .card{ padding:32px 24px 24px; border-radius:26px; }
     .name{ font-size:25px; }
     .avatar{ width:92px; height:92px; }
-    .avatar-inner{ font-size:38px; }
+    .socials{ margin:24px 0 20px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -287,19 +329,20 @@
 
 <div class="wrap">
   <section class="card" id="card">
+    
     <div class="avatar">
-      <div class="avatar-inner">n</div>
+      <div class="avatar-inner">
+        <!-- Подтягиваем аватарку с GitHub -->
+        <img src="https://github.com/noclipov.png" alt="noclipov avatar" onerror="this.style.display='none'; this.parentElement.innerText='n';">
+      </div>
     </div>
 
-    <h1 class="name">noclipov</h1>
-    <p class="tagline">где-то между звёздами и пустотой</p>
-
-    <div class="tags">
-      <span class="tag">chill</span>
-      <span class="tag">night</span>
-      <span class="tag">ambient</span>
-      <span class="tag">floating</span>
+    <div class="name-row">
+      <h1 class="name">noclipov</h1>
+      <div class="status-dot" title="Online"></div>
     </div>
+    
+    <p class="tagline">where the light fades and echoes remain</p>
 
     <div class="socials">
       <a class="soc" href="https://github.com/noclipov" aria-label="GitHub" target="_blank" rel="noopener">
@@ -322,10 +365,24 @@
       </a>
     </div>
 
-    <button class="music" id="musicBtn" aria-pressed="false">
-      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="label" id="musicLabel">включить музыку</span>
-    </button>
+    <!-- Улучшенный плеер с громкостью -->
+    <div class="player">
+      <button class="music-btn" id="musicBtn" aria-label="Включить музыку">
+        <!-- Иконка Play -->
+        <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <!-- Иконка Pause (скрыта по умолчанию) -->
+        <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </button>
+      
+      <div class="vol-wrap">
+        <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.5" title="Громкость">
+      </div>
+    </div>
+
   </section>
 </div>
 
@@ -348,16 +405,16 @@
     canvas.style.width  = innerWidth + "px";
     canvas.style.height = innerHeight + "px";
 
-    const count = Math.round(Math.min(90, Math.max(38, innerWidth / 16)));
+    const count = Math.round(Math.min(80, Math.max(35, innerWidth / 18)));
     parts = Array.from({ length: count }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      r: (Math.random() * 1.5 + 0.6) * DPR,
-      vy: -(Math.random() * 0.22 + 0.05) * DPR,
-      vx: (Math.random() - 0.5) * 0.12 * DPR,
-      a: Math.random() * 0.55 + 0.15,
+      r: (Math.random() * 1.2 + 0.5) * DPR,
+      vy: -(Math.random() * 0.15 + 0.04) * DPR,
+      vx: (Math.random() - 0.5) * 0.08 * DPR,
+      a: Math.random() * 0.45 + 0.1,
       ph: Math.random() * Math.PI * 2,
-      sp: Math.random() * 0.015 + 0.004
+      sp: Math.random() * 0.01 + 0.003
     }));
   }
 
@@ -372,13 +429,13 @@
       if (p.x < -20) p.x = W + 20;
       if (p.x > W + 20) p.x = -20;
 
-      const alpha = p.a * (0.55 + 0.45 * Math.sin(p.ph));
+      const alpha = p.a * (0.6 + 0.4 * Math.sin(p.ph));
 
       c2d.beginPath();
       c2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      c2d.fillStyle = "rgba(190,200,255," + alpha.toFixed(3) + ")";
-      c2d.shadowBlur = 12 * DPR;
-      c2d.shadowColor = "rgba(139,92,246,0.85)";
+      c2d.fillStyle = "rgba(200,210,255," + alpha.toFixed(3) + ")";
+      c2d.shadowBlur = 10 * DPR;
+      c2d.shadowColor = "rgba(139,92,246,0.7)";
       c2d.fill();
     }
     c2d.shadowBlur = 0;
@@ -390,7 +447,7 @@
   addEventListener("resize", resizeCanvas);
 
   /* =========================================================
-     2. 3D-НАКЛОН + ПОДСВЕТКА КАРТОЧКИ
+     2. 3D-НАКЛОН + ПОДСВЕТКА
      ========================================================= */
   const card = document.getElementById("card");
   const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -404,8 +461,8 @@
       const nx = (e.clientX - r.left) / r.width;
       const ny = (e.clientY - r.top) / r.height;
 
-      const rx = (0.5 - ny) * 9;
-      const ry = (nx - 0.5) * 11;
+      const rx = (0.5 - ny) * 8;
+      const ry = (nx - 0.5) * 10;
 
       card.style.transform =
         "perspective(900px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg)";
@@ -426,11 +483,12 @@
   }
 
   /* =========================================================
-     3. ГЕНЕРАТИВНАЯ ЭМБИЕНТ-МУЗЫКА (Web Audio API)
+     3. МЯГКАЯ ГЕНЕРАТИВНАЯ МУЗЫКА
      ========================================================= */
   const Music = (() => {
     let ac = null;
-    let master = null;
+    let masterGain = null;  // Плавное появление/исчезновение
+    let volumeGain = null;  // Управление громкостью
     let sendBus = null;
     let playing = false;
     let chordTimer = null;
@@ -438,118 +496,114 @@
     let step = 0;
 
     const CHORDS = [
-      [220.00, 261.63, 329.63],  // Am
-      [174.61, 220.00, 261.63],  // F
-      [261.63, 329.63, 392.00],  // C
-      [196.00, 246.94, 293.66]   // G
+      [174.61, 220.00, 261.63],  // Fmaj7
+      [130.81, 164.81, 196.00],  // Cmaj
+      [196.00, 246.94, 293.66],  // G
+      [146.83, 174.61, 220.00]   // Dm
     ];
-    const SCALE = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+    // Более мягкие высокие ноты (мажорная пентатоника)
+    const SCALE = [523.25, 587.33, 659.25, 783.99, 880.00]; 
 
     function init() {
       if (ac) return;
-
       const AC = window.AudioContext || window.webkitAudioContext;
       ac = new AC();
 
-      master = ac.createGain();
-      master.gain.value = 0;
+      masterGain = ac.createGain();
+      masterGain.gain.value = 0;
 
+      volumeGain = ac.createGain();
+      // Ставим громкость из слайдера (по умолчанию 0.5)
+      volumeGain.gain.value = parseFloat(document.getElementById('volSlider').value) * 0.4;
+
+      // Мягкий фильтр, убирающий резкие высокие частоты
       const lp = ac.createBiquadFilter();
       lp.type = "lowpass";
-      lp.frequency.value = 2800;
-      lp.Q.value = 0.4;
+      lp.frequency.value = 1800;
+      lp.Q.value = 0.2;
 
-      master.connect(lp);
-      lp.connect(ac.destination);
+      masterGain.connect(lp);
+      lp.connect(volumeGain);
+      volumeGain.connect(ac.destination);
 
-      // эхо-шина для "воздуха"
-      const delay = ac.createDelay(1.0);
-      delay.delayTime.value = 0.42;
+      // Мягкое эхо
+      const delay = ac.createDelay(1.5);
+      delay.delayTime.value = 0.6;
 
       const fb = ac.createGain();
-      fb.gain.value = 0.36;
+      fb.gain.value = 0.35;
 
       const damp = ac.createBiquadFilter();
       damp.type = "lowpass";
-      damp.frequency.value = 1900;
+      damp.frequency.value = 1200; // Очень глухое эхо
 
       const wet = ac.createGain();
-      wet.gain.value = 0.4;
+      wet.gain.value = 0.5;
 
       delay.connect(damp);
       damp.connect(fb);
       fb.connect(delay);
       damp.connect(wet);
-      wet.connect(master);
+      wet.connect(masterGain);
 
       sendBus = delay;
     }
 
-    function chord(freqs) {
-      const t0 = ac.currentTime + 0.06;
-      const dur = 9.4;
+    function playChord(freqs) {
+      const t0 = ac.currentTime + 0.1;
+      const dur = 10.0;
 
       freqs.forEach((f, i) => {
-        [1, 1.0035].forEach((det, k) => {
-          const osc = ac.createOscillator();
-          osc.type = k === 0 ? "sine" : "triangle";
-          osc.frequency.value = f * det;
+        // Только мягкие синусоиды
+        const osc = ac.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = f;
 
-          const g = ac.createGain();
-          const peak = 0.055 / (1 + i * 0.4);
+        const g = ac.createGain();
+        const peak = 0.12 / (1 + i * 0.5); // Тише для высоких нот
 
-          g.gain.setValueAtTime(0.0001, t0);
-          g.gain.exponentialRampToValueAtTime(peak, t0 + 3.2);
-          g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        // ОЧЕНЬ плавная атака и затухание (без щелчков)
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(peak, t0 + 4.0); // 4 секунды на разгон
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
 
-          const pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
-          if (pan) {
-            pan.pan.value = (k ? 0.45 : -0.45) * (i % 2 ? 1 : -1);
-            osc.connect(g);
-            g.connect(pan);
-            pan.connect(master);
-            pan.connect(sendBus);
-          } else {
-            osc.connect(g);
-            g.connect(master);
-            g.connect(sendBus);
-          }
+        const pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+        if (pan) {
+          pan.pan.value = (i % 2 ? 0.6 : -0.6);
+          osc.connect(g);
+          g.connect(pan);
+          pan.connect(masterGain);
+          pan.connect(sendBus);
+        } else {
+          osc.connect(g);
+          g.connect(masterGain);
+          g.connect(sendBus);
+        }
 
-          osc.start(t0);
-          osc.stop(t0 + dur + 0.2);
-        });
+        osc.start(t0);
+        osc.stop(t0 + dur + 0.5);
       });
     }
 
-    function bell() {
-      const t0 = ac.currentTime + 0.03;
+    function playBell() {
+      const t0 = ac.currentTime + 0.05;
       const f = SCALE[Math.floor(Math.random() * SCALE.length)];
 
       const o1 = ac.createOscillator();
       o1.type = "sine";
       o1.frequency.value = f;
 
-      const o2 = ac.createOscillator();
-      o2.type = "sine";
-      o2.frequency.value = f * 2.01;
-
-      const g2 = ac.createGain();
-      g2.gain.value = 0.22;
-
       const env = ac.createGain();
+      // Очень тихая и плавная нота
       env.gain.setValueAtTime(0.0001, t0);
-      env.gain.exponentialRampToValueAtTime(0.085, t0 + 0.03);
-      env.gain.exponentialRampToValueAtTime(0.0001, t0 + 2.8);
+      env.gain.exponentialRampToValueAtTime(0.04, t0 + 0.5); // Медленный разгон
+      env.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.5);
 
       o1.connect(env);
-      o2.connect(g2);
-      g2.connect(env);
-
-      env.connect(master);
+      env.connect(masterGain);
       env.connect(sendBus);
 
-      o1.start(t0); o1.stop(t0 + 3.0);
-      o2.start(t0); o2.stop(t0 + 3.0);
+      o1.start(t0); o1.stop(t0 + 4.0);
     }
 
     function start() {
@@ -560,21 +614,21 @@
       step = 0;
 
       const now = ac.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), now);
-      master.gain.linearRampToValueAtTime(0.9, now + 2.5);
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(Math.max(masterGain.gain.value, 0.0001), now);
+      masterGain.gain.linearRampToValueAtTime(1.0, now + 3.0); // Очень плавное появление
 
-      chord(CHORDS[0]);
+      playChord(CHORDS[0]);
       step = 1;
 
       chordTimer = setInterval(() => {
-        chord(CHORDS[step % CHORDS.length]);
+        playChord(CHORDS[step % CHORDS.length]);
         step++;
-      }, 9000);
+      }, 8000); // Смена аккорда каждые 8 секунд (плавный кроссфейд)
 
       noteTimer = setInterval(() => {
-        if (Math.random() < 0.78) bell();
-      }, 2300);
+        if (Math.random() < 0.6) playBell();
+      }, 3500); // Редкие ноты
     }
 
     function stop() {
@@ -585,9 +639,9 @@
 
       if (!ac) return;
       const now = ac.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.linearRampToValueAtTime(0.0001, now + 1.4);
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+      masterGain.gain.linearRampToValueAtTime(0.0001, now + 2.0); // Плавное затухание
     }
 
     return {
@@ -595,22 +649,63 @@
         if (playing) { stop(); return false; }
         start();
         return true;
+      },
+      setVolume(val) {
+        if (!ac || !volumeGain) return;
+        // Максимальная громкость 0.4, чтобы не было перегруза
+        volumeGain.gain.setTargetAtTime(val * 0.4, ac.currentTime, 0.1);
       }
     };
   })();
 
   /* =========================================================
-     4. КНОПКА МУЗЫКИ
+     4. УПРАВЛЕНИЕ ПЛЕЕРОМ (Кнопка и Громкость)
      ========================================================= */
   const btn = document.getElementById("musicBtn");
-  const label = document.getElementById("musicLabel");
+  const iconPlay = document.getElementById("iconPlay");
+  const iconPause = document.getElementById("iconPause");
+  const volSlider = document.getElementById("volSlider");
+
+  // Инициализация ползунка (визуально)
+  function updateSliderStyle() {
+    const val = (volSlider.value - volSlider.min) / (volSlider.max - volSlider.min) * 100;
+    volSlider.style.background = `linear-gradient(to right, var(--cyan) ${val}%, rgba(255,255,255,.1) ${val}%)`;
+  }
+  
+  // Применяем стили для трека (для WebKit ползунков)
+  const style = document.createElement('style');
+  style.innerHTML = `
+    input[type=range]::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, var(--cyan) var(--vol-pct, 50%), rgba(255,255,255,.1) var(--vol-pct, 50%));
+    }
+  `;
+  document.head.appendChild(style);
+  
+  function handleVolumeChange() {
+    const val = volSlider.value;
+    volSlider.style.setProperty('--vol-pct', `${val * 100}%`);
+    Music.setVolume(val);
+  }
+
+  volSlider.addEventListener('input', handleVolumeChange);
+  handleVolumeChange(); // init
 
   btn.addEventListener("click", () => {
     const isOn = Music.toggle();
-    btn.classList.toggle("playing", isOn);
-    btn.setAttribute("aria-pressed", String(isOn));
-    label.textContent = isOn ? "играет эмбиент" : "включить музыку";
+    
+    if (isOn) {
+      btn.classList.add("playing");
+      btn.setAttribute("aria-label", "Поставить на паузу");
+      iconPlay.style.display = "none";
+      iconPause.style.display = "block";
+    } else {
+      btn.classList.remove("playing");
+      btn.setAttribute("aria-label", "Включить музыку");
+      iconPlay.style.display = "block";
+      iconPause.style.display = "none";
+    }
   });
+
 })();
 </script>
 </body>

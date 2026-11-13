@@ -1,1709 +1,998 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>noclipov</title>
-		<link
-			rel="icon"
-			href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>"
-		/>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-			rel="stylesheet"
-		/>
-		<!-- Библиотека для кастомных QR-кодов -->
-		<script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-		<style>
-			:root {
-				--primary: #c084fc;
-				--secondary: #38bdf8;
-				--accent: #f472b6;
-				--txt: #e2e8f0;
-				--muted: #8b95a8;
-				--bg: #020006;
-				--card-bg: rgba(15, 10, 25, 0.6);
-			}
-
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
-
-			::-webkit-scrollbar {
-				width: 8px;
-			}
-			::-webkit-scrollbar-track {
-				background: var(--bg);
-			}
-			::-webkit-scrollbar-thumb {
-				background: linear-gradient(180deg, var(--primary), var(--secondary));
-				border-radius: 10px;
-				border: 2px solid var(--bg);
-			}
-
-			html,
-			body {
-				height: 100%;
-			}
-
-			body {
-				font-family:
-					'Inter',
-					-apple-system,
-					sans-serif;
-				background:
-					radial-gradient(
-						1200px 800px at 50% -20%,
-						#170a2e 0%,
-						transparent 60%
-					),
-					radial-gradient(
-						1000px 600px at 100% 120%,
-						#061b2b 0%,
-						transparent 60%
-					),
-					var(--bg);
-				color: var(--txt);
-				display: grid;
-				place-items: center;
-				padding: 32px 16px;
-				overflow-x: hidden;
-				-webkit-font-smoothing: antialiased;
-			}
-
-			/* Cosmic Aurora Background */
-			.aurora {
-				position: fixed;
-				inset: 0;
-				overflow: hidden;
-				pointer-events: none;
-				z-index: 0;
-				filter: blur(120px);
-				opacity: 0.3;
-				will-change: transform;
-			}
-			.blob {
-				position: absolute;
-				border-radius: 50%;
-				mix-blend-mode: screen;
-				will-change: transform;
-			}
-			.b1 {
-				width: 600px;
-				height: 600px;
-				background: #4c1d95;
-				top: -200px;
-				left: -150px;
-				animation: drift1 25s ease-in-out infinite;
-			}
-			.b2 {
-				width: 500px;
-				height: 500px;
-				background: #0e7490;
-				bottom: -150px;
-				right: -100px;
-				animation: drift2 30s ease-in-out infinite;
-			}
-			.b3 {
-				width: 400px;
-				height: 400px;
-				background: #831843;
-				top: 40%;
-				left: 60%;
-				animation: drift3 35s ease-in-out infinite;
-				opacity: 0.5;
-			}
-
-			@keyframes drift1 {
-				0%,
-				100% {
-					transform: translate3d(0, 0, 0) scale(1);
-				}
-				50% {
-					transform: translate3d(100px, 80px, 0) scale(1.1);
-				}
-			}
-			@keyframes drift2 {
-				0%,
-				100% {
-					transform: translate3d(0, 0, 0) scale(1.05);
-				}
-				50% {
-					transform: translate3d(-120px, -60px, 0) scale(0.95);
-				}
-			}
-			@keyframes drift3 {
-				0%,
-				100% {
-					transform: translate3d(0, 0, 0) scale(0.98);
-				}
-				50% {
-					transform: translate3d(-80px, 90px, 0) scale(1.15);
-				}
-			}
-
-			#bg {
-				position: fixed;
-				inset: 0;
-				z-index: 1;
-				pointer-events: none;
-			}
-
-			/* Left Social Sidebar */
-			.social-sidebar {
-				position: fixed;
-				left: 20px;
-				top: 50%;
-				transform: translateY(-50%);
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-				z-index: 50;
-			}
-			.social-item {
-				width: 44px;
-				height: 44px;
-				border-radius: 14px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				color: var(--muted);
-				display: grid;
-				place-items: center;
-				cursor: pointer;
-				backdrop-filter: blur(16px);
-				transition: all 0.3s;
-			}
-			.social-item:hover {
-				color: #fff;
-				background: rgba(192, 132, 252, 0.15);
-				border-color: rgba(192, 132, 252, 0.4);
-				transform: scale(1.05);
-				box-shadow: 0 8px 20px -8px rgba(192, 132, 252, 0.5);
-			}
-			.social-item svg {
-				width: 20px;
-				height: 20px;
-			}
-
-			/* Settings (Top Right) */
-			.settings-container {
-				position: fixed;
-				top: 20px;
-				right: 20px;
-				z-index: 100;
-			}
-			.settings-btn {
-				width: 40px;
-				height: 40px;
-				border-radius: 50%;
-				background: rgba(255, 255, 255, 0.02);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				color: var(--muted);
-				display: grid;
-				place-items: center;
-				cursor: pointer;
-				transition: all 0.3s;
-				backdrop-filter: blur(10px);
-			}
-			.settings-btn:hover {
-				color: #fff;
-				background: rgba(255, 255, 255, 0.08);
-				transform: rotate(90deg);
-			}
-			.settings-btn svg {
-				width: 20px;
-				height: 20px;
-			}
-
-			.settings-menu {
-				position: absolute;
-				top: 50px;
-				right: 0;
-				width: 220px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-radius: 16px;
-				padding: 16px;
-				backdrop-filter: blur(24px) saturate(160%);
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-				opacity: 0;
-				pointer-events: none;
-				transform: translateY(-10px);
-				transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-			}
-			.settings-menu.open {
-				opacity: 1;
-				pointer-events: auto;
-				transform: translateY(0);
-			}
-			.settings-title {
-				font-size: 11px;
-				text-transform: uppercase;
-				letter-spacing: 0.1em;
-				color: var(--muted);
-				margin-bottom: 10px;
-				font-weight: 600;
-			}
-
-			.effect-grid {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 8px;
-				margin-bottom: 16px;
-			}
-			.effect-btn {
-				background: rgba(255, 255, 255, 0.02);
-				border: 1px solid rgba(255, 255, 255, 0.05);
-				color: var(--muted);
-				padding: 8px;
-				border-radius: 10px;
-				font-size: 12px;
-				cursor: pointer;
-				transition: all 0.2s;
-				font-family: inherit;
-			}
-			.effect-btn:hover {
-				background: rgba(255, 255, 255, 0.06);
-				color: #fff;
-			}
-			.effect-btn.active {
-				background: rgba(192, 132, 252, 0.15);
-				border-color: rgba(192, 132, 252, 0.4);
-				color: #fff;
-			}
-
-			.toggle-row {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				font-size: 13px;
-				color: var(--txt);
-				padding-top: 12px;
-				border-top: 1px solid rgba(255, 255, 255, 0.08);
-			}
-			.switch {
-				position: relative;
-				display: inline-block;
-				width: 36px;
-				height: 20px;
-			}
-			.switch input {
-				opacity: 0;
-				width: 0;
-				height: 0;
-			}
-			.slider {
-				position: absolute;
-				cursor: pointer;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background-color: rgba(255, 255, 255, 0.1);
-				transition: 0.3s;
-				border-radius: 20px;
-			}
-			.slider:before {
-				position: absolute;
-				content: '';
-				height: 14px;
-				width: 14px;
-				left: 3px;
-				bottom: 3px;
-				background-color: white;
-				transition: 0.3s;
-				border-radius: 50%;
-			}
-			input:checked + .slider {
-				background-color: var(--secondary);
-			}
-			input:checked + .slider:before {
-				transform: translateX(16px);
-			}
-
-			/* Profile Card */
-			.wrap {
-				position: relative;
-				z-index: 2;
-				animation: rise 1s cubic-bezier(0.2, 0.85, 0.25, 1) both;
-			}
-			@keyframes rise {
-				from {
-					opacity: 0;
-					transform: translateY(30px) scale(0.97);
-					filter: blur(6px);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0) scale(1);
-					filter: blur(0);
-				}
-			}
-
-			.card {
-				position: relative;
-				width: min(92vw, 380px);
-				border-radius: 28px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.06);
-				backdrop-filter: blur(24px) saturate(160%);
-				box-shadow:
-					0 40px 100px -20px rgba(0, 0, 0, 0.95),
-					0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-					0 1px 0 rgba(255, 255, 255, 0.08) inset;
-				transform-style: preserve-3d;
-				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-				overflow: hidden;
-				display: flex;
-				flex-direction: column;
-				padding-bottom: 24px;
-			}
-
-			.card::before {
-				content: '';
-				position: absolute;
-				inset: 0;
-				opacity: 0.03;
-				pointer-events: none;
-				z-index: 0;
-				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-			}
-
-			.card::after {
-				content: '';
-				position: absolute;
-				inset: 0;
-				border-radius: inherit;
-				pointer-events: none;
-				background: radial-gradient(
-					400px circle at var(--mx, 50%) var(--my, 0%),
-					rgba(192, 132, 252, 0.1),
-					transparent 60%
-				);
-				opacity: 0;
-				transition: opacity 0.4s;
-				z-index: 0;
-			}
-			.card:hover::after {
-				opacity: 1;
-			}
-
-			.card-content {
-				position: relative;
-				z-index: 1;
-				padding: 36px 28px 0;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-
-			/* Avatar */
-			.avatar {
-				position: relative;
-				width: 100px;
-				height: 100px;
-				margin: 0 auto 20px;
-				transform: translateZ(40px);
-				transition: transform 0.4s;
-			}
-			.card:hover .avatar {
-				transform: translateZ(40px) translateY(-4px);
-			}
-			.avatar::before,
-			.avatar::after {
-				content: '';
-				position: absolute;
-				border-radius: 50%;
-			}
-			.avatar::before {
-				inset: -4px;
-				background: conic-gradient(
-					from 0deg,
-					var(--primary),
-					var(--secondary),
-					var(--accent),
-					var(--primary)
-				);
-				filter: blur(12px);
-				opacity: 0.5;
-				animation: spin 10s linear infinite;
-			}
-			.avatar::after {
-				inset: -1px;
-				background: conic-gradient(
-					from 0deg,
-					var(--primary),
-					var(--secondary),
-					var(--accent),
-					var(--primary)
-				);
-				animation: spin 10s linear infinite;
-			}
-			.avatar-inner {
-				position: absolute;
-				inset: 3px;
-				border-radius: 50%;
-				z-index: 1;
-				background: #020006;
-				overflow: hidden;
-				display: grid;
-				place-items: center;
-				font-size: 40px;
-				font-weight: 700;
-				color: #fff;
-			}
-			.avatar-inner img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				border-radius: 50%;
-				filter: brightness(0.9);
-			}
-			@keyframes spin {
-				to {
-					transform: rotate(360deg);
-				}
-			}
-
-			/* Profile Info */
-			.name-row {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 8px;
-				transform: translateZ(26px);
-			}
-			.name {
-				font-size: 26px;
-				font-weight: 700;
-				letter-spacing: -0.03em;
-				background: linear-gradient(
-					100deg,
-					#fff 10%,
-					#d8b4fe 40%,
-					#7dd3fc 60%,
-					#fff 90%
-				);
-				background-size: 250% 100%;
-				-webkit-background-clip: text;
-				background-clip: text;
-				color: transparent;
-				animation: shimmer 6s linear infinite;
-			}
-			@keyframes shimmer {
-				to {
-					background-position: -250% 0;
-				}
-			}
-			.status-dot {
-				width: 8px;
-				height: 8px;
-				border-radius: 50%;
-				background: var(--secondary);
-				box-shadow: 0 0 10px var(--secondary);
-				animation: pulse 2s ease-in-out infinite;
-			}
-			@keyframes pulse {
-				0%,
-				100% {
-					opacity: 1;
-				}
-				50% {
-					opacity: 0.4;
-				}
-			}
-			.tagline {
-				margin-top: 8px;
-				font-size: 13px;
-				color: var(--muted);
-				letter-spacing: 0.01em;
-				transform: translateZ(18px);
-				margin-bottom: 24px;
-			}
-
-			/* Floating Audio Player (Bottom Right) */
-			.floating-player {
-				position: fixed;
-				bottom: 20px;
-				right: 20px;
-				z-index: 100;
-				display: flex;
-				align-items: center;
-				gap: 12px;
-				padding: 10px 16px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-radius: 20px;
-				backdrop-filter: blur(24px) saturate(160%);
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-				transition: all 0.3s;
-			}
-			.floating-player:hover {
-				border-color: rgba(255, 255, 255, 0.15);
-			}
-
-			.player-controls {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-			}
-			.ctrl-btn {
-				background: transparent;
-				border: none;
-				color: var(--muted);
-				width: 28px;
-				height: 28px;
-				border-radius: 50%;
-				display: grid;
-				place-items: center;
-				cursor: pointer;
-				transition: all 0.2s;
-			}
-			.ctrl-btn:hover {
-				color: #fff;
-				background: rgba(255, 255, 255, 0.1);
-			}
-			.ctrl-btn svg {
-				width: 14px;
-				height: 14px;
-			}
-
-			.ctrl-btn.play-btn {
-				width: 36px;
-				height: 36px;
-				background: linear-gradient(135deg, var(--primary), var(--secondary));
-				color: #fff;
-				box-shadow: 0 4px 12px rgba(192, 132, 252, 0.3);
-			}
-			.ctrl-btn.play-btn:hover {
-				transform: scale(1.05);
-				box-shadow: 0 6px 16px rgba(192, 132, 252, 0.5);
-			}
-			.ctrl-btn.play-btn svg {
-				width: 16px;
-				height: 16px;
-			}
-
-			.player-info {
-				display: flex;
-				flex-direction: column;
-				min-width: 100px;
-				max-width: 140px;
-			}
-			.track-name {
-				font-size: 12px;
-				font-weight: 600;
-				color: var(--txt);
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-			.track-status {
-				font-size: 10px;
-				color: var(--muted);
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-			}
-
-			.player-vol {
-				display: flex;
-				align-items: center;
-				gap: 6px;
-				width: 80px;
-			}
-			.vol-icon {
-				color: var(--muted);
-				cursor: pointer;
-			}
-			.vol-icon svg {
-				width: 14px;
-				height: 14px;
-			}
-
-			input[type='range'] {
-				-webkit-appearance: none;
-				width: 100%;
-				background: transparent;
-				height: 16px;
-			}
-			input[type='range']:focus {
-				outline: none;
-			}
-			input[type='range']::-webkit-slider-runnable-track {
-				width: 100%;
-				height: 3px;
-				cursor: pointer;
-				background: rgba(255, 255, 255, 0.15);
-				border-radius: 2px;
-			}
-			input[type='range']::-webkit-slider-thumb {
-				height: 10px;
-				width: 10px;
-				border-radius: 50%;
-				background: #fff;
-				cursor: pointer;
-				-webkit-appearance: none;
-				margin-top: -3.5px;
-				box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
-			}
-
-			/* Modal (QR Code) */
-			.modal-overlay {
-				position: fixed;
-				inset: 0;
-				z-index: 200;
-				background: rgba(0, 0, 0, 0.6);
-				backdrop-filter: blur(8px);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity: 0;
-				pointer-events: none;
-				transition: opacity 0.3s;
-			}
-			.modal-overlay.open {
-				opacity: 1;
-				pointer-events: auto;
-			}
-
-			.modal-content {
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 24px;
-				padding: 24px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-				transform: scale(0.95);
-				transition: transform 0.3s;
-			}
-			.modal-overlay.open .modal-content {
-				transform: scale(1);
-			}
-
-			.qr-wrapper {
-				background: rgba(0, 0, 0, 0.2);
-				padding: 16px;
-				border-radius: 20px;
-				margin-bottom: 16px;
-				border: 1px solid rgba(255, 255, 255, 0.05);
-			}
-			.qr-wrapper > div {
-				display: block;
-				border-radius: 8px;
-				overflow: hidden;
-			}
-
-			.modal-title {
-				font-size: 16px;
-				font-weight: 600;
-				margin-bottom: 4px;
-				color: #fff;
-			}
-			.modal-desc {
-				font-size: 12px;
-				color: var(--muted);
-				margin-bottom: 20px;
-			}
-			.modal-btn {
-				background: linear-gradient(135deg, var(--primary), var(--secondary));
-				color: #fff;
-				border: none;
-				padding: 10px 24px;
-				border-radius: 12px;
-				font-size: 13px;
-				font-weight: 600;
-				cursor: pointer;
-				text-decoration: none;
-				transition:
-					transform 0.2s,
-					box-shadow 0.2s;
-			}
-			.modal-btn:hover {
-				transform: translateY(-2px);
-				box-shadow: 0 8px 20px rgba(192, 132, 252, 0.4);
-			}
-
-			@media (max-width: 768px) {
-				.social-sidebar {
-					left: 10px;
-					top: 20px;
-					transform: none;
-					flex-direction: row;
-				}
-				.floating-player {
-					bottom: 10px;
-					right: 10px;
-					left: 10px;
-					justify-content: space-between;
-				}
-				.player-vol {
-					display: none;
-				}
-				.settings-container {
-					top: 10px;
-					right: 10px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<!-- Left Socials -->
-		<div class="social-sidebar">
-			<div
-				class="social-item"
-				data-url="https://github.com/noclipov"
-				data-name="GitHub"
-			>
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path
-						d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"
-					/>
-				</svg>
-			</div>
-			<div
-				class="social-item"
-				data-url="https://t.me/noclipov"
-				data-name="Telegram"
-			>
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path
-						d="M21.6 3.4 2.9 10.7c-.94.37-.93 1.7.02 2.04l4.7 1.66 1.8 5.55c.27.84 1.32 1.03 1.86.34l2.5-3.2 4.72 3.48c.72.53 1.75.13 1.9-.75l2.9-15.2c.17-.9-.72-1.6-1.4-1.22zM9.6 14.1l-.3 3.2-1.2-3.7 9.2-6.3-7.7 6.8z"
-					/>
-				</svg>
-			</div>
-		</div>
-
-		<!-- Settings (Top Right) -->
-		<div class="settings-container">
-			<button class="settings-btn" id="settingsBtn" aria-label="Настройки">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="3"></circle>
-					<path
-						d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-					></path>
-				</svg>
-			</button>
-
-			<div class="settings-menu" id="settingsMenu">
-				<div class="settings-title">Фоновый эффект</div>
-				<div class="effect-grid">
-					<button class="effect-btn active" data-effect="stars">Звезды</button>
-					<button class="effect-btn" data-effect="snow">Пыль</button>
-					<button class="effect-btn" data-effect="rain">Дождь</button>
-					<button class="effect-btn" data-effect="vertices">Созвездия</button>
-				</div>
-				<div class="toggle-row">
-					<span>Звук дождя</span>
-					<label class="switch">
-						<input type="checkbox" id="rainSoundToggle" />
-						<span class="slider"></span>
-					</label>
-				</div>
-			</div>
-		</div>
-
-		<!-- QR Modal -->
-		<div class="modal-overlay" id="qrModal">
-			<div class="modal-content">
-				<div class="qr-wrapper" id="qrContainer"></div>
-				<div class="modal-title" id="qrTitle">Профиль</div>
-				<div class="modal-desc">Наведите камеру телефона</div>
-				<a href="#" id="qrLink" class="modal-btn" target="_blank">Перейти</a>
-			</div>
-		</div>
-
-		<div class="aurora">
-			<div class="blob b1"></div>
-			<div class="blob b2"></div>
-			<div class="blob b3"></div>
-		</div>
-		<canvas id="bg"></canvas>
-
-		<div class="wrap">
-			<section class="card" id="card">
-				<div class="card-content">
-					<div class="avatar">
-						<div class="avatar-inner">
-							<img
-								src="https://github.com/noclipov.png"
-								alt="noclipov"
-								onerror="
-									this.style.display = 'none';
-									this.parentElement.innerText = 'n';
-								"
-							/>
-						</div>
-					</div>
-					<div class="name-row">
-						<h1 class="name">noclipov</h1>
-						<div class="status-dot" title="Online"></div>
-					</div>
-					<p class="tagline">where the light fades and echoes remain</p>
-				</div>
-			</section>
-		</div>
-
-		<!-- Floating Audio Player -->
-		<div class="floating-player">
-			<div class="player-controls">
-				<button class="ctrl-btn" id="prevBtn">
-					<svg viewBox="0 0 24 24" fill="currentColor">
-						<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-					</svg>
-				</button>
-				<button class="ctrl-btn play-btn" id="playBtn">
-					<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor">
-						<path d="M8 5v14l11-7z" />
-					</svg>
-					<svg
-						id="iconPause"
-						viewBox="0 0 24 24"
-						fill="currentColor"
-						style="display: none"
-					>
-						<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-					</svg>
-				</button>
-				<button class="ctrl-btn" id="nextBtn">
-					<svg viewBox="0 0 24 24" fill="currentColor">
-						<path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
-					</svg>
-				</button>
-			</div>
-
-			<div class="player-info">
-				<div class="track-name" id="trackName">Ambient</div>
-				<div class="track-status" id="trackStatus">Генератор</div>
-			</div>
-
-			<div class="player-vol">
-				<div class="vol-icon" id="muteBtn">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M11 5L6 9H2v6h4l5 4V5z" />
-						<path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-						<path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-					</svg>
-				</div>
-				<input
-					type="range"
-					id="volSlider"
-					min="0"
-					max="1"
-					step="0.01"
-					value="0.5"
-				/>
-			</div>
-		</div>
-
-		<audio id="webAudio" loop></audio>
-
-		<script>
-			// КОНФИГУРАЦИЯ ПЛЕЙЛИСТА
-			// Положите файлы рядом с index.html (например, в папку music) и пропишите их здесь.
-			const CONFIG = {
-				playlist: [
-					{ title: 'марионетка познала безумие', src: 'music/track1.mp3' },
-					{ title: 'Набросок (Alternative Version).', src: 'music/track2.mp3' },
-					{ title: 'волны', src: 'music/track3.mp3' },
-					{ title: 'Слишком хороший', src: 'music/track4.mp3' },
-					{ title: 'я понял что значит любить', src: 'music/track5.mp3' },
-					{ title: 'Метеорит', src: 'music/track6.mp3' },
-					{ title: 'provod', src: 'music/track7.mp3' },
-				],
-			};
-
-			class TiltEffect {
-				constructor(element) {
-					this.card = element;
-					this.isFine = matchMedia(
-						'(hover: hover) and (pointer: fine)',
-					).matches;
-					this.raf = null;
-					if (this.isFine) this.bind();
-				}
-				bind() {
-					document.addEventListener('mousemove', this.onMove.bind(this));
-					document.addEventListener('mouseleave', this.onLeave.bind(this));
-				}
-				onMove(e) {
-					if (this.raf) return;
-					this.raf = requestAnimationFrame(() => {
-						const r = this.card.getBoundingClientRect();
-						const nx = (e.clientX - r.left) / r.width;
-						const ny = (e.clientY - r.top) / r.height;
-						// Очень легкий наклон
-						this.card.style.transform = `perspective(1000px) rotateX(${((0.5 - ny) * 1.5).toFixed(2)}deg) rotateY(${((nx - 0.5) * 2).toFixed(2)}deg)`;
-						this.card.style.setProperty('--mx', `${(nx * 100).toFixed(1)}%`);
-						this.card.style.setProperty('--my', `${(ny * 100).toFixed(1)}%`);
-						this.raf = null;
-					});
-				}
-				onLeave() {
-					this.card.style.transform =
-						'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-					this.card.style.setProperty('--mx', '50%');
-					this.card.style.setProperty('--my', '0%');
-				}
-			}
-
-			class BackgroundEngine {
-				constructor(canvas) {
-					this.canvas = canvas;
-					this.ctx = canvas.getContext('2d', { alpha: true });
-					this.w = 0;
-					this.h = 0;
-					this.particles = [];
-					this.effect = 'stars';
-					this.animId = null;
-					this.isActive = true;
-
-					this.resize = this.resize.bind(this);
-					this.draw = this.draw.bind(this);
-
-					window.addEventListener('resize', this.resize);
-					document.addEventListener('visibilitychange', () => {
-						this.isActive = !document.hidden;
-						if (this.isActive) this.loop();
-					});
-
-					this.resize();
-					this.loop();
-				}
-
-				resize() {
-					this.w = this.canvas.width = Math.floor(
-						innerWidth * Math.min(window.devicePixelRatio || 1, 2),
-					);
-					this.h = this.canvas.height = Math.floor(
-						innerHeight * Math.min(window.devicePixelRatio || 1, 2),
-					);
-					this.canvas.style.width = innerWidth + 'px';
-					this.canvas.style.height = innerHeight + 'px';
-					this.initParticles();
-				}
-
-				setEffect(mode) {
-					this.effect = mode;
-					this.initParticles();
-					this.loop();
-				}
-
-				initParticles() {
-					this.particles = [];
-					let count = 0;
-					if (this.effect === 'rain')
-						count = Math.min(120, Math.max(50, innerWidth / 12));
-					else if (this.effect === 'vertices')
-						count = Math.min(45, Math.max(20, innerWidth / 30));
-					else count = Math.min(100, Math.max(40, innerWidth / 15));
-
-					for (let i = 0; i < count; i++) {
-						this.particles.push({
-							x: Math.random() * this.w,
-							y: Math.random() * this.h,
-							vx:
-								(Math.random() - 0.5) *
-								(this.effect === 'vertices' ? 0.3 : 0.05) *
-								(innerWidth / 1000),
-							vy:
-								(this.effect === 'rain'
-									? Math.random() * 15 + 10
-									: this.effect === 'snow'
-										? Math.random() * 0.3 + 0.1
-										: -(Math.random() * 0.1 + 0.02)) *
-								(innerWidth / 1000),
-							r:
-								(Math.random() * 1.5 + 0.5) *
-								(this.effect === 'snow' ? 1.5 : 1),
-							a: Math.random() * 0.6 + 0.2,
-							ph: Math.random() * Math.PI * 2,
-							sp: Math.random() * 0.02 + 0.005,
-							color:
-								Math.random() > 0.5
-									? '192,132,252'
-									: Math.random() > 0.5
-										? '56,189,248'
-										: '255,255,255',
-						});
-					}
-				}
-
-				draw() {
-					this.ctx.clearRect(0, 0, this.w, this.h);
-
-					for (let i = 0; i < this.particles.length; i++) {
-						let p = this.particles[i];
-
-						if (this.effect === 'snow') {
-							p.ph += p.sp;
-							p.x += p.vx + Math.sin(p.ph) * 0.3;
-							p.y += p.vy;
-						} else if (this.effect === 'rain') {
-							p.x += p.vx;
-							p.y += p.vy;
-						} else if (this.effect === 'vertices') {
-							p.x += p.vx;
-							p.y += p.vy;
-							if (p.x < 0 || p.x > this.w) p.vx *= -1;
-							if (p.y < 0 || p.y > this.h) p.vy *= -1;
-						} else {
-							p.ph += p.sp;
-							p.x += p.vx;
-							p.y += p.vy;
-						}
-
-						if (p.y > this.h + 20) {
-							p.y = -20;
-							p.x = Math.random() * this.w;
-						}
-						if (p.y < -20) {
-							p.y = this.h + 20;
-							p.x = Math.random() * this.w;
-						}
-						if (p.x < -20) p.x = this.w + 20;
-						if (p.x > this.w + 20) p.x = -20;
-
-						if (this.effect === 'rain') {
-							const gradient = this.ctx.createLinearGradient(
-								p.x,
-								p.y,
-								p.x,
-								p.y + 30,
-							);
-							gradient.addColorStop(0, 'rgba(56,189,248,0)');
-							gradient.addColorStop(1, 'rgba(56,189,248,0.5)');
-							this.ctx.strokeStyle = gradient;
-							this.ctx.lineWidth = 1.5;
-							this.ctx.beginPath();
-							this.ctx.moveTo(p.x, p.y);
-							this.ctx.lineTo(p.x, p.y + 30);
-							this.ctx.stroke();
-						} else if (this.effect === 'snow') {
-							this.ctx.fillStyle = `rgba(${p.color}, 0.6)`;
-							this.ctx.shadowBlur = 10;
-							this.ctx.shadowColor = `rgba(${p.color}, 0.5)`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-						} else if (this.effect === 'stars') {
-							const alpha = p.a * (0.5 + 0.5 * Math.sin(p.ph));
-							this.ctx.fillStyle = `rgba(${p.color}, ${alpha})`;
-							this.ctx.shadowBlur = 8;
-							this.ctx.shadowColor = `rgba(${p.color}, 0.5)`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-						} else if (this.effect === 'vertices') {
-							this.ctx.fillStyle = 'rgba(192,132,252,0.7)';
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-
-							for (let j = i + 1; j < this.particles.length; j++) {
-								let p2 = this.particles[j];
-								let dx = p.x - p2.x;
-								let dy = p.y - p2.y;
-								let dist = Math.sqrt(dx * dx + dy * dy);
-
-								if (dist < this.w * 0.15) {
-									this.ctx.beginPath();
-									this.ctx.moveTo(p.x, p.y);
-									this.ctx.lineTo(p2.x, p2.y);
-									this.ctx.strokeStyle = `rgba(192,132,252,${0.2 * (1 - dist / (this.w * 0.15))})`;
-									this.ctx.lineWidth = 0.8;
-									this.ctx.stroke();
-								}
-							}
-						}
-					}
-
-					this.ctx.shadowBlur = 0;
-					if (this.isActive) this.animId = requestAnimationFrame(this.draw);
-				}
-
-				loop() {
-					cancelAnimationFrame(this.animId);
-					if (this.isActive) this.draw();
-				}
-			}
-
-			class AudioEngine {
-				constructor() {
-					this.ac = null;
-					this.master = null;
-					this.musicGain = null;
-					this.rainGain = null;
-					this.sendBus = null;
-					this.playing = false;
-					this.playingRain = false;
-					this.mode = 'ambient';
-					this.chordTimer = null;
-					this.noteTimer = null;
-					this.dropTimer = null;
-					this.step = 0;
-					this.oscs = [];
-					this.noiseBuffer = null;
-
-					this.playlist = CONFIG.playlist;
-					this.currentTrack = 0;
-					this.isPlaylistMode = false;
-
-					this.webAudio = document.getElementById('webAudio');
-
-					this.vibes = {
-						ambient: {
-							name: 'Ambient',
-							chords: [
-								[174.61, 220.0, 261.63, 329.63],
-								[130.81, 164.81, 196.0, 246.94],
-								[196.0, 246.94, 293.66, 349.23],
-								[146.83, 174.61, 220.0, 261.63],
-							],
-							scale: [523.25, 587.33, 659.25, 783.99, 880.0],
-							filter: 1800,
-							dur: 12,
-							cInt: 10000,
-							bInt: 3500,
-						},
-						deep: {
-							name: 'Deep Space',
-							chords: [
-								[110.0, 130.81, 164.81, 196.0],
-								[87.31, 110.0, 130.81, 155.56],
-								[98.0, 123.47, 146.83, 174.61],
-								[116.54, 146.83, 174.61, 207.65],
-							],
-							scale: [261.63, 293.66, 329.63, 392.0, 440.0],
-							filter: 800,
-							dur: 16,
-							cInt: 12000,
-							bInt: 6000,
-						},
-						rain: {
-							name: 'Lo-Fi Rain',
-							chords: [
-								[146.83, 174.61, 220.0, 261.63],
-								[130.81, 164.81, 196.0, 233.08],
-								[110.0, 130.81, 164.81, 196.0],
-								[98.0, 123.47, 146.83, 174.61],
-							],
-							scale: [440.0, 523.25, 587.33, 659.25, 783.99],
-							filter: 1200,
-							dur: 10,
-							cInt: 8000,
-							bInt: 2000,
-						},
-					};
-				}
-
-				init() {
-					if (this.ac) return;
-					const AC = window.AudioContext || window.webkitAudioContext;
-					this.ac = new AC();
-
-					this.master = this.ac.createGain();
-					this.musicGain = this.ac.createGain();
-					this.rainGain = this.ac.createGain();
-
-					this.musicGain.gain.value =
-						parseFloat(document.getElementById('volSlider').value) * 0.35;
-					this.rainGain.gain.value = 0;
-
-					this.master.connect(this.ac.destination);
-					this.musicGain.connect(this.master);
-					this.rainGain.connect(this.master);
-
-					const delay = this.ac.createDelay(1.5);
-					delay.delayTime.value = 0.5;
-					const fb = this.ac.createGain();
-					fb.gain.value = 0.4;
-					const damp = this.ac.createBiquadFilter();
-					damp.type = 'lowpass';
-					damp.frequency.value = 1200;
-					const wet = this.ac.createGain();
-					wet.gain.value = 0.5;
-
-					delay.connect(damp);
-					damp.connect(fb);
-					fb.connect(delay);
-					damp.connect(wet);
-					wet.connect(this.musicGain);
-					this.sendBus = delay;
-
-					this.buildRain();
-				}
-
-				buildRain() {
-					const bufferSize = this.ac.sampleRate * 2;
-					this.noiseBuffer = this.ac.createBuffer(
-						1,
-						bufferSize,
-						this.ac.sampleRate,
-					);
-					const data = this.noiseBuffer.getChannelData(0);
-					for (let i = 0; i < bufferSize; i++) {
-						data[i] = Math.random() * 2 - 1;
-					}
-
-					const rainNode = this.ac.createBufferSource();
-					rainNode.buffer = this.noiseBuffer;
-					rainNode.loop = true;
-					const lp = this.ac.createBiquadFilter();
-					lp.type = 'lowpass';
-					lp.frequency.value = 500;
-					const noiseVol = this.ac.createGain();
-					noiseVol.gain.value = 0.1;
-					rainNode.connect(lp);
-					lp.connect(noiseVol);
-					noiseVol.connect(this.rainGain);
-					rainNode.start(0);
-
-					const hissNode = this.ac.createBufferSource();
-					hissNode.buffer = this.noiseBuffer;
-					hissNode.loop = true;
-					const bp = this.ac.createBiquadFilter();
-					bp.type = 'bandpass';
-					bp.frequency.value = 4000;
-					bp.Q.value = 0.5;
-					const hissVol = this.ac.createGain();
-					hissVol.gain.value = 0.05;
-					hissNode.connect(bp);
-					bp.connect(hissVol);
-					hissVol.connect(this.rainGain);
-					hissNode.start(0);
-				}
-
-				playDrop() {
-					if (!this.ac || this.rainGain.gain.value === 0) return;
-					const t0 = this.ac.currentTime;
-					const dropNode = this.ac.createBufferSource();
-					dropNode.buffer = this.noiseBuffer;
-					const bp = this.ac.createBiquadFilter();
-					bp.type = 'bandpass';
-					bp.frequency.setValueAtTime(800 + Math.random() * 1200, t0);
-					bp.Q.value = 1.5;
-					const gain = this.ac.createGain();
-					gain.gain.setValueAtTime(0, t0);
-					gain.gain.linearRampToValueAtTime(
-						0.4 + Math.random() * 0.2,
-						t0 + 0.01,
-					);
-					gain.gain.exponentialRampToValueAtTime(
-						0.001,
-						t0 + 0.1 + Math.random() * 0.1,
-					);
-					dropNode.connect(bp);
-					bp.connect(gain);
-					gain.connect(this.rainGain);
-					dropNode.start(t0);
-					dropNode.stop(t0 + 0.3);
-				}
-
-				startRainDrops() {
-					if (!this.playingRain) return;
-					this.playDrop();
-					const nextDrop = 30 + Math.random() * 120;
-					this.dropTimer = setTimeout(() => this.startRainDrops(), nextDrop);
-				}
-
-				playChord(freqs, dur) {
-					const t0 = this.ac.currentTime + 0.05;
-					freqs.forEach((f, i) => {
-						const osc1 = this.ac.createOscillator();
-						const osc2 = this.ac.createOscillator();
-						osc1.type = osc2.type = 'sine';
-						osc1.frequency.value = f;
-						osc2.frequency.value = f + 0.5;
-						this.oscs.push(osc1, osc2);
-
-						const g = this.ac.createGain();
-						const peak = 0.12 / (1 + i * 0.3);
-						g.gain.setValueAtTime(0.0001, t0);
-						g.gain.exponentialRampToValueAtTime(peak, t0 + 4.0);
-						g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-
-						const pan = this.ac.createStereoPanner
-							? this.ac.createStereoPanner()
-							: null;
-						if (pan) {
-							pan.pan.value = i % 2 ? 0.5 : -0.5;
-							osc1.connect(g);
-							osc2.connect(g);
-							g.connect(pan);
-							pan.connect(this.musicGain);
-							pan.connect(this.sendBus);
-						} else {
-							osc1.connect(g);
-							osc2.connect(g);
-							g.connect(this.musicGain);
-							g.connect(this.sendBus);
-						}
-						osc1.start(t0);
-						osc2.start(t0);
-						osc1.stop(t0 + dur + 0.5);
-						osc2.stop(t0 + dur + 0.5);
-					});
-				}
-
-				playBell(scale) {
-					const t0 = this.ac.currentTime + 0.05;
-					const f = scale[Math.floor(Math.random() * scale.length)];
-					const osc = this.ac.createOscillator();
-					osc.type = 'sine';
-					osc.frequency.value = f;
-					this.oscs.push(osc);
-					const env = this.ac.createGain();
-					env.gain.setValueAtTime(0.0001, t0);
-					env.gain.exponentialRampToValueAtTime(0.04, t0 + 0.5);
-					env.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.5);
-					osc.connect(env);
-					env.connect(this.musicGain);
-					env.connect(this.sendBus);
-					osc.start(t0);
-					osc.stop(t0 + 4.0);
-				}
-
-				killMusic() {
-					this.oscs.forEach((o) => {
-						try {
-							o.stop();
-							o.disconnect();
-						} catch (e) {}
-					});
-					this.oscs = [];
-					if (this.musicGain)
-						this.musicGain.gain.cancelScheduledValues(this.ac.currentTime);
-				}
-
-				startGen() {
-					this.init();
-					if (this.ac.state === 'suspended') this.ac.resume();
-					this.playing = true;
-					this.step = 0;
-					const cfg = this.vibes[this.mode];
-
-					const now = this.ac.currentTime;
-					this.musicGain.gain.cancelScheduledValues(now);
-					this.musicGain.gain.setValueAtTime(0.0001, now);
-					this.musicGain.gain.linearRampToValueAtTime(
-						parseFloat(document.getElementById('volSlider').value) * 0.35,
-						now + 2.0,
-					);
-
-					this.playChord(cfg.chords[0], cfg.dur);
-					this.step = 1;
-
-					this.chordTimer = setInterval(() => {
-						this.playChord(cfg.chords[this.step % cfg.chords.length], cfg.dur);
-						this.step++;
-					}, cfg.cInt);
-
-					this.noteTimer = setInterval(() => {
-						if (Math.random() < 0.6) this.playBell(cfg.scale);
-					}, cfg.bInt);
-				}
-
-				stopGen() {
-					this.playing = false;
-					clearInterval(this.chordTimer);
-					clearInterval(this.noteTimer);
-					if (!this.ac) return;
-					const now = this.ac.currentTime;
-					this.musicGain.gain.cancelScheduledValues(now);
-					this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
-					this.musicGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
-					setTimeout(() => this.killMusic(), 200);
-				}
-
-				setMode(mode) {
-					this.stopGen();
-					this.webAudio.pause();
-					this.mode = mode;
-					this.isPlaylistMode = false;
-
-					if (mode === 'playlist') {
-						this.isPlaylistMode = true;
-						if (this.playlist.length > 0) {
-							this.playTrack(this.currentTrack);
-						} else {
-							this.mode = 'ambient';
-							this.startGen();
-						}
-					} else {
-						this.startGen();
-					}
-					UI.updatePlayState(this.playing || !this.webAudio.paused);
-				}
-
-				playTrack(index) {
-					if (index < 0 || index >= this.playlist.length) return;
-					this.currentTrack = index;
-					this.webAudio.src = this.playlist[index].src;
-					this.webAudio.volume = parseFloat(
-						document.getElementById('volSlider').value,
-					);
-					this.webAudio.play().catch((e) => {
-						console.log(
-							'Файл не найден или заблокирован:',
-							this.playlist[index].src,
-						);
-						UI.updateTrackInfo(this.playlist[index].title, 'Ошибка');
-					});
-					UI.updateTrackInfo(this.playlist[index].title, 'Локальный трек');
-				}
-
-				togglePlay() {
-					if (this.isPlaylistMode) {
-						if (this.webAudio.paused) {
-							this.webAudio.play();
-							return true;
-						} else {
-							this.webAudio.pause();
-							return false;
-						}
-					} else {
-						if (this.playing) {
-							this.stopGen();
-							return false;
-						}
-						this.startGen();
-						return true;
-					}
-				}
-
-				nextTrack() {
-					if (!this.isPlaylistMode || this.playlist.length === 0) return;
-					this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
-					this.playTrack(this.currentTrack);
-				}
-
-				prevTrack() {
-					if (!this.isPlaylistMode || this.playlist.length === 0) return;
-					this.currentTrack =
-						(this.currentTrack - 1 + this.playlist.length) %
-						this.playlist.length;
-					this.playTrack(this.currentTrack);
-				}
-
-				toggleRain(isOn) {
-					this.init();
-					if (this.ac.state === 'suspended') this.ac.resume();
-					const now = this.ac.currentTime;
-					this.rainGain.gain.cancelScheduledValues(now);
-					this.rainGain.gain.setValueAtTime(this.rainGain.gain.value, now);
-					if (isOn) {
-						this.playingRain = true;
-						this.rainGain.gain.linearRampToValueAtTime(0.4, now + 2.0);
-						this.startRainDrops();
-					} else {
-						this.playingRain = false;
-						this.rainGain.gain.linearRampToValueAtTime(0.0001, now + 1.5);
-						clearTimeout(this.dropTimer);
-					}
-				}
-
-				setVolume(val) {
-					if (this.isPlaylistMode) {
-						this.webAudio.volume = val;
-					} else {
-						if (!this.ac) return;
-						this.musicGain.gain.setTargetAtTime(
-							val * 0.35,
-							this.ac.currentTime,
-							0.1,
-						);
-					}
-				}
-			}
-
-			const UI = {
-				init() {
-					this.engine = new AudioEngine();
-					this.bg = new BackgroundEngine(document.getElementById('bg'));
-					new TiltEffect(document.getElementById('card'));
-
-					this.els = {
-						settingsBtn: document.getElementById('settingsBtn'),
-						settingsMenu: document.getElementById('settingsMenu'),
-						rainToggle: document.getElementById('rainSoundToggle'),
-						playBtn: document.getElementById('playBtn'),
-						iconPlay: document.getElementById('iconPlay'),
-						iconPause: document.getElementById('iconPause'),
-						prevBtn: document.getElementById('prevBtn'),
-						nextBtn: document.getElementById('nextBtn'),
-						volSlider: document.getElementById('volSlider'),
-						trackName: document.getElementById('trackName'),
-						trackStatus: document.getElementById('trackStatus'),
-						effectBtns: document.querySelectorAll('.effect-btn'),
-						vibeBtns: document.querySelectorAll('.vibe-btn'),
-						webAudio: document.getElementById('webAudio'),
-						socialItems: document.querySelectorAll('.social-item'),
-						qrModal: document.getElementById('qrModal'),
-						qrContainer: document.getElementById('qrContainer'),
-						qrTitle: document.getElementById('qrTitle'),
-						qrLink: document.getElementById('qrLink'),
-					};
-
-					this.initQR();
-					this.bindEvents();
-					this.handleVolume();
-				},
-
-				initQR() {
-					// Инициализация стилизованного QR-кода
-					this.qrCode = new QRCodeStyling({
-						width: 180,
-						height: 180,
-						type: 'svg',
-						data: 'https://github.com/noclipov',
-						margin: 5,
-						qrOptions: {
-							typeNumber: 0,
-							mode: 'Byte',
-							errorCorrectionLevel: 'H', // Высокий уровень коррекции для логотипа
-						},
-						imageOptions: {
-							hideBackgroundDots: true,
-							imageSize: 0.3,
-							margin: 4,
-							crossOrigin: 'anonymous',
-						},
-						dotsOptions: {
-							type: 'rounded',
-							gradient: {
-								type: 'linear',
-								rotation: Math.PI / 4,
-								colorStops: [
-									{ offset: 0, color: '#c084fc' },
-									{ offset: 1, color: '#38bdf8' },
-								],
-							},
-						},
-						backgroundOptions: {
-							color: '#0c0d12',
-						},
-						cornersSquareOptions: {
-							type: 'extra-rounded',
-							color: '#c084fc',
-						},
-						cornersDotOptions: {
-							type: 'dot',
-							color: '#38bdf8',
-						},
-						image: 'https://github.com/noclipov.png', // Аватарка в центре
-					});
-
-					this.qrCode.append(this.els.qrContainer);
-				},
-
-				bindEvents() {
-					const { els, engine, bg } = this;
-
-					els.settingsBtn.addEventListener('click', (e) => {
-						e.stopPropagation();
-						els.settingsMenu.classList.toggle('open');
-					});
-					document.addEventListener('click', (e) => {
-						if (
-							!els.settingsMenu.contains(e.target) &&
-							e.target !== els.settingsBtn
-						) {
-							els.settingsMenu.classList.remove('open');
-						}
-					});
-
-					els.effectBtns.forEach((btn) => {
-						btn.addEventListener('click', (e) => {
-							els.effectBtns.forEach((b) => b.classList.remove('active'));
-							e.target.classList.add('active');
-							bg.setEffect(e.target.dataset.effect);
-						});
-					});
-
-					els.rainToggle.addEventListener('change', (e) =>
-						engine.toggleRain(e.target.checked),
-					);
-
-					els.playBtn.addEventListener('click', () => {
-						const isOn = engine.togglePlay();
-						this.updatePlayState(isOn);
-					});
-
-					els.prevBtn.addEventListener('click', () => engine.prevTrack());
-					els.nextBtn.addEventListener('click', () => engine.nextTrack());
-					els.volSlider.addEventListener('input', () => this.handleVolume());
-
-					// Audio events
-					els.webAudio.addEventListener('play', () =>
-						this.updatePlayState(true),
-					);
-					els.webAudio.addEventListener('pause', () =>
-						this.updatePlayState(false),
-					);
-					els.webAudio.addEventListener('ended', () => engine.nextTrack());
-
-					// QR Modal & Socials
-					els.socialItems.forEach((item) => {
-						item.addEventListener('click', () => {
-							const url = item.dataset.url;
-							const name = item.dataset.name;
-
-							// Обновляем данные в QR-коде
-							this.qrCode.update({
-								data: url,
-							});
-
-							els.qrTitle.textContent = name;
-							els.qrLink.href = url;
-							els.qrModal.classList.add('open');
-						});
-					});
-
-					els.qrModal.addEventListener('click', (e) => {
-						if (e.target === els.qrModal) els.qrModal.classList.remove('open');
-					});
-				},
-
-				handleVolume() {
-					const val = this.els.volSlider.value;
-					this.engine.setVolume(val);
-				},
-
-				updatePlayState(isPlaying) {
-					if (isPlaying) {
-						this.els.iconPlay.style.display = 'none';
-						this.els.iconPause.style.display = 'block';
-					} else {
-						this.els.iconPlay.style.display = 'block';
-						this.els.iconPause.style.display = 'none';
-					}
-				},
-
-				updateTrackInfo(name, status) {
-					this.els.trackName.textContent = name;
-					this.els.trackStatus.textContent = status;
-				},
-			};
-
-			document.addEventListener('DOMContentLoaded', () => UI.init());
-		</script>
-	</body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>noclipov</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #c084fc;
+    --secondary: #38bdf8;
+    --accent: #f472b6;
+    --txt: #e2e8f0;
+    --muted: #8b95a8;
+    --bg: #020006;
+    --card-bg: rgba(15, 10, 25, 0.6);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    border: 2px solid var(--bg);
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Inter", -apple-system, sans-serif;
+    background: radial-gradient(1200px 800px at 50% -20%, #170a2e 0%, transparent 60%),
+                radial-gradient(1000px 600px at 100% 120%, #061b2b 0%, transparent 60%), var(--bg);
+    color: var(--txt);
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cosmic Aurora Background */
+  .aurora {
+    position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+    filter: blur(120px); opacity: .3; will-change: transform;
+  }
+  .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; will-change: transform; }
+  .b1 { width: 600px; height: 600px; background: #4c1d95; top: -200px; left: -150px; animation: drift1 25s ease-in-out infinite; }
+  .b2 { width: 500px; height: 500px; background: #0e7490; bottom: -150px; right: -100px; animation: drift2 30s ease-in-out infinite; }
+  .b3 { width: 400px; height: 400px; background: #831843; top: 40%; left: 60%; animation: drift3 35s ease-in-out infinite; opacity: .5; }
+
+  @keyframes drift1 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(100px,80px,0) scale(1.1); } }
+  @keyframes drift2 { 0%,100% { transform: translate3d(0,0,0) scale(1.05); } 50% { transform: translate3d(-120px,-60px,0) scale(.95); } }
+  @keyframes drift3 { 0%,100% { transform: translate3d(0,0,0) scale(.98); } 50% { transform: translate3d(-80px,90px,0) scale(1.15); } }
+
+  #bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+  /* Left Social Sidebar */
+  .social-sidebar {
+    position: fixed; left: 20px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px; z-index: 50;
+  }
+  .social-item {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,.08);
+    color: var(--muted); display: grid; place-items: center;
+    cursor: pointer; backdrop-filter: blur(16px); transition: all .3s;
+  }
+  .social-item:hover {
+    color: #fff; background: rgba(192,132,252,.15);
+    border-color: rgba(192,132,252,.4); transform: scale(1.05);
+    box-shadow: 0 8px 20px -8px rgba(192,132,252,.5);
+  }
+  .social-item svg { width: 20px; height: 20px; }
+
+  /* Settings (Top Right) */
+  .settings-container { position: fixed; top: 20px; right: 20px; z-index: 100; }
+  .settings-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.08);
+    color: var(--muted); display: grid; place-items: center;
+    cursor: pointer; transition: all .3s; backdrop-filter: blur(10px);
+  }
+  .settings-btn:hover { color: #fff; background: rgba(255,255,255,.08); transform: rotate(90deg); }
+  .settings-btn svg { width: 20px; height: 20px; }
+
+  .settings-menu {
+    position: absolute; top: 50px; right: 0; width: 220px;
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 16px; backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: 0 10px 30px rgba(0,0,0,.8);
+    opacity: 0; pointer-events: none; transform: translateY(-10px);
+    transition: all .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .settings-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .settings-title { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  
+  .effect-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .effect-btn {
+    background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
+    color: var(--muted); padding: 8px; border-radius: 10px;
+    font-size: 12px; cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .effect-btn:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .effect-btn.active { background: rgba(192,132,252,.15); border-color: rgba(192,132,252,.4); color: #fff; }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--txt); padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,.1); transition: .3s; border-radius: 20px; }
+  .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--secondary); }
+  input:checked + .slider:before { transform: translateX(16px); }
+
+  /* Profile Card */
+  .wrap { position: relative; z-index: 2; animation: rise 1s cubic-bezier(.2,.85,.25,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.97); filter: blur(6px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+
+  .card {
+    position: relative; width: min(92vw, 380px); border-radius: 28px;
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,.06);
+    backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.02) inset, 0 1px 0 rgba(255,255,255,.08) inset;
+    transform-style: preserve-3d; transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    overflow: hidden; display: flex; flex-direction: column; padding-bottom: 24px;
+  }
+
+  .card::before {
+    content: ""; position: absolute; inset: 0; opacity: 0.03; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .card::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(400px circle at var(--mx,50%) var(--my,0%), rgba(192,132,252,.1), transparent 60%);
+    opacity: 0; transition: opacity .4s; z-index: 0;
+  }
+  .card:hover::after { opacity: 1; }
+
+  .card-content { position: relative; z-index: 1; padding: 36px 28px 0; display: flex; flex-direction: column; align-items: center; }
+
+  /* Avatar */
+  .avatar { position: relative; width: 100px; height: 100px; margin: 0 auto 20px; transform: translateZ(40px); transition: transform .4s; }
+  .card:hover .avatar { transform: translateZ(40px) translateY(-4px); }
+  .avatar::before, .avatar::after { content: ""; position: absolute; border-radius: 50%; }
+  .avatar::before { inset: -4px; background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary)); filter: blur(12px); opacity: .5; animation: spin 10s linear infinite; }
+  .avatar::after { inset: -1px; background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary)); animation: spin 10s linear infinite; }
+  .avatar-inner { position: absolute; inset: 3px; border-radius: 50%; z-index: 1; background: #020006; overflow: hidden; display: grid; place-items: center; font-size: 40px; font-weight: 700; color: #fff; }
+  .avatar-inner img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; filter: brightness(.9); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Profile Info */
+  .name-row { display: flex; align-items: center; justify-content: center; gap: 8px; transform: translateZ(26px); }
+  .name {
+    font-size: 26px; font-weight: 700; letter-spacing: -.03em;
+    background: linear-gradient(100deg, #fff 10%, #d8b4fe 40%, #7dd3fc 60%, #fff 90%);
+    background-size: 250% 100%; -webkit-background-clip: text; background-clip: text;
+    color: transparent; animation: shimmer 6s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: -250% 0; } }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 10px var(--secondary); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+  .tagline { margin-top: 8px; font-size: 13px; color: var(--muted); letter-spacing: .01em; transform: translateZ(18px); margin-bottom: 24px; }
+
+  /* Floating Audio Player (Bottom Right) */
+  .floating-player {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px; backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    transition: all .3s;
+  }
+  .floating-player:hover { border-color: rgba(255,255,255,.15); }
+  
+  .player-controls { display: flex; align-items: center; gap: 8px; }
+  .ctrl-btn {
+    background: transparent; border: none; color: var(--muted);
+    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .ctrl-btn:hover { color: #fff; background: rgba(255,255,255,.1); }
+  .ctrl-btn svg { width: 14px; height: 14px; }
+  
+  .ctrl-btn.play-btn {
+    width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff; box-shadow: 0 4px 12px rgba(192,132,252,.3);
+  }
+  .ctrl-btn.play-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(192,132,252,.5); }
+  .ctrl-btn.play-btn svg { width: 16px; height: 16px; }
+
+  .player-info { display: flex; flex-direction: column; min-width: 100px; max-width: 140px; }
+  .track-name { font-size: 12px; font-weight: 600; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track-status { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  
+  .player-vol { display: flex; align-items: center; gap: 6px; width: 80px; }
+  .vol-icon { color: var(--muted); cursor: pointer; }
+  .vol-icon svg { width: 14px; height: 14px; }
+  
+  input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 16px; }
+  input[type=range]:focus { outline: none; }
+  input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 3px; cursor: pointer; background: rgba(255,255,255,.15); border-radius: 2px; }
+  input[type=range]::-webkit-slider-thumb { height: 10px; width: 10px; border-radius: 50%; background: #fff; cursor: pointer; -webkit-appearance: none; margin-top: -3.5px; box-shadow: 0 0 6px rgba(255,255,255,.5); }
+
+  /* Modal (QR Code) */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  
+  .modal-content {
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 24px; padding: 24px; display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8); transform: scale(.95); transition: transform .3s;
+  }
+  .modal-overlay.open .modal-content { transform: scale(1); }
+  
+  .qr-wrapper { background: #0c0d12; padding: 16px; border-radius: 20px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,.1); box-shadow: inset 0 0 20px rgba(192,132,252,.1); }
+  .qr-wrapper img { width: 160px; height: 160px; display: block; border-radius: 8px; }
+  
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #fff; }
+  .modal-desc { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .modal-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff; border: none; padding: 10px 24px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(192,132,252,.4); }
+
+  @media (max-width: 768px) {
+    .social-sidebar { left: 10px; top: 20px; transform: none; flex-direction: row; }
+    .floating-player { bottom: 10px; right: 10px; left: 10px; justify-content: space-between; }
+    .player-vol { display: none; }
+    .settings-container { top: 10px; right: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Left Socials -->
+<div class="social-sidebar">
+  <div class="social-item" data-url="https://github.com/noclipov" data-name="GitHub">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+  </div>
+  <div class="social-item" data-url="https://t.me/noclipov" data-name="Telegram">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 3.4 2.9 10.7c-.94.37-.93 1.7.02 2.04l4.7 1.66 1.8 5.55c.27.84 1.32 1.03 1.86.34l2.5-3.2 4.72 3.48c.72.53 1.75.13 1.9-.75l2.9-15.2c.17-.9-.72-1.6-1.4-1.22zM9.6 14.1l-.3 3.2-1.2-3.7 9.2-6.3-7.7 6.8z"/></svg>
+  </div>
+</div>
+
+<!-- Settings (Top Right) -->
+<div class="settings-container">
+  <button class="settings-btn" id="settingsBtn" aria-label="Настройки">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  
+  <div class="settings-menu" id="settingsMenu">
+    <div class="settings-title">Режим музыки</div>
+    <div class="effect-grid" id="musicModes">
+      <button class="effect-btn active" data-mode="ambient">Ambient</button>
+      <button class="effect-btn" data-mode="deep">Deep Space</button>
+      <button class="effect-btn" data-mode="rain">Lo-Fi</button>
+      <button class="effect-btn" data-mode="playlist">Playlist</button>
+    </div>
+
+    <div class="settings-title">Фоновый эффект</div>
+    <div class="effect-grid">
+      <button class="effect-btn active" data-effect="stars">Звезды</button>
+      <button class="effect-btn" data-effect="snow">Пыль</button>
+      <button class="effect-btn" data-effect="rain">Дождь</button>
+      <button class="effect-btn" data-effect="vertices">Созвездия</button>
+    </div>
+    
+    <div class="toggle-row">
+      <span>Звук дождя</span>
+      <label class="switch">
+        <input type="checkbox" id="rainSoundToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- QR Modal -->
+<div class="modal-overlay" id="qrModal">
+  <div class="modal-content">
+    <div class="qr-wrapper">
+      <img id="qrImage" src="" alt="QR Code">
+    </div>
+    <div class="modal-title" id="qrTitle">Профиль</div>
+    <div class="modal-desc">Наведите камеру телефона</div>
+    <a href="#" id="qrLink" class="modal-btn" target="_blank">Перейти</a>
+  </div>
+</div>
+
+<div class="aurora">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<canvas id="bg"></canvas>
+
+<div class="wrap">
+  <section class="card" id="card">
+    <div class="card-content">
+      <div class="avatar">
+        <div class="avatar-inner">
+          <img src="https://github.com/noclipov.png" alt="noclipov" onerror="this.style.display='none'; this.parentElement.innerText='n';">
+        </div>
+      </div>
+      <div class="name-row">
+        <h1 class="name">noclipov</h1>
+        <div class="status-dot" title="Online"></div>
+      </div>
+      <p class="tagline">where the light fades and echoes remain</p>
+    </div>
+  </section>
+</div>
+
+<!-- Floating Audio Player -->
+<div class="floating-player">
+  <div class="player-controls">
+    <button class="ctrl-btn" id="prevBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+    </button>
+    <button class="ctrl-btn play-btn" id="playBtn">
+      <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <button class="ctrl-btn" id="nextBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+    </button>
+  </div>
+  
+  <div class="player-info">
+    <div class="track-name" id="trackName">Ambient</div>
+    <div class="track-status" id="trackStatus">Генератор</div>
+  </div>
+  
+  <div class="player-vol">
+    <div class="vol-icon" id="muteBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    </div>
+    <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.5">
+  </div>
+</div>
+
+<audio id="webAudio" loop></audio>
+
+<script>
+// КОНФИГУРАЦИЯ ПЛЕЙЛИСТА (положите mp3 файлы в папку music/)
+const CONFIG = {
+	playlist: [
+	{ title: 'марионетка познала безумие', src: 'music/track1.mp3' },
+	{ title: 'Набросок (Alternative Version).', src: 'music/track2.mp3' },
+	{ title: 'волны', src: 'music/track3.mp3' },
+	{ title: 'Слишком хороший', src: 'music/track4.mp3' },
+	{ title: 'я понял что значит любить', src: 'music/track5.mp3' },
+	{ title: 'Метеорит', src: 'music/track6.mp3' },
+	{ title: 'provod', src: 'music/track7.mp3' },
+],
+};
+
+class TiltEffect {
+  constructor(element) {
+    this.card = element;
+    this.isFine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    this.raf = null;
+    if (this.isFine) this.bind();
+  }
+  bind() {
+    document.addEventListener("mousemove", this.onMove.bind(this));
+    document.addEventListener("mouseleave", this.onLeave.bind(this));
+  }
+  onMove(e) {
+    if (this.raf) return;
+    this.raf = requestAnimationFrame(() => {
+      const r = this.card.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width;
+      const ny = (e.clientY - r.top) / r.height;
+      this.card.style.transform = `perspective(1000px) rotateX(${((0.5 - ny) * 1.5).toFixed(2)}deg) rotateY(${((nx - 0.5) * 2).toFixed(2)}deg)`;
+      this.card.style.setProperty("--mx", `${(nx * 100).toFixed(1)}%`);
+      this.card.style.setProperty("--my", `${(ny * 100).toFixed(1)}%`);
+      this.raf = null;
+    });
+  }
+  onLeave() {
+    this.card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    this.card.style.setProperty("--mx", "50%");
+    this.card.style.setProperty("--my", "0%");
+  }
+}
+
+class BackgroundEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d", { alpha: true });
+    this.w = 0; this.h = 0;
+    this.particles = [];
+    this.effect = 'stars';
+    this.animId = null;
+    this.isActive = true;
+
+    this.resize = this.resize.bind(this);
+    this.draw = this.draw.bind(this);
+
+    window.addEventListener('resize', this.resize);
+    document.addEventListener("visibilitychange", () => {
+      this.isActive = !document.hidden;
+      if (this.isActive) this.loop();
+    });
+
+    this.resize();
+    this.loop();
+  }
+
+  resize() {
+    this.w = this.canvas.width = Math.floor(innerWidth * Math.min(window.devicePixelRatio || 1, 2));
+    this.h = this.canvas.height = Math.floor(innerHeight * Math.min(window.devicePixelRatio || 1, 2));
+    this.canvas.style.width = innerWidth + "px";
+    this.canvas.style.height = innerHeight + "px";
+    this.initParticles();
+  }
+
+  setEffect(mode) {
+    this.effect = mode;
+    this.initParticles();
+    this.loop();
+  }
+
+  initParticles() {
+    this.particles = [];
+    let count = 0;
+    if (this.effect === 'rain') count = Math.min(200, Math.max(80, innerWidth / 8));
+    else if (this.effect === 'vertices') count = Math.min(45, Math.max(20, innerWidth / 30));
+    else count = Math.min(100, Math.max(40, innerWidth / 15));
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * this.w,
+        y: Math.random() * this.h,
+        vx: (Math.random() - 0.5) * (this.effect === 'vertices' ? 0.3 : 0.05) * (innerWidth / 1000),
+        vy: (this.effect === 'rain' ? (Math.random() * 25 + 15) : (this.effect === 'snow' ? (Math.random() * 0.3 + 0.1) : -(Math.random() * 0.1 + 0.02))) * (innerWidth / 1000),
+        r: (Math.random() * 1.5 + 0.5) * (this.effect === 'snow' ? 1.5 : 1),
+        a: Math.random() * 0.6 + 0.2,
+        ph: Math.random() * Math.PI * 2,
+        sp: Math.random() * 0.02 + 0.005,
+        color: Math.random() > 0.5 ? '192,132,252' : (Math.random() > 0.5 ? '56,189,248' : '255,255,255'),
+        length: Math.random() * 20 + 15
+      });
+    }
+  }
+
+  draw() {
+    this.ctx.clearRect(0, 0, this.w, this.h);
+    
+    for (let i = 0; i < this.particles.length; i++) {
+      let p = this.particles[i];
+      
+      if (this.effect === 'snow') {
+        p.ph += p.sp;
+        p.x += p.vx + Math.sin(p.ph) * 0.3;
+        p.y += p.vy;
+      } else if (this.effect === 'rain') {
+        p.x += p.vx;
+        p.y += p.vy;
+      } else if (this.effect === 'vertices') {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > this.w) p.vx *= -1;
+        if (p.y < 0 || p.y > this.h) p.vy *= -1;
+      } else {
+        p.ph += p.sp;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+
+      if (p.y > this.h + 50) { p.y = -50; p.x = Math.random() * this.w; }
+      if (p.y < -50) { p.y = this.h + 50; p.x = Math.random() * this.w; }
+      if (p.x < -50) p.x = this.w + 50;
+      if (p.x > this.w + 50) p.x = -50;
+
+      if (this.effect === 'rain') {
+        const gradient = this.ctx.createLinearGradient(p.x, p.y, p.x - p.vx*2, p.y - p.length);
+        gradient.addColorStop(0, 'rgba(56,189,248,0.6)');
+        gradient.addColorStop(1, 'rgba(56,189,248,0)');
+        this.ctx.strokeStyle = gradient;
+        this.ctx.lineWidth = 1.2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(p.x, p.y);
+        this.ctx.lineTo(p.x - p.vx*2, p.y - p.length);
+        this.ctx.stroke();
+      } else if (this.effect === 'snow') {
+        this.ctx.fillStyle = `rgba(${p.color}, 0.6)`;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = `rgba(${p.color}, 0.5)`;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        this.ctx.fill();
+      } else if (this.effect === 'stars') {
+        const alpha = p.a * (0.5 + 0.5 * Math.sin(p.ph));
+        this.ctx.fillStyle = `rgba(${p.color}, ${alpha})`;
+        this.ctx.shadowBlur = 8;
+        this.ctx.shadowColor = `rgba(${p.color}, 0.5)`;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        this.ctx.fill();
+      } else if (this.effect === 'vertices') {
+        this.ctx.fillStyle = 'rgba(192,132,252,0.7)';
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        for (let j = i + 1; j < this.particles.length; j++) {
+          let p2 = this.particles[j];
+          let dx = p.x - p2.x;
+          let dy = p.y - p2.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < this.w * 0.15) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(p.x, p.y);
+            this.ctx.lineTo(p2.x, p2.y);
+            this.ctx.strokeStyle = `rgba(192,132,252,${0.2 * (1 - dist / (this.w * 0.15))})`;
+            this.ctx.lineWidth = 0.8;
+            this.ctx.stroke();
+          }
+        }
+      }
+    }
+    
+    this.ctx.shadowBlur = 0;
+    if (this.isActive) this.animId = requestAnimationFrame(this.draw);
+  }
+
+  loop() {
+    cancelAnimationFrame(this.animId);
+    if (this.isActive) this.draw();
+  }
+}
+
+class AudioEngine {
+  constructor() {
+    this.ac = null;
+    this.master = null;
+    this.musicGain = null;
+    this.rainGain = null;
+    this.sendBus = null;
+    this.playing = false;
+    this.playingRain = false;
+    this.mode = "ambient"; 
+    this.chordTimer = null;
+    this.noteTimer = null;
+    this.dropTimer = null;
+    this.step = 0;
+    this.oscs = [];
+    this.noiseBuffer = null;
+    
+    this.playlist = CONFIG.playlist;
+    this.currentTrack = 0;
+    this.isPlaylistMode = false;
+    
+    this.webAudio = document.getElementById('webAudio');
+    
+    this.vibes = {
+      ambient: { name: "Ambient", chords: [[174.61, 220.00, 261.63, 329.63], [130.81, 164.81, 196.00, 246.94], [196.00, 246.94, 293.66, 349.23], [146.83, 174.61, 220.00, 261.63]], scale: [523.25, 587.33, 659.25, 783.99, 880.00], dur: 12, cInt: 10000, bInt: 3500 },
+      deep: { name: "Deep Space", chords: [[110.00, 130.81, 164.81, 196.00], [87.31, 110.00, 130.81, 155.56], [98.00, 123.47, 146.83, 174.61], [116.54, 146.83, 174.61, 207.65]], scale: [261.63, 293.66, 329.63, 392.00, 440.00], dur: 16, cInt: 12000, bInt: 6000 },
+      rain: { name: "Lo-Fi Rain", chords: [[146.83, 174.61, 220.00, 261.63], [130.81, 164.81, 196.00, 233.08], [110.00, 130.81, 164.81, 196.00], [98.00, 123.47, 146.83, 174.61]], scale: [440.00, 523.25, 587.33, 659.25, 783.99], dur: 10, cInt: 8000, bInt: 2000 }
+    };
+  }
+
+  init() {
+    if (this.ac) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    this.ac = new AC();
+
+    this.master = this.ac.createGain();
+    this.musicGain = this.ac.createGain();
+    this.rainGain = this.ac.createGain();
+    
+    this.musicGain.gain.value = parseFloat(document.getElementById('volSlider').value) * 0.35;
+    this.rainGain.gain.value = 0;
+
+    this.master.connect(this.ac.destination);
+    this.musicGain.connect(this.master);
+    this.rainGain.connect(this.master);
+
+    const delay = this.ac.createDelay(1.5);
+    delay.delayTime.value = 0.5;
+    const fb = this.ac.createGain(); fb.gain.value = 0.4;
+    const damp = this.ac.createBiquadFilter(); damp.type = "lowpass"; damp.frequency.value = 1200;
+    const wet = this.ac.createGain(); wet.gain.value = 0.5;
+
+    delay.connect(damp);
+    damp.connect(fb); fb.connect(delay);
+    damp.connect(wet); wet.connect(this.musicGain);
+    this.sendBus = delay;
+
+    this.buildRain();
+  }
+
+  buildRain() {
+    // Создание реалистичного звука дождя (Коричневый + Розовый шум)
+    const bufferSize = this.ac.sampleRate * 2;
+    this.noiseBuffer = this.ac.createBuffer(1, bufferSize, this.ac.sampleRate);
+    const data = this.noiseBuffer.getChannelData(0);
+    
+    let lastOut = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      let white = Math.random() * 2 - 1;
+      // Генерация коричневого шума для глубокого гула
+      data[i] = (lastOut + (0.02 * white)) / 1.02;
+      lastOut = data[i];
+      data[i] *= 3.5;
+    }
+
+    const rainNode = this.ac.createBufferSource();
+    rainNode.buffer = this.noiseBuffer;
+    rainNode.loop = true;
+    
+    const lp = this.ac.createBiquadFilter(); 
+    lp.type = "lowpass"; 
+    lp.frequency.value = 800; // Мягкий срез
+    
+    const noiseVol = this.ac.createGain(); 
+    noiseVol.gain.value = 0.15; // Убавил громкость фона
+    
+    rainNode.connect(lp); lp.connect(noiseVol); noiseVol.connect(this.rainGain);
+    rainNode.start(0);
+
+    // Высокочастотный "шелест" капель
+    const hissNode = this.ac.createBufferSource();
+    hissNode.buffer = this.noiseBuffer;
+    hissNode.loop = true;
+    
+    const bp = this.ac.createBiquadFilter(); 
+    bp.type = "bandpass"; 
+    bp.frequency.value = 3000; 
+    bp.Q.value = 0.3;
+    
+    const hissVol = this.ac.createGain(); 
+    hissVol.gain.value = 0.08; // Добавил отчетливости каплям
+    
+    hissNode.connect(bp); bp.connect(hissVol); hissVol.connect(this.rainGain);
+    hissNode.start(0);
+  }
+
+  playDrop() {
+    if (!this.ac || this.rainGain.gain.value === 0) return;
+    const t0 = this.ac.currentTime;
+    
+    const osc = this.ac.createOscillator();
+    const gain = this.ac.createGain();
+    
+    // Звук капли: короткий низкочастотный "плюх"
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150 + Math.random() * 100, t0);
+    osc.frequency.exponentialRampToValueAtTime(50, t0 + 0.05); // Быстрое падение частоты
+    
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(0.3 + Math.random() * 0.2, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08);
+    
+    osc.connect(gain);
+    gain.connect(this.rainGain);
+    
+    osc.start(t0);
+    osc.stop(t0 + 0.1);
+  }
+
+  startRainDrops() {
+    if (!this.playingRain) return;
+    this.playDrop();
+    const nextDrop = 40 + Math.random() * 150;
+    this.dropTimer = setTimeout(() => this.startRainDrops(), nextDrop);
+  }
+
+  playChord(freqs, dur) {
+    const t0 = this.ac.currentTime + 0.05;
+    freqs.forEach((f, i) => {
+      const osc1 = this.ac.createOscillator();
+      const osc2 = this.ac.createOscillator();
+      osc1.type = osc2.type = "sine";
+      osc1.frequency.value = f;
+      osc2.frequency.value = f + 0.5; 
+      this.oscs.push(osc1, osc2);
+
+      const g = this.ac.createGain();
+      const peak = 0.12 / (1 + i * 0.3);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(peak, t0 + 4.0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+      const pan = this.ac.createStereoPanner ? this.ac.createStereoPanner() : null;
+      if (pan) {
+        pan.pan.value = (i % 2 ? 0.5 : -0.5);
+        osc1.connect(g); osc2.connect(g);
+        g.connect(pan); pan.connect(this.musicGain); pan.connect(this.sendBus);
+      } else {
+        osc1.connect(g); osc2.connect(g);
+        g.connect(this.musicGain); g.connect(this.sendBus);
+      }
+      osc1.start(t0); osc2.start(t0);
+      osc1.stop(t0 + dur + 0.5); osc2.stop(t0 + dur + 0.5);
+    });
+  }
+
+  playBell(scale) {
+    const t0 = this.ac.currentTime + 0.05;
+    const f = scale[Math.floor(Math.random() * scale.length)];
+    const osc = this.ac.createOscillator();
+    osc.type = "sine"; 
+    osc.frequency.value = f;
+    this.oscs.push(osc);
+    const env = this.ac.createGain();
+    env.gain.setValueAtTime(0.0001, t0);
+    env.gain.exponentialRampToValueAtTime(0.04, t0 + 0.5);
+    env.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.5);
+    osc.connect(env); env.connect(this.musicGain); env.connect(this.sendBus);
+    osc.start(t0); osc.stop(t0 + 4.0);
+  }
+
+  killMusic() {
+    this.oscs.forEach(o => { try { o.stop(); o.disconnect(); } catch(e){} });
+    this.oscs = [];
+    if (this.musicGain) this.musicGain.gain.cancelScheduledValues(this.ac.currentTime);
+  }
+
+  startGen() {
+    this.init();
+    if (this.ac.state === "suspended") this.ac.resume();
+    this.playing = true;
+    this.step = 0;
+    const cfg = this.vibes[this.mode];
+
+    const now = this.ac.currentTime;
+    this.musicGain.gain.cancelScheduledValues(now);
+    this.musicGain.gain.setValueAtTime(0.0001, now);
+    this.musicGain.gain.linearRampToValueAtTime(parseFloat(document.getElementById('volSlider').value) * 0.35, now + 2.0);
+
+    this.playChord(cfg.chords[0], cfg.dur);
+    this.step = 1;
+
+    this.chordTimer = setInterval(() => {
+      this.playChord(cfg.chords[this.step % cfg.chords.length], cfg.dur);
+      this.step++;
+    }, cfg.cInt);
+
+    this.noteTimer = setInterval(() => {
+      if (Math.random() < 0.6) this.playBell(cfg.scale);
+    }, cfg.bInt);
+  }
+
+  stopGen() {
+    this.playing = false;
+    clearInterval(this.chordTimer);
+    clearInterval(this.noteTimer);
+    if (!this.ac) return;
+    const now = this.ac.currentTime;
+    this.musicGain.gain.cancelScheduledValues(now);
+    this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
+    this.musicGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+    setTimeout(() => this.killMusic(), 200);
+  }
+
+  setMode(mode) {
+    this.stopGen();
+    this.webAudio.pause();
+    this.mode = mode;
+    this.isPlaylistMode = false;
+    
+    if (mode === 'playlist') {
+      this.isPlaylistMode = true;
+      if (this.playlist.length > 0) {
+        this.playTrack(this.currentTrack);
+      } else {
+        this.mode = 'ambient';
+        this.startGen();
+      }
+    } else {
+      this.startGen();
+    }
+    UI.updatePlayState(this.playing || !this.webAudio.paused);
+  }
+
+  playTrack(index) {
+    if (index < 0 || index >= this.playlist.length) return;
+    this.currentTrack = index;
+    this.webAudio.src = this.playlist[index].src;
+    this.webAudio.volume = parseFloat(document.getElementById('volSlider').value);
+    this.webAudio.play().catch(e => {
+      console.log("Файл не найден:", this.playlist[index].src);
+      UI.updateTrackInfo(this.playlist[index].title, "Ошибка (нет файла)");
+    });
+    UI.updateTrackInfo(this.playlist[index].title, "Локальный трек");
+  }
+
+  togglePlay() {
+    if (this.isPlaylistMode) {
+      if (this.webAudio.paused) {
+        this.webAudio.play();
+        return true;
+      } else {
+        this.webAudio.pause();
+        return false;
+      }
+    } else {
+      if (this.playing) { this.stopGen(); return false; }
+      this.startGen(); return true;
+    }
+  }
+
+  nextTrack() {
+    if (!this.isPlaylistMode || this.playlist.length === 0) return;
+    this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
+    this.playTrack(this.currentTrack);
+  }
+
+  prevTrack() {
+    if (!this.isPlaylistMode || this.playlist.length === 0) return;
+    this.currentTrack = (this.currentTrack - 1 + this.playlist.length) % this.playlist.length;
+    this.playTrack(this.currentTrack);
+  }
+
+  toggleRain(isOn) {
+    this.init();
+    if (this.ac.state === "suspended") this.ac.resume();
+    const now = this.ac.currentTime;
+    this.rainGain.gain.cancelScheduledValues(now);
+    this.rainGain.gain.setValueAtTime(this.rainGain.gain.value, now);
+    if (isOn) {
+      this.playingRain = true;
+      this.rainGain.gain.linearRampToValueAtTime(0.4, now + 2.0);
+      this.startRainDrops();
+    } else {
+      this.playingRain = false;
+      this.rainGain.gain.linearRampToValueAtTime(0.0001, now + 1.5);
+      clearTimeout(this.dropTimer);
+    }
+  }
+
+  setVolume(val) {
+    if (this.isPlaylistMode) {
+      this.webAudio.volume = val;
+    } else {
+      if (!this.ac) return;
+      this.musicGain.gain.setTargetAtTime(val * 0.35, this.ac.currentTime, 0.1);
+    }
+  }
+}
+
+const UI = {
+  init() {
+    this.engine = new AudioEngine();
+    this.bg = new BackgroundEngine(document.getElementById('bg'));
+    new TiltEffect(document.getElementById('card'));
+
+    this.els = {
+      settingsBtn: document.getElementById('settingsBtn'),
+      settingsMenu: document.getElementById('settingsMenu'),
+      rainToggle: document.getElementById('rainSoundToggle'),
+      playBtn: document.getElementById('playBtn'),
+      iconPlay: document.getElementById('iconPlay'),
+      iconPause: document.getElementById('iconPause'),
+      prevBtn: document.getElementById('prevBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      volSlider: document.getElementById('volSlider'),
+      trackName: document.getElementById('trackName'),
+      trackStatus: document.getElementById('trackStatus'),
+      effectBtns: document.querySelectorAll('.effect-btn[data-effect]'),
+      modeBtns: document.querySelectorAll('.effect-btn[data-mode]'),
+      webAudio: document.getElementById('webAudio'),
+      socialItems: document.querySelectorAll('.social-item'),
+      qrModal: document.getElementById('qrModal'),
+      qrImage: document.getElementById('qrImage'),
+      qrTitle: document.getElementById('qrTitle'),
+      qrLink: document.getElementById('qrLink')
+    };
+
+    this.bindEvents();
+    this.handleVolume();
+    this.updateTrackInfo("Ambient", "Генератор");
+  },
+
+  bindEvents() {
+    const { els, engine, bg } = this;
+
+    els.settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      els.settingsMenu.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!els.settingsMenu.contains(e.target) && e.target !== els.settingsBtn) {
+        els.settingsMenu.classList.remove('open');
+      }
+    });
+
+    // Переключение эффектов фона
+    els.effectBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        els.effectBtns.forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        bg.setEffect(e.target.dataset.effect);
+      });
+    });
+
+    // Переключение режимов музыки
+    els.modeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        els.modeBtns.forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        const mode = e.target.dataset.mode;
+        engine.setMode(mode);
+        
+        if (mode === 'playlist') {
+          this.updateTrackInfo(engine.playlist[engine.currentTrack]?.title || "Playlist", "Локальный трек");
+        } else {
+          const vibeNames = { ambient: "Ambient", deep: "Deep Space", rain: "Lo-Fi" };
+          this.updateTrackInfo(vibeNames[mode], "Генератор");
+        }
+      });
+    });
+
+    els.rainToggle.addEventListener('change', (e) => engine.toggleRain(e.target.checked));
+
+    els.playBtn.addEventListener('click', () => {
+      const isOn = engine.togglePlay();
+      this.updatePlayState(isOn);
+    });
+
+    els.prevBtn.addEventListener('click', () => engine.prevTrack());
+    els.nextBtn.addEventListener('click', () => engine.nextTrack());
+    els.volSlider.addEventListener('input', () => this.handleVolume());
+
+    els.webAudio.addEventListener('play', () => this.updatePlayState(true));
+    els.webAudio.addEventListener('pause', () => this.updatePlayState(false));
+    els.webAudio.addEventListener('ended', () => engine.nextTrack());
+
+    // QR Modal (Используем надежный API генерации)
+    els.socialItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const url = item.dataset.url;
+        const name = item.dataset.name;
+        
+        // Генерация стильного QR-кода (фиолетовый на темном)
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&color=c084fc&bgcolor=0c0d12`;
+        
+        els.qrImage.src = qrUrl;
+        els.qrTitle.textContent = name;
+        els.qrLink.href = url;
+        els.qrModal.classList.add('open');
+      });
+    });
+    
+    els.qrModal.addEventListener('click', (e) => {
+      if (e.target === els.qrModal) els.qrModal.classList.remove('open');
+    });
+  },
+
+  handleVolume() {
+    const val = this.els.volSlider.value;
+    this.engine.setVolume(val);
+  },
+
+  updatePlayState(isPlaying) {
+    if (isPlaying) {
+      this.els.iconPlay.style.display = "none";
+      this.els.iconPause.style.display = "block";
+    } else {
+      this.els.iconPlay.style.display = "block";
+      this.els.iconPause.style.display = "none";
+    }
+  },
+
+  updateTrackInfo(name, status) {
+    this.els.trackName.textContent = name;
+    this.els.trackStatus.textContent = status;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => UI.init());
+</script>
+</body>
 </html>

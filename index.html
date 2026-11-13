@@ -14,19 +14,18 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 		<style>
 			:root {
-				--primary: #a78bfa;
-				--secondary: #22d3ee;
-				--accent: #f472b6;
-				--txt: #f8fafc;
-				--muted: #94a3b8;
-				--bg: #03040a;
-				--card-bg: rgba(15, 18, 28, 0.7);
+				--primary: #8b5cf6;
+				--secondary: #06b6d4;
+				--accent: #ec4899;
+				--txt: #e2e8f0;
+				--muted: #64748b;
+				--bg: #010204;
+				--card-bg: rgba(15, 18, 28, 0.2); /* Очень прозрачная карточка */
 			}
 
 			* {
@@ -42,11 +41,14 @@
 				width: 6px;
 			}
 			::-webkit-scrollbar-track {
-				background: var(--bg);
+				background: transparent;
 			}
 			::-webkit-scrollbar-thumb {
-				background: var(--primary);
+				background: rgba(255, 255, 255, 0.1);
 				border-radius: 10px;
+			}
+			::-webkit-scrollbar-thumb:hover {
+				background: rgba(255, 255, 255, 0.2);
 			}
 
 			html,
@@ -57,18 +59,18 @@
 
 			body {
 				font-family:
-					'Plus Jakarta Sans',
+					'Outfit',
 					-apple-system,
 					sans-serif;
 				background:
 					radial-gradient(
-						1200px 800px at 50% -20%,
-						#0f1123 0%,
+						1000px 700px at 50% -20%,
+						#0a0c13 0%,
 						transparent 60%
 					),
 					radial-gradient(
-						1000px 600px at 100% 120%,
-						#07111a 0%,
+						800px 600px at 100% 120%,
+						#040a10 0%,
 						transparent 60%
 					),
 					var(--bg);
@@ -77,9 +79,10 @@
 				place-items: center;
 				position: relative;
 				-webkit-font-smoothing: antialiased;
+				perspective: 1000px;
 			}
 
-			/* Background & Atmosphere */
+			/* Background - более насыщенный и плотный */
 			.aurora {
 				position: fixed;
 				inset: 0;
@@ -87,7 +90,7 @@
 				pointer-events: none;
 				z-index: 0;
 				filter: blur(100px);
-				opacity: 0.2;
+				opacity: 0.35;
 			}
 			.blob {
 				position: absolute;
@@ -95,22 +98,30 @@
 				mix-blend-mode: screen;
 			}
 			.b1 {
-				width: 70vw;
-				height: 70vw;
+				width: 60vw;
+				height: 60vw;
 				background: #4c1d95;
 				top: -20%;
 				left: -10%;
 				animation: drift 25s infinite alternate;
 			}
 			.b2 {
-				width: 60vw;
-				height: 60vw;
+				width: 50vw;
+				height: 50vw;
 				background: #0e7490;
 				bottom: -20%;
 				right: -10%;
 				animation: drift 30s infinite alternate-reverse;
 			}
-
+			.b3 {
+				width: 40vw;
+				height: 40vw;
+				background: #831843;
+				top: 40%;
+				left: 40%;
+				opacity: 0.5;
+				animation: drift 35s infinite alternate;
+			}
 			@keyframes drift {
 				0% {
 					transform: translate(0, 0) scale(1);
@@ -126,7 +137,6 @@
 				z-index: 1;
 				pointer-events: none;
 			}
-
 			.vignette {
 				position: fixed;
 				inset: 0;
@@ -134,11 +144,10 @@
 				pointer-events: none;
 				background: radial-gradient(
 					circle at center,
-					transparent 20%,
-					rgba(0, 0, 0, 0.85) 100%
+					transparent 30%,
+					rgba(0, 0, 0, 0.95) 100%
 				);
 			}
-
 			.grain {
 				position: fixed;
 				inset: 0;
@@ -148,30 +157,27 @@
 				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 			}
 
-			/* Profile Card */
+			/* Profile Card - Настоящее матовое стекло */
 			.card {
 				position: relative;
 				z-index: 4;
 				width: min(90vw, 380px);
 				border-radius: 32px;
-				background: linear-gradient(
-					145deg,
-					rgba(20, 24, 39, 0.8),
-					rgba(10, 12, 20, 0.9)
-				);
+				background: var(--card-bg);
 				border: 1px solid rgba(255, 255, 255, 0.08);
-				backdrop-filter: blur(40px) saturate(150%);
+				backdrop-filter: blur(30px) saturate(200%);
 				box-shadow:
-					0 40px 100px -20px rgba(0, 0, 0, 0.95),
-					0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+					0 30px 80px -20px rgba(0, 0, 0, 0.9),
+					0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+					0 0 40px rgba(139, 92, 246, 0.15); /* Внутреннее свечение */
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				padding: 40px 24px 32px;
 				animation: rise 1s cubic-bezier(0.2, 0.85, 0.25, 1) both;
-				overflow: hidden;
+				transform-style: preserve-3d;
+				transition: transform 0.1s ease-out;
 			}
-
 			.card::before {
 				content: '';
 				position: absolute;
@@ -182,11 +188,10 @@
 				background: linear-gradient(
 					90deg,
 					transparent,
-					rgba(167, 139, 250, 0.5),
+					rgba(139, 92, 246, 0.6),
 					transparent
 				);
 			}
-
 			@keyframes rise {
 				from {
 					opacity: 0;
@@ -201,6 +206,7 @@
 			.avatar-wrapper {
 				position: relative;
 				margin-bottom: 24px;
+				transform: translateZ(30px);
 			}
 			.avatar {
 				position: relative;
@@ -214,35 +220,30 @@
 					var(--secondary),
 					var(--accent)
 				);
-				box-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+				box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
 			}
 			.avatar-inner {
 				width: 100%;
 				height: 100%;
 				border-radius: 50%;
-				background: #03040a;
+				background: #010204;
 				overflow: hidden;
 				display: grid;
 				place-items: center;
 				font-size: 40px;
 				font-weight: 800;
-				border: 2px solid #03040a;
+				border: 2px solid #010204;
 			}
 			.avatar-inner img {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-				filter: brightness(0.9);
-				transition: transform 0.5s;
-			}
-			.avatar:hover .avatar-inner img {
-				transform: scale(1.1);
-				filter: brightness(1.1);
+				filter: brightness(0.95);
 			}
 
 			.name {
 				font-size: 30px;
-				font-weight: 800;
+				font-weight: 700;
 				letter-spacing: -0.03em;
 				background: linear-gradient(
 					100deg,
@@ -256,19 +257,22 @@
 				background-clip: text;
 				color: transparent;
 				animation: shimmer 8s linear infinite;
+				text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+				transform: translateZ(20px);
 			}
 			@keyframes shimmer {
 				to {
 					background-position: -250% 0;
 				}
 			}
-
 			.tagline {
 				margin-top: 8px;
 				font-size: 14px;
-				color: var(--muted);
-				font-weight: 500;
+				color: #94a3b8;
+				font-weight: 400;
 				text-align: center;
+				text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+				transform: translateZ(10px);
 			}
 
 			/* Now Playing Widget */
@@ -276,12 +280,14 @@
 				margin-top: 28px;
 				width: 100%;
 				padding: 16px 20px;
-				background: rgba(0, 0, 0, 0.4);
+				background: rgba(0, 0, 0, 0.2);
 				border-radius: 20px;
 				border: 1px solid rgba(255, 255, 255, 0.04);
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
+				transform: translateZ(15px);
+				backdrop-filter: blur(10px);
 			}
 			.widget-info {
 				display: flex;
@@ -292,36 +298,38 @@
 				font-size: 10px;
 				text-transform: uppercase;
 				color: var(--secondary);
-				font-weight: 800;
+				font-weight: 700;
 				letter-spacing: 0.1em;
+				text-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
 			}
 			.widget-track {
 				font-size: 14px;
-				font-weight: 700;
+				font-weight: 500;
 				color: #fff;
 				margin-top: 2px;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
 			}
 
-			/* New Sleek Visualizer (5 Bars) */
+			/* Visualizer */
 			.visualizer {
 				display: flex;
 				align-items: center;
 				gap: 3px;
-				height: 24px;
+				height: 20px;
 			}
 			.vis-bar {
-				width: 4px;
+				width: 3px;
 				background: linear-gradient(to top, var(--primary), var(--secondary));
-				border-radius: 4px;
+				border-radius: 3px;
 				height: 15%;
 				transition: height 0.08s ease-out;
-				box-shadow: 0 0 8px rgba(34, 211, 238, 0.4);
+				box-shadow: 0 0 6px rgba(6, 182, 212, 0.3);
 			}
 
-			/* Settings (Top Right) */
+			/* Settings */
 			.settings-btn {
 				position: fixed;
 				top: 20px;
@@ -330,7 +338,7 @@
 				width: 44px;
 				height: 44px;
 				border-radius: 50%;
-				background: var(--card-bg);
+				background: rgba(15, 18, 28, 0.6);
 				border: 1px solid rgba(255, 255, 255, 0.08);
 				color: var(--muted);
 				display: grid;
@@ -344,14 +352,13 @@
 				transform: rotate(90deg);
 				background: rgba(255, 255, 255, 0.1);
 			}
-
 			.settings-menu {
 				position: fixed;
 				top: 70px;
 				right: 20px;
 				z-index: 99;
 				width: 240px;
-				background: var(--card-bg);
+				background: rgba(15, 18, 28, 0.85);
 				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-radius: 20px;
 				padding: 16px;
@@ -372,7 +379,7 @@
 				text-transform: uppercase;
 				color: var(--muted);
 				margin-bottom: 8px;
-				font-weight: 800;
+				font-weight: 700;
 				letter-spacing: 0.05em;
 			}
 			.grid-btns {
@@ -391,60 +398,16 @@
 				cursor: pointer;
 				transition: all 0.2s;
 				font-family: inherit;
-				font-weight: 600;
+				font-weight: 500;
 			}
 			.s-btn:hover {
 				background: rgba(255, 255, 255, 0.08);
 				color: #fff;
 			}
 			.s-btn.active {
-				background: rgba(167, 139, 250, 0.15);
-				border-color: rgba(167, 139, 250, 0.4);
+				background: rgba(139, 92, 246, 0.2);
+				border-color: rgba(139, 92, 246, 0.4);
 				color: #fff;
-			}
-
-			/* Toggle */
-			.toggle-row {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				font-size: 13px;
-				padding-top: 12px;
-				border-top: 1px solid rgba(255, 255, 255, 0.08);
-				font-weight: 600;
-			}
-			.switch {
-				position: relative;
-				width: 34px;
-				height: 18px;
-			}
-			.switch input {
-				opacity: 0;
-			}
-			.slider {
-				position: absolute;
-				inset: 0;
-				background: rgba(255, 255, 255, 0.1);
-				border-radius: 20px;
-				transition: 0.3s;
-				cursor: pointer;
-			}
-			.slider::before {
-				content: '';
-				position: absolute;
-				width: 14px;
-				height: 14px;
-				left: 2px;
-				bottom: 2px;
-				background: #fff;
-				border-radius: 50%;
-				transition: 0.3s;
-			}
-			input:checked + .slider {
-				background: var(--secondary);
-			}
-			input:checked + .slider::before {
-				transform: translateX(16px);
 			}
 
 			/* Desktop Triggers & Tabs */
@@ -462,7 +425,6 @@
 			.panel-trigger.right {
 				right: 0;
 			}
-
 			.panel-tab {
 				position: fixed;
 				top: 50%;
@@ -470,8 +432,8 @@
 				z-index: 100;
 				width: 24px;
 				height: 60px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				background: rgba(15, 18, 28, 0.6);
+				border: 1px solid rgba(255, 255, 255, 0.06);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -480,7 +442,8 @@
 				backdrop-filter: blur(10px);
 				transition:
 					transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-					opacity 0.3s;
+					opacity 0.3s,
+					background 0.3s;
 			}
 			.panel-tab.left {
 				left: 0;
@@ -494,8 +457,8 @@
 			}
 			.panel-tab:hover {
 				color: #fff;
+				background: rgba(139, 92, 246, 0.2);
 			}
-
 			.panel-tab.left.tab-hidden {
 				transform: translate(-100%, -50%);
 				opacity: 0;
@@ -507,7 +470,7 @@
 				pointer-events: none;
 			}
 
-			/* Panels - Desktop */
+			/* Panels */
 			.social-panel,
 			.music-panel {
 				position: fixed;
@@ -518,7 +481,7 @@
 				flex-direction: column;
 				gap: 12px;
 				padding: 20px;
-				background: var(--card-bg);
+				background: rgba(15, 18, 28, 0.85);
 				border: 1px solid rgba(255, 255, 255, 0.08);
 				backdrop-filter: blur(30px);
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
@@ -537,24 +500,21 @@
 				border-right: none;
 				width: 240px;
 			}
-
 			.social-panel.open {
 				transform: translate(0, -50%);
 			}
 			.music-panel.open {
 				transform: translate(0, -50%);
 			}
-
 			.panel-title {
 				font-size: 12px;
 				text-transform: uppercase;
 				color: var(--muted);
-				font-weight: 800;
+				font-weight: 700;
 				letter-spacing: 0.1em;
 				text-align: center;
 				margin-bottom: 8px;
 			}
-
 			.soc-item {
 				width: 48px;
 				height: 48px;
@@ -568,9 +528,9 @@
 				border: 1px solid transparent;
 			}
 			.soc-item:hover {
-				background: rgba(167, 139, 250, 0.15);
+				background: rgba(139, 92, 246, 0.15);
 				color: #fff;
-				border-color: rgba(167, 139, 250, 0.3);
+				border-color: rgba(139, 92, 246, 0.3);
 				transform: scale(1.05);
 			}
 			.soc-item svg {
@@ -578,31 +538,100 @@
 				height: 22px;
 			}
 
-			/* Draggable Player */
+			/* Floating Player */
 			.floating-player {
 				position: fixed;
 				bottom: 24px;
 				right: 24px;
 				z-index: 100;
 				display: flex;
-				align-items: center;
-				gap: 16px;
+				flex-direction: column;
+				gap: 8px;
 				padding: 12px 20px;
-				background: var(--card-bg);
+				background: rgba(15, 18, 28, 0.8);
 				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-radius: 24px;
 				backdrop-filter: blur(30px);
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 				cursor: grab;
+				min-width: 340px;
+				transition:
+					border-color 0.3s,
+					box-shadow 0.3s;
 			}
 			.floating-player:active {
 				cursor: grabbing;
 			}
 			.floating-player:hover {
 				border-color: rgba(255, 255, 255, 0.15);
+				box-shadow:
+					0 10px 40px rgba(0, 0, 0, 0.8),
+					0 0 20px rgba(139, 92, 246, 0.1);
+			}
+
+			/* Timeline */
+			.progress-container {
+				width: 100%;
+				height: 4px;
+				background: rgba(255, 255, 255, 0.08);
+				border-radius: 2px;
+				position: relative;
+				cursor: pointer;
+				display: none;
+				margin-bottom: 8px;
+			}
+			.progress-container.active {
+				display: block;
+			}
+			#progressSlider {
+				-webkit-appearance: none;
+				width: 100%;
+				height: 100%;
+				background: transparent;
+				position: absolute;
+				top: 0;
+				left: 0;
+				margin: 0;
+				cursor: pointer;
+			}
+			#progressSlider::-webkit-slider-runnable-track {
+				width: 100%;
+				height: 4px;
+				background: linear-gradient(to right, var(--primary), var(--secondary))
+					0 0 / var(--progress, 0%) 100% no-repeat;
+				border-radius: 2px;
+			}
+			#progressSlider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				height: 12px;
+				width: 12px;
+				border-radius: 50%;
+				background: #fff;
+				margin-top: -4px;
+				box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+				opacity: 0;
+				transition: opacity 0.2s;
+			}
+			.progress-container:hover #progressSlider::-webkit-slider-thumb {
+				opacity: 1;
+			}
+
+			/* Player Controls */
+			.player-controls {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: 100%;
+				gap: 12px;
+			}
+			.main-controls {
+				display: flex;
+				align-items: center;
+				gap: 16px;
 			}
 
 			.ctrl-btn {
+				position: relative;
 				background: transparent;
 				border: none;
 				color: var(--muted);
@@ -615,147 +644,148 @@
 			.ctrl-btn:hover {
 				color: #fff;
 			}
+			.ctrl-btn.active {
+				color: var(--secondary);
+				text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+			}
+			.ctrl-btn svg {
+				width: 20px;
+				height: 20px;
+			}
+
 			.play-btn {
 				width: 44px;
 				height: 44px;
 				border-radius: 50%;
 				background: linear-gradient(135deg, var(--primary), var(--secondary));
 				color: #fff;
-				box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
+				box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 			}
 			.play-btn:hover {
 				transform: scale(1.05);
-				box-shadow: 0 6px 20px rgba(167, 139, 250, 0.6);
+				box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 			}
 			.play-btn svg {
 				width: 20px;
 				height: 20px;
 			}
 
+			#repeatOneDot {
+				position: absolute;
+				top: -4px;
+				right: -4px;
+				font-size: 10px;
+				font-weight: 800;
+				color: var(--bg);
+				background: var(--secondary);
+				border-radius: 50%;
+				width: 14px;
+				height: 14px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				line-height: 1;
+				box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+			}
+
 			.track-info {
 				display: flex;
 				flex-direction: column;
-				min-width: 90px;
-				max-width: 120px;
+				min-width: 80px;
+				max-width: 110px;
 				pointer-events: none;
 			}
 			.track-name {
-				font-size: 13px;
-				font-weight: 700;
+				font-size: 12px;
+				font-weight: 600;
 				color: #fff;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 			.track-status {
-				font-size: 10px;
+				font-size: 9px;
 				color: var(--muted);
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
 				font-weight: 600;
 			}
 
+			/* Vertical Volume */
 			.vol-wrap {
+				position: relative;
 				display: flex;
 				align-items: center;
-				gap: 8px;
-				width: 80px;
+			}
+			.vol-popover {
+				position: absolute;
+				bottom: 100%;
+				right: -10px;
+				background: rgba(15, 18, 28, 0.95);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				padding: 16px 8px;
+				border-radius: 16px;
+				backdrop-filter: blur(20px);
+				opacity: 0;
+				pointer-events: none;
+				transform: translateY(10px);
+				transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+				margin-bottom: 12px;
+				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+				z-index: 102;
+				width: 44px;
+				height: 140px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.vol-popover.open {
+				opacity: 1;
 				pointer-events: auto;
+				transform: translateY(0);
 			}
-			.vol-wrap svg {
-				width: 14px;
-				height: 14px;
-				color: var(--muted);
-			}
-			input[type='range'] {
+			.vol-popover input[type='range'] {
 				-webkit-appearance: none;
-				width: 100%;
+				width: 100px;
+				height: 6px;
 				background: transparent;
 				cursor: pointer;
+				transform: rotate(-90deg);
 			}
-			input[type='range']::-webkit-slider-runnable-track {
+			.vol-popover input[type='range']::-webkit-slider-runnable-track {
 				width: 100%;
-				height: 4px;
+				height: 6px;
 				background: rgba(255, 255, 255, 0.15);
-				border-radius: 2px;
+				border-radius: 3px;
 			}
-			input[type='range']::-webkit-slider-thumb {
+			.vol-popover input[type='range']::-webkit-slider-thumb {
 				-webkit-appearance: none;
-				height: 12px;
-				width: 12px;
+				height: 18px;
+				width: 18px;
 				border-radius: 50%;
 				background: #fff;
-				margin-top: -4px;
-				box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+				margin-top: -6px;
+				box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+				transition: transform 0.1s;
+			}
+			.vol-popover input[type='range']:hover::-webkit-slider-thumb {
+				transform: scale(1.1);
 			}
 
-			/* Context Menu */
-			#ctx-menu {
+			/* Скрываем кнопку плейлиста по умолчанию */
+			#playlistBtn {
 				display: none;
-				position: fixed;
-				z-index: 300;
-				background: rgba(15, 18, 28, 0.95);
-				backdrop-filter: blur(16px);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 16px;
-				padding: 6px;
-				min-width: 180px;
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-				flex-direction: column;
-				gap: 2px;
-				animation: ctxIn 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
 			}
-			@keyframes ctxIn {
-				from {
-					opacity: 0;
-					transform: scale(0.95) translateY(-5px);
-				}
-				to {
-					opacity: 1;
-					transform: scale(1) translateY(0);
-				}
-			}
-			.ctx-item {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				padding: 10px 14px;
-				color: var(--txt);
-				font-size: 13px;
-				font-weight: 600;
-				text-decoration: none;
-				border-radius: 10px;
-				cursor: pointer;
-				transition: background 0.2s;
-				border: none;
-				background: transparent;
-				width: 100%;
-				text-align: left;
-				font-family: inherit;
-			}
-			.ctx-item:hover {
-				background: rgba(167, 139, 250, 0.15);
-			}
-			.ctx-item svg {
-				width: 16px;
-				height: 16px;
-				opacity: 0.7;
-			}
-			.ctx-item:hover svg {
-				opacity: 1;
-			}
-			.ctx-sep {
-				height: 1px;
-				background: rgba(255, 255, 255, 0.08);
-				margin: 4px 0;
+			#playlistBtn.visible {
+				display: grid;
 			}
 
-			/* QR Modal */
+			/* Playlist Modal (Удобное окно по центру) */
 			.modal-overlay {
 				position: fixed;
 				inset: 0;
 				z-index: 200;
-				background: rgba(0, 0, 0, 0.8);
+				background: rgba(0, 0, 0, 0.85);
 				backdrop-filter: blur(10px);
 				display: flex;
 				align-items: center;
@@ -768,9 +798,92 @@
 				opacity: 1;
 				pointer-events: auto;
 			}
-			.modal-content {
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+
+			.qr-modal-content {
+				background: rgba(15, 18, 28, 0.9);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 32px;
+				padding: 32px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				transform: translateY(20px) scale(0.95);
+				transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+				position: relative;
+				overflow: hidden;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+			}
+			.modal-overlay.open .qr-modal-content {
+				transform: translateY(0) scale(1);
+			}
+
+			.qr-wrapper {
+				background: rgba(0, 0, 0, 0.4);
+				padding: 16px;
+				border-radius: 24px;
+				margin-bottom: 24px;
+				border: 1px solid rgba(255, 255, 255, 0.05);
+				position: relative;
+			}
+			#qr-image {
+				display: block;
+				width: 200px;
+				height: 200px;
+				object-fit: contain;
+			}
+
+			.modal-title {
+				font-size: 20px;
+				font-weight: 700;
+				color: #fff;
+				margin-bottom: 8px;
+				letter-spacing: 0.02em;
+			}
+			.modal-desc {
+				font-size: 13px;
+				color: var(--muted);
+				margin-bottom: 24px;
+			}
+
+			.modal-btn {
+				background: rgba(255, 255, 255, 0.05);
+				color: #fff;
+				padding: 12px 32px;
+				border-radius: 14px;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 14px;
+				transition: all 0.3s;
+				width: 100%;
+				text-align: center;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				cursor: pointer;
+				font-family: inherit;
+				position: relative;
+				overflow: hidden;
+				z-index: 2;
+			}
+			.modal-btn::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border-radius: inherit;
+				background: linear-gradient(135deg, var(--primary), var(--secondary));
+				opacity: 0;
+				transition: opacity 0.3s;
+				z-index: -1;
+			}
+			.modal-btn:hover {
+				border-color: transparent;
+			}
+			.modal-btn:hover::before {
+				opacity: 1;
+			}
+
+			/* Playlist Modal Specific */
+			.playlist-modal-content {
+				background: rgba(15, 18, 28, 0.95);
+				border: 1px solid rgba(255, 255, 255, 0.1);
 				border-radius: 24px;
 				padding: 24px;
 				display: flex;
@@ -778,39 +891,47 @@
 				align-items: center;
 				transform: translateY(20px);
 				transition: 0.3s;
+				width: min(90vw, 400px);
+				max-height: 80vh;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
 			}
-			.modal-overlay.open .modal-content {
+			.modal-overlay.open .playlist-modal-content {
 				transform: translateY(0);
 			}
-			.qr-wrapper {
-				background: #0c0d12;
-				padding: 16px;
-				border-radius: 20px;
-				margin-bottom: 16px;
-				border: 1px solid rgba(255, 255, 255, 0.05);
-			}
-			#qr-image {
-				display: block;
-				width: 180px;
-				height: 180px;
-			}
-			.modal-btn {
-				background: linear-gradient(135deg, var(--primary), var(--secondary));
-				color: #fff;
-				padding: 12px 32px;
-				border-radius: 12px;
-				text-decoration: none;
-				font-weight: 700;
-				font-size: 14px;
-				transition: transform 0.2s;
+			.playlist-list {
 				width: 100%;
-				text-align: center;
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				overflow-y: auto;
+				padding-right: 4px;
+				margin-bottom: 16px;
 			}
-			.modal-btn:hover {
-				transform: translateY(-2px);
+			.playlist-item {
+				text-align: left;
+				padding: 14px 16px;
+				font-size: 14px;
+				border-radius: 10px;
+				background: rgba(255, 255, 255, 0.03);
+				border: 1px solid transparent;
+				color: var(--muted);
+				transition: all 0.2s;
+				cursor: pointer;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.playlist-item:hover {
+				background: rgba(255, 255, 255, 0.08);
+				color: #fff;
+			}
+			.playlist-item.active {
+				background: rgba(139, 92, 246, 0.15);
+				border-color: rgba(139, 92, 246, 0.4);
+				color: var(--secondary);
+				font-weight: 600;
 			}
 
-			/* Mobile Backdrop */
 			.mobile-backdrop {
 				position: fixed;
 				inset: 0;
@@ -826,13 +947,11 @@
 				pointer-events: auto;
 			}
 
-			/* Mobile Adaptations */
+			/* Mobile */
 			.mobile-header {
 				display: none;
 			}
-
 			@media (max-width: 768px) {
-				/* Mobile Header */
 				.mobile-header {
 					display: flex;
 					position: fixed;
@@ -846,7 +965,6 @@
 					display: flex;
 					gap: 10px;
 				}
-
 				.m-btn {
 					width: 44px;
 					height: 44px;
@@ -864,7 +982,6 @@
 					transform: scale(0.95);
 				}
 
-				/* Hide desktop settings and tabs */
 				.settings-btn {
 					display: none;
 				}
@@ -873,26 +990,44 @@
 					display: none;
 				}
 
-				/* Mobile Player */
 				.floating-player {
 					bottom: 0;
 					right: 0;
 					left: 0;
 					border-radius: 24px 24px 0 0;
-					justify-content: center;
-					gap: 30px;
-					padding: 16px 20px;
 					cursor: default;
+					min-width: 100%;
+					padding: 16px 20px 24px;
 					box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
 					z-index: 101;
 				}
-				/* Убираем инфо о треке и громкость на мобилке, чтобы не было пустоты */
-				.track-info,
-				.vol-wrap {
+				.track-info {
 					display: none;
 				}
+				.player-controls {
+					justify-content: space-between;
+					gap: 0;
+					padding: 0 10px;
+				}
+				.main-controls {
+					gap: 20px;
+				}
+				.ctrl-btn svg {
+					width: 22px;
+					height: 22px;
+				}
+				.play-btn {
+					width: 48px;
+					height: 48px;
+				}
+				.play-btn svg {
+					width: 24px;
+					height: 24px;
+				}
+				.vol-popover {
+					right: 0;
+				}
 
-				/* Panels Mobile (Bottom Sheets) */
 				.social-panel,
 				.music-panel {
 					top: auto;
@@ -902,7 +1037,7 @@
 					width: 100%;
 					transform: translateY(100%);
 					border-radius: 32px 32px 0 0;
-					padding: 30px 20px 100px;
+					padding: 30px 20px 140px;
 					z-index: 100;
 					border: none;
 					border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -911,7 +1046,6 @@
 				.music-panel.open {
 					transform: translateY(0);
 				}
-
 				.music-panel .grid-btns {
 					grid-template-columns: 1fr 1fr;
 				}
@@ -926,11 +1060,11 @@
 					margin-bottom: 10px;
 				}
 
-				/* Card adjustments */
 				.card {
 					padding: 30px 20px 24px;
 					width: 92vw;
 					border-radius: 24px;
+					margin-bottom: 100px;
 				}
 				.avatar {
 					width: 90px;
@@ -943,19 +1077,18 @@
 		</style>
 	</head>
 	<body>
-		<!-- Atmosphere & Background -->
 		<div class="vignette"></div>
 		<div class="grain"></div>
 		<canvas id="bg"></canvas>
 		<div class="aurora">
 			<div class="blob b1"></div>
 			<div class="blob b2"></div>
+			<div class="blob b3"></div>
 		</div>
 
-		<!-- Mobile Backdrop -->
 		<div class="mobile-backdrop" id="mobileBackdrop"></div>
 
-		<!-- Custom Context Menu -->
+		<!-- Context Menu -->
 		<div id="ctx-menu">
 			<button class="ctx-item" onclick="location.reload()">
 				<svg
@@ -1082,7 +1215,7 @@
 		</div>
 
 		<!-- Profile Card -->
-		<div class="card">
+		<div class="card" id="tilt-card">
 			<div class="avatar-wrapper">
 				<div class="avatar">
 					<div class="avatar-inner">
@@ -1103,13 +1236,11 @@
 				where the light fades and echoes remain
 			</p>
 
-			<!-- Now Playing Widget -->
 			<div class="card-widget">
 				<div class="widget-info">
 					<div class="widget-label">Now Playing</div>
 					<div class="widget-track" id="widgetTrack">Ambient</div>
 				</div>
-				<!-- Sleek 5-Bar Wave Visualizer -->
 				<div class="visualizer">
 					<div class="vis-bar"></div>
 					<div class="vis-bar"></div>
@@ -1120,7 +1251,7 @@
 			</div>
 		</div>
 
-		<!-- Settings (Desktop) -->
+		<!-- Settings -->
 		<button class="settings-btn" id="settingsBtn">
 			<svg
 				viewBox="0 0 24 24"
@@ -1137,7 +1268,6 @@
 			</svg>
 		</button>
 
-		<!-- Settings Menu -->
 		<div class="settings-menu" id="settingsMenu">
 			<div class="settings-title">Фон</div>
 			<div class="grid-btns" id="bgModes">
@@ -1147,12 +1277,6 @@
 				<button class="s-btn" data-effect="vertices">Сеть</button>
 				<button class="s-btn" data-effect="warp">Warp</button>
 				<button class="s-btn" data-effect="bubbles">Пузыри</button>
-			</div>
-			<div class="toggle-row">
-				<span>Звук дождя</span>
-				<label class="switch"
-					><input type="checkbox" id="rainToggle" /><span class="slider"></span
-				></label>
 			</div>
 		</div>
 
@@ -1194,78 +1318,168 @@
 			</div>
 		</div>
 
+		<!-- Playlist Modal -->
+		<div class="modal-overlay" id="playlistModal">
+			<div class="playlist-modal-content">
+				<h3
+					style="
+						margin-bottom: 20px;
+						color: #fff;
+						font-weight: 700;
+						font-size: 18px;
+					"
+				>
+					Локальный плейлист
+				</h3>
+				<div class="playlist-list" id="playlistContainer"></div>
+				<button class="modal-btn" id="closePlaylistBtn">Закрыть</button>
+			</div>
+		</div>
+
 		<!-- Draggable Player -->
 		<div class="floating-player" id="player">
-			<button class="ctrl-btn" id="prevBtn">
-				<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-					<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-				</svg>
-			</button>
-
-			<button class="ctrl-btn play-btn" id="playBtn">
-				<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor">
-					<path d="M8 5v14l11-7z" />
-				</svg>
-				<svg
-					id="iconPause"
-					viewBox="0 0 24 24"
-					fill="currentColor"
-					style="display: none"
-				>
-					<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-				</svg>
-			</button>
-
-			<button class="ctrl-btn" id="nextBtn">
-				<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-					<path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
-				</svg>
-			</button>
-
-			<div class="track-info">
-				<div class="track-name" id="trackName">Ambient</div>
-				<div class="track-status" id="trackStatus">Генератор</div>
-			</div>
-
-			<div class="vol-wrap">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<path d="M11 5L6 9H2v6h4l5 4V5z" />
-					<path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-					<path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-				</svg>
+			<div class="progress-container" id="progressContainer">
 				<input
 					type="range"
-					id="volSlider"
+					id="progressSlider"
 					min="0"
-					max="1"
-					step="0.01"
-					value="0.5"
+					max="100"
+					step="0.1"
+					value="0"
 				/>
 			</div>
-		</div>
 
-		<!-- QR Modal -->
-		<div class="modal-overlay" id="qrModal">
-			<div class="modal-content">
-				<div class="qr-wrapper">
-					<img id="qr-image" src="" alt="QR Code" />
+			<div class="player-controls">
+				<button class="ctrl-btn" id="shuffleBtn" title="Случайный порядок">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path d="M16 3h5v5" />
+						<path d="M4 20L21 3" />
+						<path d="M21 16v5h-5" />
+						<path d="M15 15l6 6" />
+						<path d="M4 4l5 5" />
+					</svg>
+				</button>
+
+				<div class="main-controls">
+					<button class="ctrl-btn" id="prevBtn">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+						</svg>
+					</button>
+
+					<button class="ctrl-btn play-btn" id="playBtn">
+						<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M8 5v14l11-7z" />
+						</svg>
+						<svg
+							id="iconPause"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							style="display: none"
+						>
+							<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+						</svg>
+					</button>
+
+					<button class="ctrl-btn" id="nextBtn">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
+						</svg>
+					</button>
 				</div>
-				<h3
-					id="qrTitle"
-					style="margin-bottom: 20px; color: #fff; font-weight: 700"
-				>
-					Профиль
-				</h3>
-				<a href="#" id="qrLink" class="modal-btn" target="_blank">Перейти</a>
+
+				<button class="ctrl-btn" id="repeatBtn" title="Повтор">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path d="M17 2l4 4-4 4" />
+						<path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+						<path d="M7 22l-4-4 4-4" />
+						<path d="M21 13v1a4 4 0 0 1-4 4H3" />
+					</svg>
+					<span id="repeatOneDot" style="display: none">1</span>
+				</button>
+
+				<div class="track-info">
+					<div class="track-name" id="trackName">Ambient</div>
+					<div class="track-status" id="trackStatus">Генератор</div>
+				</div>
+
+				<!-- Кнопка вызова плейлиста (появляется только в локальном режиме) -->
+				<button class="ctrl-btn" id="playlistBtn" title="Список треков">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<line x1="8" y1="6" x2="21" y2="6"></line>
+						<line x1="8" y1="12" x2="21" y2="12"></line>
+						<line x1="8" y1="18" x2="21" y2="18"></line>
+						<line x1="3" y1="6" x2="3.01" y2="6"></line>
+						<line x1="3" y1="12" x2="3.01" y2="12"></line>
+						<line x1="3" y1="18" x2="3.01" y2="18"></line>
+					</svg>
+				</button>
+
+				<div class="vol-wrap">
+					<button class="ctrl-btn" id="volBtn">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<path d="M11 5L6 9H2v6h4l5 4V5z" />
+							<path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+							<path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+						</svg>
+					</button>
+					<div class="vol-popover" id="volPopover">
+						<input
+							type="range"
+							id="volSlider"
+							min="0"
+							max="1"
+							step="0.01"
+							value="0.5"
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 
-		<audio id="webAudio" loop crossorigin="anonymous"></audio>
+		<!-- Modern QR Modal -->
+		<div class="modal-overlay" id="qrModal">
+			<div class="qr-modal-content">
+				<div class="qr-wrapper">
+					<img
+						id="qr-image"
+						src=""
+						alt="QR Code"
+						onerror="
+							this.src =
+								'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><rect width=\'200\' height=\'200\' fill=\'#0c0d12\'/><text x=\'50%\' y=\'50%\' fill=\'#a78bfa\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'sans-serif\' font-size=\'14\'>Нет файла QR</text></svg>'
+						"
+					/>
+				</div>
+				<h3 id="qrTitle" class="modal-title">Профиль</h3>
+				<p class="modal-desc">Наведите камеру телефона для перехода</p>
+				<a href="#" id="qrLink" class="modal-btn" target="_blank"
+					>Открыть ссылку</a
+				>
+			</div>
+		</div>
+
+		<audio id="webAudio" crossorigin="anonymous"></audio>
 
 		<script>
 			const CONFIG = {
@@ -1289,6 +1503,40 @@
 					'beyond the edge of time',
 				],
 			};
+
+			// 3D TILT EFFECT (Parallax) - очень мягкий
+			const card = document.getElementById('tilt-card');
+			const isFine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+			let raf = null;
+
+			if (isFine) {
+				document.addEventListener('mousemove', (e) => {
+					if (raf) return;
+					raf = requestAnimationFrame(() => {
+						const rect = card.getBoundingClientRect();
+						const centerX = rect.left + rect.width / 2;
+						const centerY = rect.top + rect.height / 2;
+
+						const distX = e.clientX - centerX;
+						const distY = e.clientY - centerY;
+
+						const rotateX = (distY / (window.innerHeight / 2)) * -3;
+						const rotateY = (distX / (window.innerWidth / 2)) * 3;
+
+						card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+						raf = null;
+					});
+				});
+
+				document.addEventListener('mouseleave', () => {
+					card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+					card.style.transition = 'transform 0.5s ease';
+					setTimeout(
+						() => (card.style.transition = 'transform 0.1s ease-out'),
+						500,
+					);
+				});
+			}
 
 			class BackgroundEngine {
 				constructor(canvas) {
@@ -1323,12 +1571,14 @@
 				initParticles() {
 					this.particles = [];
 					let count = 0;
-					if (this.effect === 'rain') count = Math.min(120, innerWidth / 12);
+					if (this.effect === 'rain') count = Math.min(200, innerWidth / 10);
 					else if (this.effect === 'vertices')
-						count = Math.min(50, innerWidth / 25);
+						count = Math.min(80, innerWidth / 20);
 					else if (this.effect === 'warp')
-						count = Math.min(250, innerWidth / 6);
-					else count = Math.min(90, innerWidth / 18);
+						count = Math.min(350, innerWidth / 5);
+					else if (this.effect === 'snow')
+						count = Math.min(150, innerWidth / 12);
+					else count = Math.min(150, innerWidth / 15);
 
 					for (let i = 0; i < count; i++) {
 						this.particles.push({
@@ -1345,7 +1595,7 @@
 								this.effect === 'snow' || this.effect === 'bubbles'
 									? Math.random() * 3 + 1
 									: Math.random() * 2,
-							a: Math.random() * 0.6 + 0.2,
+							a: Math.random() * 0.5 + 0.1,
 							length: Math.random() * 30 + 20,
 							phase: Math.random() * Math.PI * 2,
 							speed: Math.random() * 0.03 + 0.01,
@@ -1359,12 +1609,12 @@
 					this.ctx.shadowBlur = 0;
 
 					if (this.effect === 'rain') {
-						this.ctx.strokeStyle = 'rgba(180, 200, 230, 0.25)';
-						this.ctx.lineWidth = 1.2;
+						this.ctx.strokeStyle = 'rgba(180, 200, 230, 0.15)';
+						this.ctx.lineWidth = 1;
 						this.ctx.lineCap = 'round';
 					} else {
-						this.ctx.shadowBlur = 12;
-						this.ctx.shadowColor = 'rgba(167, 139, 250, 0.4)';
+						this.ctx.shadowBlur = 8;
+						this.ctx.shadowColor = 'rgba(139, 92, 246, 0.3)';
 					}
 
 					for (let i = 0; i < this.particles.length; i++) {
@@ -1407,7 +1657,7 @@
 							this.ctx.lineTo(p.x - p.vx * 3, p.y - p.length);
 							this.ctx.stroke();
 						} else if (this.effect === 'vertices') {
-							this.ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
+							this.ctx.fillStyle = 'rgba(6, 182, 212, 0.4)';
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.fill();
@@ -1420,7 +1670,7 @@
 									this.ctx.beginPath();
 									this.ctx.moveTo(p.x, p.y);
 									this.ctx.lineTo(p2.x, p2.y);
-									this.ctx.strokeStyle = `rgba(34, 211, 238, ${0.2 * (1 - dist / (this.w * 0.15))})`;
+									this.ctx.strokeStyle = `rgba(6, 182, 212, ${0.15 * (1 - dist / (this.w * 0.15))})`;
 									this.ctx.lineWidth = 1;
 									this.ctx.stroke();
 								}
@@ -1428,18 +1678,18 @@
 						} else if (this.effect === 'warp') {
 							const px = (p.x / p.z) * this.w + this.w / 2;
 							const py = (p.y / p.z) * this.h + this.h / 2;
-							const radius = Math.max(0.1, (1 - p.z / this.w) * 4);
-							this.ctx.fillStyle = `rgba(255,255,255,${1 - p.z / this.w})`;
+							const radius = Math.max(0.1, (1 - p.z / this.w) * 3);
+							this.ctx.fillStyle = `rgba(255,255,255,${(1 - p.z / this.w) * 0.6})`;
 							this.ctx.beginPath();
 							this.ctx.arc(px, py, radius, 0, Math.PI * 2);
 							this.ctx.fill();
 						} else if (this.effect === 'bubbles') {
-							this.ctx.strokeStyle = `rgba(167, 139, 250, ${p.a})`;
+							this.ctx.strokeStyle = `rgba(139, 92, 246, ${p.a * 0.6})`;
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.stroke();
 						} else {
-							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.6 + 0.4 * Math.sin(Date.now() * 0.002 + i))})`;
+							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i))})`;
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.fill();
@@ -1460,16 +1710,17 @@
 					this.ac = null;
 					this.masterGain = null;
 					this.musicGain = null;
-					this.rainGain = null;
 					this.analyser = null;
 					this.isPlaying = false;
-					this.isPlayingRain = false;
 					this.mode = 'ambient';
 					this.playlist = CONFIG.playlist;
 					this.currentTrack = 0;
 					this.isPlaylistMode = false;
+
+					this.repeatMode = 0;
+					this.shuffleMode = false;
+
 					this.webAudio = document.getElementById('webAudio');
-					this.rainTimer = null;
 					this.mediaSource = null;
 
 					this.vibes = {
@@ -1504,104 +1755,14 @@
 
 					this.masterGain = this.ac.createGain();
 					this.musicGain = this.ac.createGain();
-					this.rainGain = this.ac.createGain();
 					this.analyser = this.ac.createAnalyser();
 					this.analyser.fftSize = 64;
 
-					this.musicGain.gain.value = 0.3;
-					this.rainGain.gain.value = 0;
+					this.musicGain.gain.value = 0.25;
 
 					this.musicGain.connect(this.masterGain);
-					this.rainGain.connect(this.masterGain);
 					this.masterGain.connect(this.analyser);
 					this.analyser.connect(this.ac.destination);
-				}
-
-				buildRain() {
-					if (this.rainInitialized) return;
-					this.rainInitialized = true;
-					const bufferSize = this.ac.sampleRate * 2;
-					const buffer = this.ac.createBuffer(
-						1,
-						bufferSize,
-						this.ac.sampleRate,
-					);
-					const data = buffer.getChannelData(0);
-					let lastOut = 0;
-					for (let i = 0; i < bufferSize; i++) {
-						let white = Math.random() * 2 - 1;
-						data[i] = (lastOut + 0.02 * white) / 1.02;
-						lastOut = data[i];
-						data[i] *= 3.5;
-					}
-					const rainNode = this.ac.createBufferSource();
-					rainNode.buffer = buffer;
-					rainNode.loop = true;
-					const filter = this.ac.createBiquadFilter();
-					filter.type = 'lowpass';
-					filter.frequency.value = 600;
-					rainNode.connect(filter);
-					filter.connect(this.rainGain);
-					rainNode.start(0);
-				}
-
-				playThunder() {
-					if (!this.ac) return;
-					const t0 = this.ac.currentTime;
-					const osc = this.ac.createOscillator();
-					const gain = this.ac.createGain();
-					osc.type = 'sine';
-					osc.frequency.setValueAtTime(60, t0);
-					osc.frequency.exponentialRampToValueAtTime(30, t0 + 1.5);
-					gain.gain.setValueAtTime(0, t0);
-					gain.gain.linearRampToValueAtTime(0.8, t0 + 0.2);
-					gain.gain.exponentialRampToValueAtTime(0.01, t0 + 2.5);
-					osc.connect(gain);
-					gain.connect(this.rainGain);
-					osc.start(t0);
-					osc.stop(t0 + 3);
-				}
-
-				startRainSounds() {
-					this.init();
-					if (this.ac.state === 'suspended') this.ac.resume();
-					this.buildRain();
-
-					this.rainGain.gain.cancelScheduledValues(this.ac.currentTime);
-					this.rainGain.gain.setValueAtTime(0, this.ac.currentTime);
-					this.rainGain.gain.linearRampToValueAtTime(
-						0.4,
-						this.ac.currentTime + 2,
-					);
-
-					this.isPlayingRain = true;
-					const scheduleThunder = () => {
-						if (!this.isPlayingRain) return;
-						this.playThunder();
-						this.rainTimer = setTimeout(
-							scheduleThunder,
-							15000 + Math.random() * 20000,
-						);
-					};
-
-					clearTimeout(this.rainTimer);
-					this.rainTimer = setTimeout(scheduleThunder, 5000);
-				}
-
-				stopRainSounds() {
-					if (!this.ac) return;
-					this.isPlayingRain = false;
-					this.rainGain.gain.cancelScheduledValues(this.ac.currentTime);
-					this.rainGain.gain.setValueAtTime(
-						this.rainGain.gain.value,
-						this.ac.currentTime,
-					);
-					this.rainGain.gain.linearRampToValueAtTime(
-						0,
-						this.ac.currentTime + 1.5,
-					);
-					clearTimeout(this.rainTimer);
-					this.rainTimer = null;
 				}
 
 				playChord(freqs) {
@@ -1612,7 +1773,7 @@
 						osc.frequency.value = f;
 						const g = this.ac.createGain();
 						g.gain.setValueAtTime(0.0001, t0);
-						g.gain.exponentialRampToValueAtTime(0.1 / (i + 1), t0 + 3);
+						g.gain.exponentialRampToValueAtTime(0.08 / (i + 1), t0 + 3);
 						g.gain.exponentialRampToValueAtTime(0.0001, t0 + 10);
 						osc.connect(g);
 						g.connect(this.musicGain);
@@ -1654,12 +1815,11 @@
 							);
 							this.mediaSource.connect(this.masterGain);
 						}
-						if (this.playlist.length > 0) this.playTrack(this.currentTrack);
-						else this.setMode('ambient');
 					} else {
 						this.startGen();
 					}
 					UI.updatePlayState(this.isPlaying || !this.webAudio.paused);
+					UI.updateTimelineVisibility();
 				}
 
 				playTrack(index) {
@@ -1674,6 +1834,7 @@
 							UI.updateTrackInfo(this.playlist[index].title, 'Ошибка файла'),
 						);
 					UI.updateTrackInfo(this.playlist[index].title, 'Локальный трек');
+					UI.updatePlaylistActive(index);
 				}
 
 				togglePlay() {
@@ -1697,22 +1858,32 @@
 				}
 
 				nextTrack() {
-					if (this.isPlaylistMode)
-						this.playTrack((this.currentTrack + 1) % this.playlist.length);
+					if (!this.isPlaylistMode) return;
+					if (this.shuffleMode) {
+						let next = Math.floor(Math.random() * this.playlist.length);
+						while (next === this.currentTrack && this.playlist.length > 1) {
+							next = Math.floor(Math.random() * this.playlist.length);
+						}
+						this.playTrack(next);
+					} else {
+						this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
+						this.playTrack(this.currentTrack);
+					}
 				}
+
 				prevTrack() {
-					if (this.isPlaylistMode)
-						this.playTrack(
-							(this.currentTrack - 1 + this.playlist.length) %
-								this.playlist.length,
-						);
+					if (!this.isPlaylistMode) return;
+					this.currentTrack =
+						(this.currentTrack - 1 + this.playlist.length) %
+						this.playlist.length;
+					this.playTrack(this.currentTrack);
 				}
 
 				setVolume(val) {
 					if (this.isPlaylistMode) this.webAudio.volume = val;
 					else if (this.ac)
 						this.musicGain.gain.setTargetAtTime(
-							val * 0.4,
+							val * 0.3,
 							this.ac.currentTime,
 							0.1,
 						);
@@ -1735,8 +1906,11 @@
 						rightTab: document.getElementById('rightTab'),
 						socialPanel: document.getElementById('socialPanel'),
 						musicPanel: document.getElementById('musicPanel'),
+						playlistContainer: document.getElementById('playlistContainer'),
+						playlistModal: document.getElementById('playlistModal'),
+						closePlaylistBtn: document.getElementById('closePlaylistBtn'),
+						playlistBtn: document.getElementById('playlistBtn'),
 						mobileBackdrop: document.getElementById('mobileBackdrop'),
-						rainToggle: document.getElementById('rainToggle'),
 						playBtn: document.getElementById('playBtn'),
 						iconPlay: document.getElementById('iconPlay'),
 						iconPause: document.getElementById('iconPause'),
@@ -1751,14 +1925,75 @@
 						ctxMenu: document.getElementById('ctx-menu'),
 						copyLinkBtn: document.getElementById('copyLinkBtn'),
 						visBars: document.querySelectorAll('.vis-bar'),
+
+						progressContainer: document.getElementById('progressContainer'),
+						progressSlider: document.getElementById('progressSlider'),
+						shuffleBtn: document.getElementById('shuffleBtn'),
+						repeatBtn: document.getElementById('repeatBtn'),
+						repeatOneDot: document.getElementById('repeatOneDot'),
+						volBtn: document.getElementById('volBtn'),
+						volPopover: document.getElementById('volPopover'),
 					};
 
 					this.els.tagline.innerText =
 						CONFIG.quotes[Math.floor(Math.random() * CONFIG.quotes.length)];
+					this.isSeeking = false;
 
+					this.renderPlaylist();
 					this.setupDrag();
 					this.bindEvents();
 					this.updateVisualizer();
+				},
+
+				renderPlaylist() {
+					this.els.playlistContainer.innerHTML = '';
+					CONFIG.playlist.forEach((track, i) => {
+						const btn = document.createElement('button');
+						btn.className = 'playlist-item';
+						btn.innerText = track.title;
+						btn.dataset.index = i;
+						btn.onclick = (e) => {
+							e.stopPropagation();
+
+							if (!this.engine.isPlaylistMode) {
+								document
+									.querySelectorAll('[data-mode]')
+									.forEach((b) => b.classList.remove('active'));
+								document
+									.querySelector('[data-mode="playlist"]')
+									.classList.add('active');
+								this.engine.setMode('playlist');
+							}
+
+							this.engine.playTrack(i);
+							this.updatePlayState(true);
+
+							this.els.playlistModal.classList.remove('open');
+							this.closeAllUI();
+						};
+						this.els.playlistContainer.appendChild(btn);
+					});
+				},
+
+				updatePlaylistActive(index) {
+					document
+						.querySelectorAll('.playlist-item')
+						.forEach((b) => b.classList.remove('active'));
+					const activeBtn = document.querySelector(
+						`.playlist-item[data-index="${index}"]`,
+					);
+					if (activeBtn) activeBtn.classList.add('active');
+				},
+
+				closeAllUI() {
+					this.els.settingsMenu.classList.remove('open');
+					this.els.socialPanel.classList.remove('open');
+					this.els.musicPanel.classList.remove('open');
+					this.els.volPopover.classList.remove('open');
+					this.els.playlistModal.classList.remove('open');
+					this.els.mobileBackdrop.classList.remove('active');
+					this.els.leftTab.classList.remove('tab-hidden');
+					this.els.rightTab.classList.remove('tab-hidden');
 				},
 
 				setupDrag() {
@@ -1780,7 +2015,12 @@
 					}
 
 					player.addEventListener('mousedown', (e) => {
-						if (e.target.closest('.ctrl-btn') || e.target.closest('input'))
+						if (
+							e.target.closest('.ctrl-btn') ||
+							e.target.closest('input') ||
+							e.target.closest('.vol-wrap') ||
+							e.target.closest('.progress-container')
+						)
 							return;
 
 						isDragging = true;
@@ -1799,16 +2039,12 @@
 
 					document.addEventListener('mousemove', (e) => {
 						if (!isDragging) return;
-
 						let newX = startLeft + (e.clientX - startX);
 						let newY = startTop + (e.clientY - startY);
-
 						const maxX = window.innerWidth - player.offsetWidth;
 						const maxY = window.innerHeight - player.offsetHeight;
-
 						newX = Math.max(0, Math.min(newX, maxX));
 						newY = Math.max(0, Math.min(newY, maxY));
-
 						player.style.left = newX + 'px';
 						player.style.top = newY + 'px';
 					});
@@ -1817,7 +2053,6 @@
 						if (!isDragging) return;
 						isDragging = false;
 						player.style.transition = '';
-
 						const rect = player.getBoundingClientRect();
 						localStorage.setItem(
 							'playerPos',
@@ -1841,28 +2076,39 @@
 					);
 					this.engine.analyser.getByteFrequencyData(dataArray);
 
-					// Мапим 5 полосок на разные частоты
 					const step = Math.floor(dataArray.length / 5);
 					for (let i = 0; i < 5; i++) {
 						let value = dataArray[i * step];
-						// Плавное затухание для более мягкого вида
 						let height = Math.max(15, (value / 255) * 100);
 						this.els.visBars[i].style.height = height + '%';
+					}
+				},
+
+				updateTimelineVisibility() {
+					if (this.engine.isPlaylistMode) {
+						this.els.progressContainer.classList.add('active');
+						this.els.playlistBtn.classList.add('visible');
+					} else {
+						this.els.progressContainer.classList.remove('active');
+						this.els.playlistBtn.classList.remove('visible');
 					}
 				},
 
 				bindEvents() {
 					const { els, engine, bg } = this;
 
-					// Settings
-					const toggleSettings = () =>
-						els.settingsMenu.classList.toggle('open');
+					const toggleSettings = (e) => {
+						e.stopPropagation();
+						const isOpen = els.settingsMenu.classList.contains('open');
+						this.closeAllUI();
+						if (!isOpen) els.settingsMenu.classList.add('open');
+					};
 					els.settingsBtn.onclick = toggleSettings;
 					els.mSettingsBtn.onclick = toggleSettings;
 
-					// Background effects
 					document.querySelectorAll('[data-effect]').forEach((btn) => {
 						btn.onclick = (e) => {
+							e.stopPropagation();
 							document
 								.querySelectorAll('[data-effect]')
 								.forEach((b) => b.classList.remove('active'));
@@ -1871,15 +2117,7 @@
 						};
 					});
 
-					// Rain sound
-					els.rainToggle.onchange = (e) => {
-						if (e.target.checked) engine.startRainSounds();
-						else engine.stopRainSounds();
-					};
-
-					// Desktop Panels (Hover)
 					let leftTimer, rightTimer;
-
 					const openLeft = () => {
 						if (window.innerWidth >= 768) {
 							clearTimeout(leftTimer);
@@ -1922,88 +2160,176 @@
 					els.musicPanel.addEventListener('mouseleave', closeRight);
 					els.rightTab.addEventListener('mouseenter', openRight);
 
-					// Mobile Panels (Click & Backdrop)
-					const closeMobilePanels = () => {
-						els.socialPanel.classList.remove('open');
-						els.musicPanel.classList.remove('open');
-						els.mobileBackdrop.classList.remove('active');
-					};
-
 					document.getElementById('mLeftBtn').onclick = (e) => {
 						e.stopPropagation();
-						els.musicPanel.classList.remove('open');
-						els.socialPanel.classList.toggle('open');
-						els.mobileBackdrop.classList.toggle(
-							'active',
-							els.socialPanel.classList.contains('open'),
-						);
+						const isOpen = els.socialPanel.classList.contains('open');
+						this.closeAllUI();
+						if (!isOpen) {
+							els.socialPanel.classList.add('open');
+							els.mobileBackdrop.classList.add('active');
+						}
 					};
 
 					document.getElementById('mRightBtn').onclick = (e) => {
 						e.stopPropagation();
-						els.socialPanel.classList.remove('open');
-						els.musicPanel.classList.toggle('open');
-						els.mobileBackdrop.classList.toggle(
-							'active',
-							els.musicPanel.classList.contains('open'),
-						);
+						const isOpen = els.musicPanel.classList.contains('open');
+						this.closeAllUI();
+						if (!isOpen) {
+							els.musicPanel.classList.add('open');
+							els.mobileBackdrop.classList.add('active');
+						}
 					};
 
-					els.mobileBackdrop.onclick = closeMobilePanels;
+					document.addEventListener('click', (e) => {
+						if (
+							!e.target.closest('.settings-menu') &&
+							!e.target.closest('.social-panel') &&
+							!e.target.closest('.music-panel') &&
+							!e.target.closest('.vol-wrap') &&
+							!e.target.closest('.settings-btn') &&
+							!e.target.closest('.m-btn') &&
+							!e.target.closest('.playlist-modal-content') &&
+							!e.target.closest('#playlistBtn')
+						) {
+							this.closeAllUI();
+						}
+					});
 
-					// Music Modes
+					els.mobileBackdrop.onclick = () => this.closeAllUI();
+
 					document.querySelectorAll('[data-mode]').forEach((btn) => {
 						btn.onclick = (e) => {
+							e.stopPropagation();
 							document
 								.querySelectorAll('[data-mode]')
 								.forEach((b) => b.classList.remove('active'));
 							e.target.classList.add('active');
-							engine.setMode(e.target.dataset.mode);
-							if (e.target.dataset.mode !== 'playlist') {
+
+							const mode = e.target.dataset.mode;
+							engine.setMode(mode);
+
+							if (mode !== 'playlist') {
 								const names = {
 									ambient: 'Ambient',
 									deep: 'Deep Space',
 									rain: 'Lo-Fi',
 								};
-								this.updateTrackInfo(names[e.target.dataset.mode], 'Генератор');
+								this.updateTrackInfo(names[mode], 'Генератор');
 							}
 						};
 					});
 
-					// Player Controls
+					els.playlistBtn.onclick = (e) => {
+						e.stopPropagation();
+						this.closeAllUI();
+						els.playlistModal.classList.add('open');
+					};
+
+					els.closePlaylistBtn.onclick = () => {
+						els.playlistModal.classList.remove('open');
+					};
+
+					els.playlistModal.onclick = (e) => {
+						if (e.target === els.playlistModal)
+							els.playlistModal.classList.remove('open');
+					};
+
 					els.playBtn.onclick = () => {
 						const isPlaying = engine.togglePlay();
 						this.updatePlayState(isPlaying);
 					};
+
 					document.getElementById('nextBtn').onclick = () => engine.nextTrack();
 					document.getElementById('prevBtn').onclick = () => engine.prevTrack();
 
-					document.getElementById('volSlider').oninput = (e) =>
+					els.shuffleBtn.onclick = (e) => {
+						e.stopPropagation();
+						engine.shuffleMode = !engine.shuffleMode;
+						els.shuffleBtn.classList.toggle('active', engine.shuffleMode);
+					};
+
+					els.repeatBtn.onclick = (e) => {
+						e.stopPropagation();
+						engine.repeatMode = (engine.repeatMode + 1) % 3;
+						els.repeatBtn.classList.toggle('active', engine.repeatMode > 0);
+						els.repeatOneDot.style.display =
+							engine.repeatMode === 2 ? 'flex' : 'none';
+					};
+
+					els.volBtn.onclick = (e) => {
+						e.stopPropagation();
+						els.volPopover.classList.toggle('open');
+					};
+					document.getElementById('volSlider').oninput = (e) => {
 						engine.setVolume(e.target.value);
+					};
+
 					const webAudio = document.getElementById('webAudio');
 					webAudio.onplay = () => this.updatePlayState(true);
 					webAudio.onpause = () => this.updatePlayState(false);
-					webAudio.onended = () => engine.nextTrack();
 
-					// Socials
+					webAudio.onended = () => {
+						if (engine.repeatMode === 2) {
+							webAudio.currentTime = 0;
+							webAudio.play();
+						} else if (engine.shuffleMode) {
+							engine.nextTrack();
+						} else {
+							if (
+								engine.currentTrack === engine.playlist.length - 1 &&
+								engine.repeatMode === 0
+							) {
+								this.updatePlayState(false);
+							} else {
+								engine.nextTrack();
+							}
+						}
+					};
+
+					webAudio.addEventListener('timeupdate', () => {
+						if (
+							this.isSeeking ||
+							!engine.isPlaylistMode ||
+							isNaN(webAudio.duration)
+						)
+							return;
+						const percent = (webAudio.currentTime / webAudio.duration) * 100;
+						els.progressSlider.value = percent;
+						els.progressSlider.style.setProperty('--progress', `${percent}%`);
+					});
+
+					webAudio.addEventListener('loadedmetadata', () => {
+						els.progressSlider.value = 0;
+						els.progressSlider.style.setProperty('--progress', `0%`);
+					});
+
+					els.progressSlider.addEventListener('input', (e) => {
+						this.isSeeking = true;
+						e.target.style.setProperty('--progress', `${e.target.value}%`);
+					});
+
+					els.progressSlider.addEventListener('change', (e) => {
+						if (engine.isPlaylistMode && webAudio.duration) {
+							webAudio.currentTime = (e.target.value / 100) * webAudio.duration;
+						}
+						this.isSeeking = false;
+					});
+
 					document.querySelectorAll('.soc-item').forEach((item) => {
 						item.onclick = () => {
 							const url = item.dataset.url;
-							els.qrTitle.innerText = item.dataset.name;
-							els.qrLink.href = url;
-							els.qrModal.classList.add('open');
+							const name = item.dataset.name;
 
-							QRCode.toDataURL(
-								url,
-								{
-									width: 200,
-									margin: 2,
-									color: { dark: '#a78bfa', light: '#0d111c' },
-								},
-								(err, url) => {
-									if (!err) els.qrImage.src = url;
-								},
-							);
+							els.qrTitle.innerText = name;
+							els.qrLink.href = url;
+
+							if (name === 'GitHub') {
+								els.qrImage.src = 'qr_github.png';
+							} else if (name === 'Telegram') {
+								els.qrImage.src = 'qr_telegram.png';
+							}
+
+							els.qrModal.classList.add('open');
 						};
 					});
 
@@ -2011,7 +2337,6 @@
 						if (e.target === els.qrModal) els.qrModal.classList.remove('open');
 					};
 
-					// Context Menu
 					document.addEventListener('contextmenu', (e) => {
 						e.preventDefault();
 						els.ctxMenu.style.display = 'flex';

@@ -1,2385 +1,1164 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-		/>
-		<title>noclipov</title>
-		<link
-			rel="icon"
-			href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>"
-		/>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-			rel="stylesheet"
-		/>
-		<style>
-			:root {
-				--primary: #8b5cf6;
-				--secondary: #06b6d4;
-				--accent: #ec4899;
-				--txt: #e2e8f0;
-				--muted: #64748b;
-				--bg: #010204;
-				--card-bg: rgba(15, 18, 28, 0.2); /* Очень прозрачная карточка */
-			}
-
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-				-webkit-tap-highlight-color: transparent;
-				user-select: none;
-				-webkit-user-select: none;
-			}
-
-			::-webkit-scrollbar {
-				width: 6px;
-			}
-			::-webkit-scrollbar-track {
-				background: transparent;
-			}
-			::-webkit-scrollbar-thumb {
-				background: rgba(255, 255, 255, 0.1);
-				border-radius: 10px;
-			}
-			::-webkit-scrollbar-thumb:hover {
-				background: rgba(255, 255, 255, 0.2);
-			}
-
-			html,
-			body {
-				height: 100%;
-				overflow: hidden;
-			}
-
-			body {
-				font-family:
-					'Outfit',
-					-apple-system,
-					sans-serif;
-				background:
-					radial-gradient(
-						1000px 700px at 50% -20%,
-						#0a0c13 0%,
-						transparent 60%
-					),
-					radial-gradient(
-						800px 600px at 100% 120%,
-						#040a10 0%,
-						transparent 60%
-					),
-					var(--bg);
-				color: var(--txt);
-				display: grid;
-				place-items: center;
-				position: relative;
-				-webkit-font-smoothing: antialiased;
-				perspective: 1000px;
-			}
-
-			/* Background - более насыщенный и плотный */
-			.aurora {
-				position: fixed;
-				inset: 0;
-				overflow: hidden;
-				pointer-events: none;
-				z-index: 0;
-				filter: blur(100px);
-				opacity: 0.35;
-			}
-			.blob {
-				position: absolute;
-				border-radius: 50%;
-				mix-blend-mode: screen;
-			}
-			.b1 {
-				width: 60vw;
-				height: 60vw;
-				background: #4c1d95;
-				top: -20%;
-				left: -10%;
-				animation: drift 25s infinite alternate;
-			}
-			.b2 {
-				width: 50vw;
-				height: 50vw;
-				background: #0e7490;
-				bottom: -20%;
-				right: -10%;
-				animation: drift 30s infinite alternate-reverse;
-			}
-			.b3 {
-				width: 40vw;
-				height: 40vw;
-				background: #831843;
-				top: 40%;
-				left: 40%;
-				opacity: 0.5;
-				animation: drift 35s infinite alternate;
-			}
-			@keyframes drift {
-				0% {
-					transform: translate(0, 0) scale(1);
-				}
-				100% {
-					transform: translate(10%, 10%) scale(1.1);
-				}
-			}
-
-			#bg {
-				position: fixed;
-				inset: 0;
-				z-index: 1;
-				pointer-events: none;
-			}
-			.vignette {
-				position: fixed;
-				inset: 0;
-				z-index: 2;
-				pointer-events: none;
-				background: radial-gradient(
-					circle at center,
-					transparent 30%,
-					rgba(0, 0, 0, 0.95) 100%
-				);
-			}
-			.grain {
-				position: fixed;
-				inset: 0;
-				z-index: 3;
-				pointer-events: none;
-				opacity: 0.04;
-				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-			}
-
-			/* Profile Card - Настоящее матовое стекло */
-			.card {
-				position: relative;
-				z-index: 4;
-				width: min(90vw, 380px);
-				border-radius: 32px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				backdrop-filter: blur(30px) saturate(200%);
-				box-shadow:
-					0 30px 80px -20px rgba(0, 0, 0, 0.9),
-					0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-					0 0 40px rgba(139, 92, 246, 0.15); /* Внутреннее свечение */
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				padding: 40px 24px 32px;
-				animation: rise 1s cubic-bezier(0.2, 0.85, 0.25, 1) both;
-				transform-style: preserve-3d;
-				transition: transform 0.1s ease-out;
-			}
-			.card::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				height: 1px;
-				background: linear-gradient(
-					90deg,
-					transparent,
-					rgba(139, 92, 246, 0.6),
-					transparent
-				);
-			}
-			@keyframes rise {
-				from {
-					opacity: 0;
-					transform: translateY(30px) scale(0.95);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0) scale(1);
-				}
-			}
-
-			.avatar-wrapper {
-				position: relative;
-				margin-bottom: 24px;
-				transform: translateZ(30px);
-			}
-			.avatar {
-				position: relative;
-				width: 110px;
-				height: 110px;
-				border-radius: 50%;
-				padding: 3px;
-				background: linear-gradient(
-					135deg,
-					var(--primary),
-					var(--secondary),
-					var(--accent)
-				);
-				box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
-			}
-			.avatar-inner {
-				width: 100%;
-				height: 100%;
-				border-radius: 50%;
-				background: #010204;
-				overflow: hidden;
-				display: grid;
-				place-items: center;
-				font-size: 40px;
-				font-weight: 800;
-				border: 2px solid #010204;
-			}
-			.avatar-inner img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				filter: brightness(0.95);
-			}
-
-			.name {
-				font-size: 30px;
-				font-weight: 700;
-				letter-spacing: -0.03em;
-				background: linear-gradient(
-					100deg,
-					#fff 10%,
-					#c4b5fd 40%,
-					#67e8f9 60%,
-					#fff 90%
-				);
-				background-size: 250% 100%;
-				-webkit-background-clip: text;
-				background-clip: text;
-				color: transparent;
-				animation: shimmer 8s linear infinite;
-				text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-				transform: translateZ(20px);
-			}
-			@keyframes shimmer {
-				to {
-					background-position: -250% 0;
-				}
-			}
-			.tagline {
-				margin-top: 8px;
-				font-size: 14px;
-				color: #94a3b8;
-				font-weight: 400;
-				text-align: center;
-				text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-				transform: translateZ(10px);
-			}
-
-			/* Now Playing Widget */
-			.card-widget {
-				margin-top: 28px;
-				width: 100%;
-				padding: 16px 20px;
-				background: rgba(0, 0, 0, 0.2);
-				border-radius: 20px;
-				border: 1px solid rgba(255, 255, 255, 0.04);
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				transform: translateZ(15px);
-				backdrop-filter: blur(10px);
-			}
-			.widget-info {
-				display: flex;
-				flex-direction: column;
-				max-width: 60%;
-			}
-			.widget-label {
-				font-size: 10px;
-				text-transform: uppercase;
-				color: var(--secondary);
-				font-weight: 700;
-				letter-spacing: 0.1em;
-				text-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
-			}
-			.widget-track {
-				font-size: 14px;
-				font-weight: 500;
-				color: #fff;
-				margin-top: 2px;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-			}
-
-			/* Visualizer */
-			.visualizer {
-				display: flex;
-				align-items: center;
-				gap: 3px;
-				height: 20px;
-			}
-			.vis-bar {
-				width: 3px;
-				background: linear-gradient(to top, var(--primary), var(--secondary));
-				border-radius: 3px;
-				height: 15%;
-				transition: height 0.08s ease-out;
-				box-shadow: 0 0 6px rgba(6, 182, 212, 0.3);
-			}
-
-			/* Settings */
-			.settings-btn {
-				position: fixed;
-				top: 20px;
-				right: 20px;
-				z-index: 100;
-				width: 44px;
-				height: 44px;
-				border-radius: 50%;
-				background: rgba(15, 18, 28, 0.6);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				color: var(--muted);
-				display: grid;
-				place-items: center;
-				cursor: pointer;
-				backdrop-filter: blur(10px);
-				transition: all 0.3s;
-			}
-			.settings-btn:hover {
-				color: #fff;
-				transform: rotate(90deg);
-				background: rgba(255, 255, 255, 0.1);
-			}
-			.settings-menu {
-				position: fixed;
-				top: 70px;
-				right: 20px;
-				z-index: 99;
-				width: 240px;
-				background: rgba(15, 18, 28, 0.85);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-radius: 20px;
-				padding: 16px;
-				backdrop-filter: blur(30px);
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-				opacity: 0;
-				pointer-events: none;
-				transform: translateY(-10px);
-				transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-			}
-			.settings-menu.open {
-				opacity: 1;
-				pointer-events: auto;
-				transform: translateY(0);
-			}
-			.settings-title {
-				font-size: 11px;
-				text-transform: uppercase;
-				color: var(--muted);
-				margin-bottom: 8px;
-				font-weight: 700;
-				letter-spacing: 0.05em;
-			}
-			.grid-btns {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 6px;
-				margin-bottom: 16px;
-			}
-			.s-btn {
-				background: rgba(255, 255, 255, 0.03);
-				border: 1px solid rgba(255, 255, 255, 0.06);
-				color: var(--muted);
-				padding: 8px;
-				border-radius: 10px;
-				font-size: 12px;
-				cursor: pointer;
-				transition: all 0.2s;
-				font-family: inherit;
-				font-weight: 500;
-			}
-			.s-btn:hover {
-				background: rgba(255, 255, 255, 0.08);
-				color: #fff;
-			}
-			.s-btn.active {
-				background: rgba(139, 92, 246, 0.2);
-				border-color: rgba(139, 92, 246, 0.4);
-				color: #fff;
-			}
-
-			/* Desktop Triggers & Tabs */
-			.panel-trigger {
-				position: fixed;
-				top: 50%;
-				transform: translateY(-50%);
-				z-index: 98;
-				width: 60px;
-				height: 200px;
-			}
-			.panel-trigger.left {
-				left: 0;
-			}
-			.panel-trigger.right {
-				right: 0;
-			}
-			.panel-tab {
-				position: fixed;
-				top: 50%;
-				transform: translateY(-50%);
-				z-index: 100;
-				width: 24px;
-				height: 60px;
-				background: rgba(15, 18, 28, 0.6);
-				border: 1px solid rgba(255, 255, 255, 0.06);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-				color: var(--muted);
-				backdrop-filter: blur(10px);
-				transition:
-					transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-					opacity 0.3s,
-					background 0.3s;
-			}
-			.panel-tab.left {
-				left: 0;
-				border-radius: 0 12px 12px 0;
-				border-left: none;
-			}
-			.panel-tab.right {
-				right: 0;
-				border-radius: 12px 0 0 12px;
-				border-right: none;
-			}
-			.panel-tab:hover {
-				color: #fff;
-				background: rgba(139, 92, 246, 0.2);
-			}
-			.panel-tab.left.tab-hidden {
-				transform: translate(-100%, -50%);
-				opacity: 0;
-				pointer-events: none;
-			}
-			.panel-tab.right.tab-hidden {
-				transform: translate(100%, -50%);
-				opacity: 0;
-				pointer-events: none;
-			}
-
-			/* Panels */
-			.social-panel,
-			.music-panel {
-				position: fixed;
-				top: 50%;
-				transform: translateY(-50%);
-				z-index: 99;
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-				padding: 20px;
-				background: rgba(15, 18, 28, 0.85);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				backdrop-filter: blur(30px);
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-				transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-			}
-			.social-panel {
-				left: 0;
-				transform: translate(-100%, -50%);
-				border-radius: 0 24px 24px 0;
-				border-left: none;
-			}
-			.music-panel {
-				right: 0;
-				transform: translate(100%, -50%);
-				border-radius: 24px 0 0 24px;
-				border-right: none;
-				width: 240px;
-			}
-			.social-panel.open {
-				transform: translate(0, -50%);
-			}
-			.music-panel.open {
-				transform: translate(0, -50%);
-			}
-			.panel-title {
-				font-size: 12px;
-				text-transform: uppercase;
-				color: var(--muted);
-				font-weight: 700;
-				letter-spacing: 0.1em;
-				text-align: center;
-				margin-bottom: 8px;
-			}
-			.soc-item {
-				width: 48px;
-				height: 48px;
-				border-radius: 16px;
-				background: rgba(255, 255, 255, 0.03);
-				display: grid;
-				place-items: center;
-				color: var(--muted);
-				cursor: pointer;
-				transition: 0.3s;
-				border: 1px solid transparent;
-			}
-			.soc-item:hover {
-				background: rgba(139, 92, 246, 0.15);
-				color: #fff;
-				border-color: rgba(139, 92, 246, 0.3);
-				transform: scale(1.05);
-			}
-			.soc-item svg {
-				width: 22px;
-				height: 22px;
-			}
-
-			/* Floating Player */
-			.floating-player {
-				position: fixed;
-				bottom: 24px;
-				right: 24px;
-				z-index: 100;
-				display: flex;
-				flex-direction: column;
-				gap: 8px;
-				padding: 12px 20px;
-				background: rgba(15, 18, 28, 0.8);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-radius: 24px;
-				backdrop-filter: blur(30px);
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-				cursor: grab;
-				min-width: 340px;
-				transition:
-					border-color 0.3s,
-					box-shadow 0.3s;
-			}
-			.floating-player:active {
-				cursor: grabbing;
-			}
-			.floating-player:hover {
-				border-color: rgba(255, 255, 255, 0.15);
-				box-shadow:
-					0 10px 40px rgba(0, 0, 0, 0.8),
-					0 0 20px rgba(139, 92, 246, 0.1);
-			}
-
-			/* Timeline */
-			.progress-container {
-				width: 100%;
-				height: 4px;
-				background: rgba(255, 255, 255, 0.08);
-				border-radius: 2px;
-				position: relative;
-				cursor: pointer;
-				display: none;
-				margin-bottom: 8px;
-			}
-			.progress-container.active {
-				display: block;
-			}
-			#progressSlider {
-				-webkit-appearance: none;
-				width: 100%;
-				height: 100%;
-				background: transparent;
-				position: absolute;
-				top: 0;
-				left: 0;
-				margin: 0;
-				cursor: pointer;
-			}
-			#progressSlider::-webkit-slider-runnable-track {
-				width: 100%;
-				height: 4px;
-				background: linear-gradient(to right, var(--primary), var(--secondary))
-					0 0 / var(--progress, 0%) 100% no-repeat;
-				border-radius: 2px;
-			}
-			#progressSlider::-webkit-slider-thumb {
-				-webkit-appearance: none;
-				height: 12px;
-				width: 12px;
-				border-radius: 50%;
-				background: #fff;
-				margin-top: -4px;
-				box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-				opacity: 0;
-				transition: opacity 0.2s;
-			}
-			.progress-container:hover #progressSlider::-webkit-slider-thumb {
-				opacity: 1;
-			}
-
-			/* Player Controls */
-			.player-controls {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				width: 100%;
-				gap: 12px;
-			}
-			.main-controls {
-				display: flex;
-				align-items: center;
-				gap: 16px;
-			}
-
-			.ctrl-btn {
-				position: relative;
-				background: transparent;
-				border: none;
-				color: var(--muted);
-				cursor: pointer;
-				display: grid;
-				place-items: center;
-				transition: 0.2s;
-				pointer-events: auto;
-			}
-			.ctrl-btn:hover {
-				color: #fff;
-			}
-			.ctrl-btn.active {
-				color: var(--secondary);
-				text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-			}
-			.ctrl-btn svg {
-				width: 20px;
-				height: 20px;
-			}
-
-			.play-btn {
-				width: 44px;
-				height: 44px;
-				border-radius: 50%;
-				background: linear-gradient(135deg, var(--primary), var(--secondary));
-				color: #fff;
-				box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-			}
-			.play-btn:hover {
-				transform: scale(1.05);
-				box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
-			}
-			.play-btn svg {
-				width: 20px;
-				height: 20px;
-			}
-
-			#repeatOneDot {
-				position: absolute;
-				top: -4px;
-				right: -4px;
-				font-size: 10px;
-				font-weight: 800;
-				color: var(--bg);
-				background: var(--secondary);
-				border-radius: 50%;
-				width: 14px;
-				height: 14px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				line-height: 1;
-				box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
-			}
-
-			.track-info {
-				display: flex;
-				flex-direction: column;
-				min-width: 80px;
-				max-width: 110px;
-				pointer-events: none;
-			}
-			.track-name {
-				font-size: 12px;
-				font-weight: 600;
-				color: #fff;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-			.track-status {
-				font-size: 9px;
-				color: var(--muted);
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-				font-weight: 600;
-			}
-
-			/* Vertical Volume */
-			.vol-wrap {
-				position: relative;
-				display: flex;
-				align-items: center;
-			}
-			.vol-popover {
-				position: absolute;
-				bottom: 100%;
-				right: -10px;
-				background: rgba(15, 18, 28, 0.95);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				padding: 16px 8px;
-				border-radius: 16px;
-				backdrop-filter: blur(20px);
-				opacity: 0;
-				pointer-events: none;
-				transform: translateY(10px);
-				transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-				margin-bottom: 12px;
-				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
-				z-index: 102;
-				width: 44px;
-				height: 140px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-			.vol-popover.open {
-				opacity: 1;
-				pointer-events: auto;
-				transform: translateY(0);
-			}
-			.vol-popover input[type='range'] {
-				-webkit-appearance: none;
-				width: 100px;
-				height: 6px;
-				background: transparent;
-				cursor: pointer;
-				transform: rotate(-90deg);
-			}
-			.vol-popover input[type='range']::-webkit-slider-runnable-track {
-				width: 100%;
-				height: 6px;
-				background: rgba(255, 255, 255, 0.15);
-				border-radius: 3px;
-			}
-			.vol-popover input[type='range']::-webkit-slider-thumb {
-				-webkit-appearance: none;
-				height: 18px;
-				width: 18px;
-				border-radius: 50%;
-				background: #fff;
-				margin-top: -6px;
-				box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-				transition: transform 0.1s;
-			}
-			.vol-popover input[type='range']:hover::-webkit-slider-thumb {
-				transform: scale(1.1);
-			}
-
-			/* Скрываем кнопку плейлиста по умолчанию */
-			#playlistBtn {
-				display: none;
-			}
-			#playlistBtn.visible {
-				display: grid;
-			}
-
-			/* Playlist Modal (Удобное окно по центру) */
-			.modal-overlay {
-				position: fixed;
-				inset: 0;
-				z-index: 200;
-				background: rgba(0, 0, 0, 0.85);
-				backdrop-filter: blur(10px);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity: 0;
-				pointer-events: none;
-				transition: 0.3s;
-			}
-			.modal-overlay.open {
-				opacity: 1;
-				pointer-events: auto;
-			}
-
-			.qr-modal-content {
-				background: rgba(15, 18, 28, 0.9);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 32px;
-				padding: 32px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				transform: translateY(20px) scale(0.95);
-				transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-				position: relative;
-				overflow: hidden;
-				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-			}
-			.modal-overlay.open .qr-modal-content {
-				transform: translateY(0) scale(1);
-			}
-
-			.qr-wrapper {
-				background: rgba(0, 0, 0, 0.4);
-				padding: 16px;
-				border-radius: 24px;
-				margin-bottom: 24px;
-				border: 1px solid rgba(255, 255, 255, 0.05);
-				position: relative;
-			}
-			#qr-image {
-				display: block;
-				width: 200px;
-				height: 200px;
-				object-fit: contain;
-			}
-
-			.modal-title {
-				font-size: 20px;
-				font-weight: 700;
-				color: #fff;
-				margin-bottom: 8px;
-				letter-spacing: 0.02em;
-			}
-			.modal-desc {
-				font-size: 13px;
-				color: var(--muted);
-				margin-bottom: 24px;
-			}
-
-			.modal-btn {
-				background: rgba(255, 255, 255, 0.05);
-				color: #fff;
-				padding: 12px 32px;
-				border-radius: 14px;
-				text-decoration: none;
-				font-weight: 600;
-				font-size: 14px;
-				transition: all 0.3s;
-				width: 100%;
-				text-align: center;
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				cursor: pointer;
-				font-family: inherit;
-				position: relative;
-				overflow: hidden;
-				z-index: 2;
-			}
-			.modal-btn::before {
-				content: '';
-				position: absolute;
-				inset: 0;
-				border-radius: inherit;
-				background: linear-gradient(135deg, var(--primary), var(--secondary));
-				opacity: 0;
-				transition: opacity 0.3s;
-				z-index: -1;
-			}
-			.modal-btn:hover {
-				border-color: transparent;
-			}
-			.modal-btn:hover::before {
-				opacity: 1;
-			}
-
-			/* Playlist Modal Specific */
-			.playlist-modal-content {
-				background: rgba(15, 18, 28, 0.95);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 24px;
-				padding: 24px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				transform: translateY(20px);
-				transition: 0.3s;
-				width: min(90vw, 400px);
-				max-height: 80vh;
-				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-			}
-			.modal-overlay.open .playlist-modal-content {
-				transform: translateY(0);
-			}
-			.playlist-list {
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				gap: 6px;
-				overflow-y: auto;
-				padding-right: 4px;
-				margin-bottom: 16px;
-			}
-			.playlist-item {
-				text-align: left;
-				padding: 14px 16px;
-				font-size: 14px;
-				border-radius: 10px;
-				background: rgba(255, 255, 255, 0.03);
-				border: 1px solid transparent;
-				color: var(--muted);
-				transition: all 0.2s;
-				cursor: pointer;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-			.playlist-item:hover {
-				background: rgba(255, 255, 255, 0.08);
-				color: #fff;
-			}
-			.playlist-item.active {
-				background: rgba(139, 92, 246, 0.15);
-				border-color: rgba(139, 92, 246, 0.4);
-				color: var(--secondary);
-				font-weight: 600;
-			}
-
-			.mobile-backdrop {
-				position: fixed;
-				inset: 0;
-				background: rgba(0, 0, 0, 0.6);
-				backdrop-filter: blur(4px);
-				z-index: 90;
-				opacity: 0;
-				pointer-events: none;
-				transition: opacity 0.3s;
-			}
-			.mobile-backdrop.active {
-				opacity: 1;
-				pointer-events: auto;
-			}
-
-			/* Mobile */
-			.mobile-header {
-				display: none;
-			}
-			@media (max-width: 768px) {
-				.mobile-header {
-					display: flex;
-					position: fixed;
-					top: 15px;
-					left: 15px;
-					right: 15px;
-					justify-content: space-between;
-					z-index: 100;
-				}
-				.m-header-group {
-					display: flex;
-					gap: 10px;
-				}
-				.m-btn {
-					width: 44px;
-					height: 44px;
-					border-radius: 50%;
-					background: var(--card-bg);
-					border: 1px solid rgba(255, 255, 255, 0.1);
-					display: grid;
-					place-items: center;
-					color: var(--txt);
-					cursor: pointer;
-					backdrop-filter: blur(10px);
-					transition: transform 0.2s;
-				}
-				.m-btn:active {
-					transform: scale(0.95);
-				}
-
-				.settings-btn {
-					display: none;
-				}
-				.panel-trigger,
-				.panel-tab {
-					display: none;
-				}
-
-				.floating-player {
-					bottom: 0;
-					right: 0;
-					left: 0;
-					border-radius: 24px 24px 0 0;
-					cursor: default;
-					min-width: 100%;
-					padding: 16px 20px 24px;
-					box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-					z-index: 101;
-				}
-				.track-info {
-					display: none;
-				}
-				.player-controls {
-					justify-content: space-between;
-					gap: 0;
-					padding: 0 10px;
-				}
-				.main-controls {
-					gap: 20px;
-				}
-				.ctrl-btn svg {
-					width: 22px;
-					height: 22px;
-				}
-				.play-btn {
-					width: 48px;
-					height: 48px;
-				}
-				.play-btn svg {
-					width: 24px;
-					height: 24px;
-				}
-				.vol-popover {
-					right: 0;
-				}
-
-				.social-panel,
-				.music-panel {
-					top: auto;
-					bottom: 0;
-					left: 0;
-					right: 0;
-					width: 100%;
-					transform: translateY(100%);
-					border-radius: 32px 32px 0 0;
-					padding: 30px 20px 140px;
-					z-index: 100;
-					border: none;
-					border-top: 1px solid rgba(255, 255, 255, 0.1);
-				}
-				.social-panel.open,
-				.music-panel.open {
-					transform: translateY(0);
-				}
-				.music-panel .grid-btns {
-					grid-template-columns: 1fr 1fr;
-				}
-				.social-panel {
-					flex-direction: row;
-					flex-wrap: wrap;
-					justify-content: center;
-					gap: 20px;
-				}
-				.social-panel .panel-title {
-					width: 100%;
-					margin-bottom: 10px;
-				}
-
-				.card {
-					padding: 30px 20px 24px;
-					width: 92vw;
-					border-radius: 24px;
-					margin-bottom: 100px;
-				}
-				.avatar {
-					width: 90px;
-					height: 90px;
-				}
-				.name {
-					font-size: 26px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div class="vignette"></div>
-		<div class="grain"></div>
-		<canvas id="bg"></canvas>
-		<div class="aurora">
-			<div class="blob b1"></div>
-			<div class="blob b2"></div>
-			<div class="blob b3"></div>
-		</div>
-
-		<div class="mobile-backdrop" id="mobileBackdrop"></div>
-
-		<!-- Context Menu -->
-		<div id="ctx-menu">
-			<button class="ctx-item" onclick="location.reload()">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-					<path d="M3 3v5h5" />
-					<path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-					<path d="M16 21v-5h-5" />
-				</svg>
-				Обновить
-			</button>
-			<button class="ctx-item" id="copyLinkBtn">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<path
-						d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-					/>
-					<path
-						d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-					/>
-				</svg>
-				Копировать ссылку
-			</button>
-			<div class="ctx-sep"></div>
-			<a class="ctx-item" href="https://github.com/noclipov" target="_blank">
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path
-						d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"
-					/>
-				</svg>
-				GitHub
-			</a>
-		</div>
-
-		<!-- Mobile Header -->
-		<div class="mobile-header">
-			<div class="m-header-group">
-				<div class="m-btn" id="mLeftBtn">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						width="20"
-						height="20"
-					>
-						<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-						<circle cx="9" cy="7" r="4"></circle>
-						<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-						<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="m-header-group">
-				<div class="m-btn" id="mRightBtn">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						width="20"
-						height="20"
-					>
-						<path d="M9 18V5l12-2v13"></path>
-						<circle cx="6" cy="18" r="3"></circle>
-						<circle cx="18" cy="16" r="3"></circle>
-					</svg>
-				</div>
-				<div class="m-btn" id="mSettingsBtn">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						width="20"
-						height="20"
-					>
-						<circle cx="12" cy="12" r="3"></circle>
-						<path
-							d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-						></path>
-					</svg>
-				</div>
-			</div>
-		</div>
-
-		<!-- Desktop Triggers & Tabs -->
-		<div class="panel-trigger left" id="leftTrigger"></div>
-		<div class="panel-trigger right" id="rightTrigger"></div>
-
-		<div class="panel-tab left" id="leftTab">
-			<svg
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				width="16"
-				height="16"
-			>
-				<path d="M9 18l6-6-6-6" />
-			</svg>
-		</div>
-		<div class="panel-tab right" id="rightTab">
-			<svg
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				width="16"
-				height="16"
-			>
-				<path d="M15 18l-6-6 6-6" />
-			</svg>
-		</div>
-
-		<!-- Profile Card -->
-		<div class="card" id="tilt-card">
-			<div class="avatar-wrapper">
-				<div class="avatar">
-					<div class="avatar-inner">
-						<img
-							src="https://github.com/noclipov.png"
-							alt="avatar"
-							onerror="
-								this.style.display = 'none';
-								this.parentElement.innerText = 'n';
-							"
-						/>
-					</div>
-				</div>
-			</div>
-
-			<h1 class="name">noclipov</h1>
-			<p class="tagline" id="tagline">
-				where the light fades and echoes remain
-			</p>
-
-			<div class="card-widget">
-				<div class="widget-info">
-					<div class="widget-label">Now Playing</div>
-					<div class="widget-track" id="widgetTrack">Ambient</div>
-				</div>
-				<div class="visualizer">
-					<div class="vis-bar"></div>
-					<div class="vis-bar"></div>
-					<div class="vis-bar"></div>
-					<div class="vis-bar"></div>
-					<div class="vis-bar"></div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Settings -->
-		<button class="settings-btn" id="settingsBtn">
-			<svg
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				width="20"
-				height="20"
-			>
-				<circle cx="12" cy="12" r="3"></circle>
-				<path
-					d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-				></path>
-			</svg>
-		</button>
-
-		<div class="settings-menu" id="settingsMenu">
-			<div class="settings-title">Фон</div>
-			<div class="grid-btns" id="bgModes">
-				<button class="s-btn active" data-effect="stars">Звезды</button>
-				<button class="s-btn" data-effect="snow">Пыль</button>
-				<button class="s-btn" data-effect="rain">Дождь</button>
-				<button class="s-btn" data-effect="vertices">Сеть</button>
-				<button class="s-btn" data-effect="warp">Warp</button>
-				<button class="s-btn" data-effect="bubbles">Пузыри</button>
-			</div>
-		</div>
-
-		<!-- Left Social Panel -->
-		<div class="social-panel" id="socialPanel">
-			<div class="panel-title">Socials</div>
-			<div
-				class="soc-item"
-				data-url="https://github.com/noclipov"
-				data-name="GitHub"
-			>
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path
-						d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"
-					/>
-				</svg>
-			</div>
-			<div
-				class="soc-item"
-				data-url="https://t.me/noclipov"
-				data-name="Telegram"
-			>
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path
-						d="M21.6 3.4 2.9 10.7c-.94.37-.93 1.7.02 2.04l4.7 1.66 1.8 5.55c.27.84 1.32 1.03 1.86.34l2.5-3.2 4.72 3.48c.72.53 1.75.13 1.9-.75l2.9-15.2c.17-.9-.72-1.6-1.4-1.22zM9.6 14.1l-.3 3.2-1.2-3.7 9.2-6.3-7.7 6.8z"
-					/>
-				</svg>
-			</div>
-		</div>
-
-		<!-- Right Music Panel -->
-		<div class="music-panel" id="musicPanel">
-			<div class="panel-title">Music Mode</div>
-			<div class="grid-btns" id="musicModes" style="grid-template-columns: 1fr">
-				<button class="s-btn active" data-mode="ambient">Ambient</button>
-				<button class="s-btn" data-mode="deep">Deep Space</button>
-				<button class="s-btn" data-mode="rain">Lo-Fi</button>
-				<button class="s-btn" data-mode="playlist">Playlist (Local)</button>
-			</div>
-		</div>
-
-		<!-- Playlist Modal -->
-		<div class="modal-overlay" id="playlistModal">
-			<div class="playlist-modal-content">
-				<h3
-					style="
-						margin-bottom: 20px;
-						color: #fff;
-						font-weight: 700;
-						font-size: 18px;
-					"
-				>
-					Локальный плейлист
-				</h3>
-				<div class="playlist-list" id="playlistContainer"></div>
-				<button class="modal-btn" id="closePlaylistBtn">Закрыть</button>
-			</div>
-		</div>
-
-		<!-- Draggable Player -->
-		<div class="floating-player" id="player">
-			<div class="progress-container" id="progressContainer">
-				<input
-					type="range"
-					id="progressSlider"
-					min="0"
-					max="100"
-					step="0.1"
-					value="0"
-				/>
-			</div>
-
-			<div class="player-controls">
-				<button class="ctrl-btn" id="shuffleBtn" title="Случайный порядок">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M16 3h5v5" />
-						<path d="M4 20L21 3" />
-						<path d="M21 16v5h-5" />
-						<path d="M15 15l6 6" />
-						<path d="M4 4l5 5" />
-					</svg>
-				</button>
-
-				<div class="main-controls">
-					<button class="ctrl-btn" id="prevBtn">
-						<svg viewBox="0 0 24 24" fill="currentColor">
-							<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-						</svg>
-					</button>
-
-					<button class="ctrl-btn play-btn" id="playBtn">
-						<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor">
-							<path d="M8 5v14l11-7z" />
-						</svg>
-						<svg
-							id="iconPause"
-							viewBox="0 0 24 24"
-							fill="currentColor"
-							style="display: none"
-						>
-							<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-						</svg>
-					</button>
-
-					<button class="ctrl-btn" id="nextBtn">
-						<svg viewBox="0 0 24 24" fill="currentColor">
-							<path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
-						</svg>
-					</button>
-				</div>
-
-				<button class="ctrl-btn" id="repeatBtn" title="Повтор">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M17 2l4 4-4 4" />
-						<path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-						<path d="M7 22l-4-4 4-4" />
-						<path d="M21 13v1a4 4 0 0 1-4 4H3" />
-					</svg>
-					<span id="repeatOneDot" style="display: none">1</span>
-				</button>
-
-				<div class="track-info">
-					<div class="track-name" id="trackName">Ambient</div>
-					<div class="track-status" id="trackStatus">Генератор</div>
-				</div>
-
-				<!-- Кнопка вызова плейлиста (появляется только в локальном режиме) -->
-				<button class="ctrl-btn" id="playlistBtn" title="Список треков">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<line x1="8" y1="6" x2="21" y2="6"></line>
-						<line x1="8" y1="12" x2="21" y2="12"></line>
-						<line x1="8" y1="18" x2="21" y2="18"></line>
-						<line x1="3" y1="6" x2="3.01" y2="6"></line>
-						<line x1="3" y1="12" x2="3.01" y2="12"></line>
-						<line x1="3" y1="18" x2="3.01" y2="18"></line>
-					</svg>
-				</button>
-
-				<div class="vol-wrap">
-					<button class="ctrl-btn" id="volBtn">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-						>
-							<path d="M11 5L6 9H2v6h4l5 4V5z" />
-							<path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-							<path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-						</svg>
-					</button>
-					<div class="vol-popover" id="volPopover">
-						<input
-							type="range"
-							id="volSlider"
-							min="0"
-							max="1"
-							step="0.01"
-							value="0.5"
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modern QR Modal -->
-		<div class="modal-overlay" id="qrModal">
-			<div class="qr-modal-content">
-				<div class="qr-wrapper">
-					<img
-						id="qr-image"
-						src=""
-						alt="QR Code"
-						onerror="
-							this.src =
-								'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><rect width=\'200\' height=\'200\' fill=\'#0c0d12\'/><text x=\'50%\' y=\'50%\' fill=\'#a78bfa\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'sans-serif\' font-size=\'14\'>Нет файла QR</text></svg>'
-						"
-					/>
-				</div>
-				<h3 id="qrTitle" class="modal-title">Профиль</h3>
-				<p class="modal-desc">Наведите камеру телефона для перехода</p>
-				<a href="#" id="qrLink" class="modal-btn" target="_blank"
-					>Открыть ссылку</a
-				>
-			</div>
-		</div>
-
-		<audio id="webAudio" crossorigin="anonymous"></audio>
-
-		<script>
-			const CONFIG = {
-				playlist: [
-					{ title: 'марионетка познала безумие', src: 'music/track1.mp3' },
-					{ title: 'Набросок (Alternative Version).', src: 'music/track2.mp3' },
-					{ title: 'волны', src: 'music/track3.mp3' },
-					{ title: 'Слишком хороший', src: 'music/track4.mp3' },
-					{ title: 'я понял что значит любить', src: 'music/track5.mp3' },
-					{ title: 'Метеорит', src: 'music/track6.mp3' },
-					{ title: 'provod', src: 'music/track7.mp3' },
-				],
-				quotes: [
-					'where the light fades and echoes remain',
-					'lost in the cosmic silence',
-					'drifting through the astral plane',
-					'a soul wandering the neon void',
-					'dust in the wind of a dying star',
-					'echoes of a forgotten tomorrow',
-					'in search of a new horizon',
-					'beyond the edge of time',
-				],
-			};
-
-			// 3D TILT EFFECT (Parallax) - очень мягкий
-			const card = document.getElementById('tilt-card');
-			const isFine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-			let raf = null;
-
-			if (isFine) {
-				document.addEventListener('mousemove', (e) => {
-					if (raf) return;
-					raf = requestAnimationFrame(() => {
-						const rect = card.getBoundingClientRect();
-						const centerX = rect.left + rect.width / 2;
-						const centerY = rect.top + rect.height / 2;
-
-						const distX = e.clientX - centerX;
-						const distY = e.clientY - centerY;
-
-						const rotateX = (distY / (window.innerHeight / 2)) * -3;
-						const rotateY = (distX / (window.innerWidth / 2)) * 3;
-
-						card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-						raf = null;
-					});
-				});
-
-				document.addEventListener('mouseleave', () => {
-					card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-					card.style.transition = 'transform 0.5s ease';
-					setTimeout(
-						() => (card.style.transition = 'transform 0.1s ease-out'),
-						500,
-					);
-				});
-			}
-
-			class BackgroundEngine {
-				constructor(canvas) {
-					this.canvas = canvas;
-					this.ctx = canvas.getContext('2d');
-					this.w = 0;
-					this.h = 0;
-					this.particles = [];
-					this.effect = 'stars';
-					this.animId = null;
-
-					window.addEventListener('resize', () => this.resize());
-					this.resize();
-					this.loop();
-				}
-
-				resize() {
-					this.w = this.canvas.width =
-						innerWidth * (window.devicePixelRatio > 1 ? 2 : 1);
-					this.h = this.canvas.height =
-						innerHeight * (window.devicePixelRatio > 1 ? 2 : 1);
-					this.canvas.style.width = innerWidth + 'px';
-					this.canvas.style.height = innerHeight + 'px';
-					this.initParticles();
-				}
-
-				setEffect(mode) {
-					this.effect = mode;
-					this.initParticles();
-				}
-
-				initParticles() {
-					this.particles = [];
-					let count = 0;
-					if (this.effect === 'rain') count = Math.min(200, innerWidth / 10);
-					else if (this.effect === 'vertices')
-						count = Math.min(80, innerWidth / 20);
-					else if (this.effect === 'warp')
-						count = Math.min(350, innerWidth / 5);
-					else if (this.effect === 'snow')
-						count = Math.min(150, innerWidth / 12);
-					else count = Math.min(150, innerWidth / 15);
-
-					for (let i = 0; i < count; i++) {
-						this.particles.push({
-							x: Math.random() * this.w,
-							y: Math.random() * this.h,
-							vx: (Math.random() - 0.5) * (this.effect === 'rain' ? 1.5 : 0.3),
-							vy:
-								this.effect === 'rain'
-									? 18 + Math.random() * 10
-									: this.effect === 'warp'
-										? 0
-										: -(Math.random() * 0.4 + 0.1),
-							r:
-								this.effect === 'snow' || this.effect === 'bubbles'
-									? Math.random() * 3 + 1
-									: Math.random() * 2,
-							a: Math.random() * 0.5 + 0.1,
-							length: Math.random() * 30 + 20,
-							phase: Math.random() * Math.PI * 2,
-							speed: Math.random() * 0.03 + 0.01,
-							z: Math.random() * this.w,
-						});
-					}
-				}
-
-				draw() {
-					this.ctx.clearRect(0, 0, this.w, this.h);
-					this.ctx.shadowBlur = 0;
-
-					if (this.effect === 'rain') {
-						this.ctx.strokeStyle = 'rgba(180, 200, 230, 0.15)';
-						this.ctx.lineWidth = 1;
-						this.ctx.lineCap = 'round';
-					} else {
-						this.ctx.shadowBlur = 8;
-						this.ctx.shadowColor = 'rgba(139, 92, 246, 0.3)';
-					}
-
-					for (let i = 0; i < this.particles.length; i++) {
-						let p = this.particles[i];
-
-						if (this.effect === 'rain') {
-							p.x += p.vx;
-							p.y += p.vy;
-						} else if (this.effect === 'vertices') {
-							p.x += p.vx;
-							p.y += p.vy;
-							if (p.x < 0 || p.x > this.w) p.vx *= -1;
-							if (p.y < 0 || p.y > this.h) p.vy *= -1;
-						} else if (this.effect === 'warp') {
-							p.z -= 8;
-							if (p.z <= 1) {
-								p.z = this.w;
-								p.x = (Math.random() - 0.5) * this.w;
-								p.y = (Math.random() - 0.5) * this.h;
-							}
-						} else if (this.effect === 'bubbles') {
-							p.phase += p.speed;
-							p.x += Math.sin(p.phase) * 0.8;
-							p.y -= 0.8;
-						} else {
-							p.x += p.vx;
-							p.y += p.vy;
-						}
-
-						if (this.effect !== 'warp' && this.effect !== 'vertices') {
-							if (p.x < -50) p.x = this.w + 50;
-							if (p.x > this.w + 50) p.x = -50;
-							if (p.y < -50) p.y = this.h + 50;
-							if (p.y > this.h + 50) p.y = -50;
-						}
-
-						if (this.effect === 'rain') {
-							this.ctx.beginPath();
-							this.ctx.moveTo(p.x, p.y);
-							this.ctx.lineTo(p.x - p.vx * 3, p.y - p.length);
-							this.ctx.stroke();
-						} else if (this.effect === 'vertices') {
-							this.ctx.fillStyle = 'rgba(6, 182, 212, 0.4)';
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-							for (let j = i + 1; j < this.particles.length; j++) {
-								let p2 = this.particles[j];
-								let dx = p.x - p2.x,
-									dy = p.y - p2.y;
-								let dist = Math.sqrt(dx * dx + dy * dy);
-								if (dist < this.w * 0.15) {
-									this.ctx.beginPath();
-									this.ctx.moveTo(p.x, p.y);
-									this.ctx.lineTo(p2.x, p2.y);
-									this.ctx.strokeStyle = `rgba(6, 182, 212, ${0.15 * (1 - dist / (this.w * 0.15))})`;
-									this.ctx.lineWidth = 1;
-									this.ctx.stroke();
-								}
-							}
-						} else if (this.effect === 'warp') {
-							const px = (p.x / p.z) * this.w + this.w / 2;
-							const py = (p.y / p.z) * this.h + this.h / 2;
-							const radius = Math.max(0.1, (1 - p.z / this.w) * 3);
-							this.ctx.fillStyle = `rgba(255,255,255,${(1 - p.z / this.w) * 0.6})`;
-							this.ctx.beginPath();
-							this.ctx.arc(px, py, radius, 0, Math.PI * 2);
-							this.ctx.fill();
-						} else if (this.effect === 'bubbles') {
-							this.ctx.strokeStyle = `rgba(139, 92, 246, ${p.a * 0.6})`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.stroke();
-						} else {
-							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i))})`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-						}
-					}
-					this.ctx.shadowBlur = 0;
-					this.animId = requestAnimationFrame(() => this.draw());
-				}
-
-				loop() {
-					cancelAnimationFrame(this.animId);
-					this.draw();
-				}
-			}
-
-			class AudioEngine {
-				constructor() {
-					this.ac = null;
-					this.masterGain = null;
-					this.musicGain = null;
-					this.analyser = null;
-					this.isPlaying = false;
-					this.mode = 'ambient';
-					this.playlist = CONFIG.playlist;
-					this.currentTrack = 0;
-					this.isPlaylistMode = false;
-
-					this.repeatMode = 0;
-					this.shuffleMode = false;
-
-					this.webAudio = document.getElementById('webAudio');
-					this.mediaSource = null;
-
-					this.vibes = {
-						ambient: {
-							chords: [
-								[174.61, 220.0, 261.63],
-								[130.81, 164.81, 196.0],
-								[146.83, 174.61, 220.0],
-							],
-						},
-						deep: {
-							chords: [
-								[110.0, 130.81, 164.81],
-								[87.31, 110.0, 130.81],
-								[98.0, 123.47, 146.83],
-							],
-						},
-						rain: {
-							chords: [
-								[146.83, 174.61, 220.0],
-								[130.81, 164.81, 196.0],
-								[110.0, 130.81, 164.81],
-							],
-						},
-					};
-				}
-
-				init() {
-					if (this.ac) return;
-					const AC = window.AudioContext || window.webkitAudioContext;
-					this.ac = new AC();
-
-					this.masterGain = this.ac.createGain();
-					this.musicGain = this.ac.createGain();
-					this.analyser = this.ac.createAnalyser();
-					this.analyser.fftSize = 64;
-
-					this.musicGain.gain.value = 0.25;
-
-					this.musicGain.connect(this.masterGain);
-					this.masterGain.connect(this.analyser);
-					this.analyser.connect(this.ac.destination);
-				}
-
-				playChord(freqs) {
-					const t0 = this.ac.currentTime;
-					freqs.forEach((f, i) => {
-						const osc = this.ac.createOscillator();
-						osc.type = 'sine';
-						osc.frequency.value = f;
-						const g = this.ac.createGain();
-						g.gain.setValueAtTime(0.0001, t0);
-						g.gain.exponentialRampToValueAtTime(0.08 / (i + 1), t0 + 3);
-						g.gain.exponentialRampToValueAtTime(0.0001, t0 + 10);
-						osc.connect(g);
-						g.connect(this.musicGain);
-						osc.start(t0);
-						osc.stop(t0 + 11);
-					});
-				}
-
-				startGen() {
-					this.init();
-					if (this.ac.state === 'suspended') this.ac.resume();
-					this.isPlaying = true;
-					const chords = this.vibes[this.mode].chords;
-					this.playChord(chords[0]);
-					let step = 1;
-					clearInterval(this.genTimer);
-					this.genTimer = setInterval(() => {
-						this.playChord(chords[step % chords.length]);
-						step++;
-					}, 8000);
-				}
-
-				stopGen() {
-					this.isPlaying = false;
-					clearInterval(this.genTimer);
-				}
-
-				setMode(mode) {
-					this.stopGen();
-					this.webAudio.pause();
-					this.mode = mode;
-					this.isPlaylistMode = mode === 'playlist';
-
-					if (this.isPlaylistMode) {
-						this.init();
-						if (!this.mediaSource) {
-							this.mediaSource = this.ac.createMediaElementSource(
-								this.webAudio,
-							);
-							this.mediaSource.connect(this.masterGain);
-						}
-					} else {
-						this.startGen();
-					}
-					UI.updatePlayState(this.isPlaying || !this.webAudio.paused);
-					UI.updateTimelineVisibility();
-				}
-
-				playTrack(index) {
-					this.currentTrack = index;
-					this.webAudio.src = this.playlist[index].src;
-					this.webAudio.volume = parseFloat(
-						document.getElementById('volSlider').value,
-					);
-					this.webAudio
-						.play()
-						.catch(() =>
-							UI.updateTrackInfo(this.playlist[index].title, 'Ошибка файла'),
-						);
-					UI.updateTrackInfo(this.playlist[index].title, 'Локальный трек');
-					UI.updatePlaylistActive(index);
-				}
-
-				togglePlay() {
-					if (this.isPlaylistMode) {
-						if (this.webAudio.paused) {
-							this.webAudio.play();
-							return true;
-						} else {
-							this.webAudio.pause();
-							return false;
-						}
-					} else {
-						if (this.isPlaying) {
-							this.stopGen();
-							return false;
-						} else {
-							this.startGen();
-							return true;
-						}
-					}
-				}
-
-				nextTrack() {
-					if (!this.isPlaylistMode) return;
-					if (this.shuffleMode) {
-						let next = Math.floor(Math.random() * this.playlist.length);
-						while (next === this.currentTrack && this.playlist.length > 1) {
-							next = Math.floor(Math.random() * this.playlist.length);
-						}
-						this.playTrack(next);
-					} else {
-						this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
-						this.playTrack(this.currentTrack);
-					}
-				}
-
-				prevTrack() {
-					if (!this.isPlaylistMode) return;
-					this.currentTrack =
-						(this.currentTrack - 1 + this.playlist.length) %
-						this.playlist.length;
-					this.playTrack(this.currentTrack);
-				}
-
-				setVolume(val) {
-					if (this.isPlaylistMode) this.webAudio.volume = val;
-					else if (this.ac)
-						this.musicGain.gain.setTargetAtTime(
-							val * 0.3,
-							this.ac.currentTime,
-							0.1,
-						);
-				}
-			}
-
-			const UI = {
-				init() {
-					this.engine = new AudioEngine();
-					this.bg = new BackgroundEngine(document.getElementById('bg'));
-
-					this.els = {
-						player: document.getElementById('player'),
-						settingsBtn: document.getElementById('settingsBtn'),
-						mSettingsBtn: document.getElementById('mSettingsBtn'),
-						settingsMenu: document.getElementById('settingsMenu'),
-						leftTrigger: document.getElementById('leftTrigger'),
-						rightTrigger: document.getElementById('rightTrigger'),
-						leftTab: document.getElementById('leftTab'),
-						rightTab: document.getElementById('rightTab'),
-						socialPanel: document.getElementById('socialPanel'),
-						musicPanel: document.getElementById('musicPanel'),
-						playlistContainer: document.getElementById('playlistContainer'),
-						playlistModal: document.getElementById('playlistModal'),
-						closePlaylistBtn: document.getElementById('closePlaylistBtn'),
-						playlistBtn: document.getElementById('playlistBtn'),
-						mobileBackdrop: document.getElementById('mobileBackdrop'),
-						playBtn: document.getElementById('playBtn'),
-						iconPlay: document.getElementById('iconPlay'),
-						iconPause: document.getElementById('iconPause'),
-						trackName: document.getElementById('trackName'),
-						trackStatus: document.getElementById('trackStatus'),
-						widgetTrack: document.getElementById('widgetTrack'),
-						qrModal: document.getElementById('qrModal'),
-						qrTitle: document.getElementById('qrTitle'),
-						qrLink: document.getElementById('qrLink'),
-						qrImage: document.getElementById('qr-image'),
-						tagline: document.getElementById('tagline'),
-						ctxMenu: document.getElementById('ctx-menu'),
-						copyLinkBtn: document.getElementById('copyLinkBtn'),
-						visBars: document.querySelectorAll('.vis-bar'),
-
-						progressContainer: document.getElementById('progressContainer'),
-						progressSlider: document.getElementById('progressSlider'),
-						shuffleBtn: document.getElementById('shuffleBtn'),
-						repeatBtn: document.getElementById('repeatBtn'),
-						repeatOneDot: document.getElementById('repeatOneDot'),
-						volBtn: document.getElementById('volBtn'),
-						volPopover: document.getElementById('volPopover'),
-					};
-
-					this.els.tagline.innerText =
-						CONFIG.quotes[Math.floor(Math.random() * CONFIG.quotes.length)];
-					this.isSeeking = false;
-
-					this.renderPlaylist();
-					this.setupDrag();
-					this.bindEvents();
-					this.updateVisualizer();
-				},
-
-				renderPlaylist() {
-					this.els.playlistContainer.innerHTML = '';
-					CONFIG.playlist.forEach((track, i) => {
-						const btn = document.createElement('button');
-						btn.className = 'playlist-item';
-						btn.innerText = track.title;
-						btn.dataset.index = i;
-						btn.onclick = (e) => {
-							e.stopPropagation();
-
-							if (!this.engine.isPlaylistMode) {
-								document
-									.querySelectorAll('[data-mode]')
-									.forEach((b) => b.classList.remove('active'));
-								document
-									.querySelector('[data-mode="playlist"]')
-									.classList.add('active');
-								this.engine.setMode('playlist');
-							}
-
-							this.engine.playTrack(i);
-							this.updatePlayState(true);
-
-							this.els.playlistModal.classList.remove('open');
-							this.closeAllUI();
-						};
-						this.els.playlistContainer.appendChild(btn);
-					});
-				},
-
-				updatePlaylistActive(index) {
-					document
-						.querySelectorAll('.playlist-item')
-						.forEach((b) => b.classList.remove('active'));
-					const activeBtn = document.querySelector(
-						`.playlist-item[data-index="${index}"]`,
-					);
-					if (activeBtn) activeBtn.classList.add('active');
-				},
-
-				closeAllUI() {
-					this.els.settingsMenu.classList.remove('open');
-					this.els.socialPanel.classList.remove('open');
-					this.els.musicPanel.classList.remove('open');
-					this.els.volPopover.classList.remove('open');
-					this.els.playlistModal.classList.remove('open');
-					this.els.mobileBackdrop.classList.remove('active');
-					this.els.leftTab.classList.remove('tab-hidden');
-					this.els.rightTab.classList.remove('tab-hidden');
-				},
-
-				setupDrag() {
-					const player = this.els.player;
-					let isDragging = false;
-					let startX, startY, startLeft, startTop;
-
-					if (window.innerWidth < 768) return;
-
-					const savedPos = localStorage.getItem('playerPos');
-					if (savedPos) {
-						try {
-							const { left, top } = JSON.parse(savedPos);
-							player.style.bottom = 'auto';
-							player.style.right = 'auto';
-							player.style.left = left + 'px';
-							player.style.top = top + 'px';
-						} catch (e) {}
-					}
-
-					player.addEventListener('mousedown', (e) => {
-						if (
-							e.target.closest('.ctrl-btn') ||
-							e.target.closest('input') ||
-							e.target.closest('.vol-wrap') ||
-							e.target.closest('.progress-container')
-						)
-							return;
-
-						isDragging = true;
-						const rect = player.getBoundingClientRect();
-						startX = e.clientX;
-						startY = e.clientY;
-						startLeft = rect.left;
-						startTop = rect.top;
-
-						player.style.bottom = 'auto';
-						player.style.right = 'auto';
-						player.style.left = rect.left + 'px';
-						player.style.top = rect.top + 'px';
-						player.style.transition = 'none';
-					});
-
-					document.addEventListener('mousemove', (e) => {
-						if (!isDragging) return;
-						let newX = startLeft + (e.clientX - startX);
-						let newY = startTop + (e.clientY - startY);
-						const maxX = window.innerWidth - player.offsetWidth;
-						const maxY = window.innerHeight - player.offsetHeight;
-						newX = Math.max(0, Math.min(newX, maxX));
-						newY = Math.max(0, Math.min(newY, maxY));
-						player.style.left = newX + 'px';
-						player.style.top = newY + 'px';
-					});
-
-					document.addEventListener('mouseup', () => {
-						if (!isDragging) return;
-						isDragging = false;
-						player.style.transition = '';
-						const rect = player.getBoundingClientRect();
-						localStorage.setItem(
-							'playerPos',
-							JSON.stringify({ left: rect.left, top: rect.top }),
-						);
-					});
-				},
-
-				updateVisualizer() {
-					requestAnimationFrame(() => this.updateVisualizer());
-					if (
-						!this.engine.analyser ||
-						(!this.engine.isPlaying && this.engine.webAudio.paused)
-					) {
-						this.els.visBars.forEach((bar) => (bar.style.height = '15%'));
-						return;
-					}
-
-					const dataArray = new Uint8Array(
-						this.engine.analyser.frequencyBinCount,
-					);
-					this.engine.analyser.getByteFrequencyData(dataArray);
-
-					const step = Math.floor(dataArray.length / 5);
-					for (let i = 0; i < 5; i++) {
-						let value = dataArray[i * step];
-						let height = Math.max(15, (value / 255) * 100);
-						this.els.visBars[i].style.height = height + '%';
-					}
-				},
-
-				updateTimelineVisibility() {
-					if (this.engine.isPlaylistMode) {
-						this.els.progressContainer.classList.add('active');
-						this.els.playlistBtn.classList.add('visible');
-					} else {
-						this.els.progressContainer.classList.remove('active');
-						this.els.playlistBtn.classList.remove('visible');
-					}
-				},
-
-				bindEvents() {
-					const { els, engine, bg } = this;
-
-					const toggleSettings = (e) => {
-						e.stopPropagation();
-						const isOpen = els.settingsMenu.classList.contains('open');
-						this.closeAllUI();
-						if (!isOpen) els.settingsMenu.classList.add('open');
-					};
-					els.settingsBtn.onclick = toggleSettings;
-					els.mSettingsBtn.onclick = toggleSettings;
-
-					document.querySelectorAll('[data-effect]').forEach((btn) => {
-						btn.onclick = (e) => {
-							e.stopPropagation();
-							document
-								.querySelectorAll('[data-effect]')
-								.forEach((b) => b.classList.remove('active'));
-							e.target.classList.add('active');
-							bg.setEffect(e.target.dataset.effect);
-						};
-					});
-
-					let leftTimer, rightTimer;
-					const openLeft = () => {
-						if (window.innerWidth >= 768) {
-							clearTimeout(leftTimer);
-							els.socialPanel.classList.add('open');
-							els.leftTab.classList.add('tab-hidden');
-						}
-					};
-					const closeLeft = () => {
-						if (window.innerWidth >= 768) {
-							leftTimer = setTimeout(() => {
-								els.socialPanel.classList.remove('open');
-								els.leftTab.classList.remove('tab-hidden');
-							}, 400);
-						}
-					};
-					els.leftTrigger.addEventListener('mouseenter', openLeft);
-					els.leftTrigger.addEventListener('mouseleave', closeLeft);
-					els.socialPanel.addEventListener('mouseenter', openLeft);
-					els.socialPanel.addEventListener('mouseleave', closeLeft);
-					els.leftTab.addEventListener('mouseenter', openLeft);
-
-					const openRight = () => {
-						if (window.innerWidth >= 768) {
-							clearTimeout(rightTimer);
-							els.musicPanel.classList.add('open');
-							els.rightTab.classList.add('tab-hidden');
-						}
-					};
-					const closeRight = () => {
-						if (window.innerWidth >= 768) {
-							rightTimer = setTimeout(() => {
-								els.musicPanel.classList.remove('open');
-								els.rightTab.classList.remove('tab-hidden');
-							}, 400);
-						}
-					};
-					els.rightTrigger.addEventListener('mouseenter', openRight);
-					els.rightTrigger.addEventListener('mouseleave', closeRight);
-					els.musicPanel.addEventListener('mouseenter', openRight);
-					els.musicPanel.addEventListener('mouseleave', closeRight);
-					els.rightTab.addEventListener('mouseenter', openRight);
-
-					document.getElementById('mLeftBtn').onclick = (e) => {
-						e.stopPropagation();
-						const isOpen = els.socialPanel.classList.contains('open');
-						this.closeAllUI();
-						if (!isOpen) {
-							els.socialPanel.classList.add('open');
-							els.mobileBackdrop.classList.add('active');
-						}
-					};
-
-					document.getElementById('mRightBtn').onclick = (e) => {
-						e.stopPropagation();
-						const isOpen = els.musicPanel.classList.contains('open');
-						this.closeAllUI();
-						if (!isOpen) {
-							els.musicPanel.classList.add('open');
-							els.mobileBackdrop.classList.add('active');
-						}
-					};
-
-					document.addEventListener('click', (e) => {
-						if (
-							!e.target.closest('.settings-menu') &&
-							!e.target.closest('.social-panel') &&
-							!e.target.closest('.music-panel') &&
-							!e.target.closest('.vol-wrap') &&
-							!e.target.closest('.settings-btn') &&
-							!e.target.closest('.m-btn') &&
-							!e.target.closest('.playlist-modal-content') &&
-							!e.target.closest('#playlistBtn')
-						) {
-							this.closeAllUI();
-						}
-					});
-
-					els.mobileBackdrop.onclick = () => this.closeAllUI();
-
-					document.querySelectorAll('[data-mode]').forEach((btn) => {
-						btn.onclick = (e) => {
-							e.stopPropagation();
-							document
-								.querySelectorAll('[data-mode]')
-								.forEach((b) => b.classList.remove('active'));
-							e.target.classList.add('active');
-
-							const mode = e.target.dataset.mode;
-							engine.setMode(mode);
-
-							if (mode !== 'playlist') {
-								const names = {
-									ambient: 'Ambient',
-									deep: 'Deep Space',
-									rain: 'Lo-Fi',
-								};
-								this.updateTrackInfo(names[mode], 'Генератор');
-							}
-						};
-					});
-
-					els.playlistBtn.onclick = (e) => {
-						e.stopPropagation();
-						this.closeAllUI();
-						els.playlistModal.classList.add('open');
-					};
-
-					els.closePlaylistBtn.onclick = () => {
-						els.playlistModal.classList.remove('open');
-					};
-
-					els.playlistModal.onclick = (e) => {
-						if (e.target === els.playlistModal)
-							els.playlistModal.classList.remove('open');
-					};
-
-					els.playBtn.onclick = () => {
-						const isPlaying = engine.togglePlay();
-						this.updatePlayState(isPlaying);
-					};
-
-					document.getElementById('nextBtn').onclick = () => engine.nextTrack();
-					document.getElementById('prevBtn').onclick = () => engine.prevTrack();
-
-					els.shuffleBtn.onclick = (e) => {
-						e.stopPropagation();
-						engine.shuffleMode = !engine.shuffleMode;
-						els.shuffleBtn.classList.toggle('active', engine.shuffleMode);
-					};
-
-					els.repeatBtn.onclick = (e) => {
-						e.stopPropagation();
-						engine.repeatMode = (engine.repeatMode + 1) % 3;
-						els.repeatBtn.classList.toggle('active', engine.repeatMode > 0);
-						els.repeatOneDot.style.display =
-							engine.repeatMode === 2 ? 'flex' : 'none';
-					};
-
-					els.volBtn.onclick = (e) => {
-						e.stopPropagation();
-						els.volPopover.classList.toggle('open');
-					};
-					document.getElementById('volSlider').oninput = (e) => {
-						engine.setVolume(e.target.value);
-					};
-
-					const webAudio = document.getElementById('webAudio');
-					webAudio.onplay = () => this.updatePlayState(true);
-					webAudio.onpause = () => this.updatePlayState(false);
-
-					webAudio.onended = () => {
-						if (engine.repeatMode === 2) {
-							webAudio.currentTime = 0;
-							webAudio.play();
-						} else if (engine.shuffleMode) {
-							engine.nextTrack();
-						} else {
-							if (
-								engine.currentTrack === engine.playlist.length - 1 &&
-								engine.repeatMode === 0
-							) {
-								this.updatePlayState(false);
-							} else {
-								engine.nextTrack();
-							}
-						}
-					};
-
-					webAudio.addEventListener('timeupdate', () => {
-						if (
-							this.isSeeking ||
-							!engine.isPlaylistMode ||
-							isNaN(webAudio.duration)
-						)
-							return;
-						const percent = (webAudio.currentTime / webAudio.duration) * 100;
-						els.progressSlider.value = percent;
-						els.progressSlider.style.setProperty('--progress', `${percent}%`);
-					});
-
-					webAudio.addEventListener('loadedmetadata', () => {
-						els.progressSlider.value = 0;
-						els.progressSlider.style.setProperty('--progress', `0%`);
-					});
-
-					els.progressSlider.addEventListener('input', (e) => {
-						this.isSeeking = true;
-						e.target.style.setProperty('--progress', `${e.target.value}%`);
-					});
-
-					els.progressSlider.addEventListener('change', (e) => {
-						if (engine.isPlaylistMode && webAudio.duration) {
-							webAudio.currentTime = (e.target.value / 100) * webAudio.duration;
-						}
-						this.isSeeking = false;
-					});
-
-					document.querySelectorAll('.soc-item').forEach((item) => {
-						item.onclick = () => {
-							const url = item.dataset.url;
-							const name = item.dataset.name;
-
-							els.qrTitle.innerText = name;
-							els.qrLink.href = url;
-
-							if (name === 'GitHub') {
-								els.qrImage.src = 'qr_github.png';
-							} else if (name === 'Telegram') {
-								els.qrImage.src = 'qr_telegram.png';
-							}
-
-							els.qrModal.classList.add('open');
-						};
-					});
-
-					els.qrModal.onclick = (e) => {
-						if (e.target === els.qrModal) els.qrModal.classList.remove('open');
-					};
-
-					document.addEventListener('contextmenu', (e) => {
-						e.preventDefault();
-						els.ctxMenu.style.display = 'flex';
-						let x = e.clientX,
-							y = e.clientY;
-						if (x + 180 > window.innerWidth) x -= 180;
-						if (y + 160 > window.innerHeight) y -= 160;
-						els.ctxMenu.style.left = `${x}px`;
-						els.ctxMenu.style.top = `${y}px`;
-					});
-					document.addEventListener('click', (e) => {
-						if (!els.ctxMenu.contains(e.target))
-							els.ctxMenu.style.display = 'none';
-					});
-
-					els.copyLinkBtn.onclick = () => {
-						navigator.clipboard.writeText(window.location.href);
-						const original = els.copyLinkBtn.innerHTML;
-						els.copyLinkBtn.innerText = 'Скопировано!';
-						setTimeout(() => (els.copyLinkBtn.innerHTML = original), 2000);
-					};
-				},
-
-				updatePlayState(isPlaying) {
-					if (isPlaying) {
-						this.els.iconPlay.style.display = 'none';
-						this.els.iconPause.style.display = 'block';
-						this.els.player.classList.add('playing');
-					} else {
-						this.els.iconPlay.style.display = 'block';
-						this.els.iconPause.style.display = 'none';
-						this.els.player.classList.remove('playing');
-					}
-				},
-
-				updateTrackInfo(name, status) {
-					this.els.trackName.innerText = name;
-					this.els.trackStatus.innerText = status;
-					this.els.widgetTrack.innerText = name;
-				},
-			};
-
-			document.addEventListener('DOMContentLoaded', () => UI.init());
-		</script>
-	</body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>noclipov</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #8b5cf6;
+    --secondary: #06b6d4;
+    --accent: #ec4899;
+    --txt: #e2e8f0;
+    --muted: #64748b;
+    --bg: #010204; /* Более глубокий фон */
+    --card-bg: rgba(12, 15, 24, 0.35); /* Прозрачная карточка */
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    font-family: "Outfit", -apple-system, sans-serif;
+    background: radial-gradient(1000px 700px at 50% -20%, #0a0c13 0%, transparent 60%),
+                radial-gradient(800px 600px at 100% 120%, #040a10 0%, transparent 60%), var(--bg);
+    color: var(--txt);
+    display: grid;
+    place-items: center;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    perspective: 1000px;
+  }
+
+  /* Background */
+  .aurora { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; filter: blur(120px); opacity: .15; } /* Приглушено */
+  .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+  .b1 { width: 60vw; height: 60vw; background: #4c1d95; top: -20%; left: -10%; animation: drift 25s infinite alternate; }
+  .b2 { width: 50vw; height: 50vw; background: #0e7490; bottom: -20%; right: -10%; animation: drift 30s infinite alternate-reverse; }
+  @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(10%, 10%) scale(1.1); } }
+
+  #bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+  .vignette { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%); }
+  .grain { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+
+  /* Profile Card */
+  .card {
+    position: relative; z-index: 4; width: min(90vw, 380px); border-radius: 32px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), var(--card-bg);
+    border: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(25px) saturate(150%); 
+    box-shadow: 
+      0 30px 80px -20px rgba(0,0,0,.9), 
+      0 0 0 1px rgba(255,255,255,.02) inset;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 24px 32px;
+    animation: rise 1s cubic-bezier(.2,.85,.25,1) both;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
+  .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent); }
+  @keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .avatar-wrapper { position: relative; margin-bottom: 24px; transform: translateZ(30px); }
+  .avatar { position: relative; width: 110px; height: 110px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent)); box-shadow: 0 0 25px rgba(139, 92, 246, 0.25); }
+  .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #010204; overflow: hidden; display: grid; place-items: center; font-size: 40px; font-weight: 800; border: 2px solid #010204; }
+  .avatar-inner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.9); transition: none; }
+
+  .name { font-size: 30px; font-weight: 700; letter-spacing: -.03em; background: linear-gradient(100deg, #fff 10%, #c4b5fd 40%, #67e8f9 60%, #fff 90%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 8s linear infinite; text-shadow: 0 4px 20px rgba(0,0,0,0.8); transform: translateZ(20px); }
+  @keyframes shimmer { to { background-position: -250% 0; } }
+  .tagline { margin-top: 8px; font-size: 14px; color: #94a3b8; font-weight: 400; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); transform: translateZ(10px); }
+
+  /* Now Playing Widget */
+  .card-widget { margin-top: 28px; width: 100%; padding: 16px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; border: 1px solid rgba(255,255,255,.04); display: flex; align-items: center; justify-content: space-between; transform: translateZ(15px); backdrop-filter: blur(10px); }
+  .widget-info { display: flex; flex-direction: column; max-width: 60%; }
+  .widget-label { font-size: 10px; text-transform: uppercase; color: var(--secondary); font-weight: 700; letter-spacing: .1em; text-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
+  .widget-track { font-size: 14px; font-weight: 500; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+
+  /* Visualizer */
+  .visualizer { display: flex; align-items: center; gap: 3px; height: 20px; }
+  .vis-bar { width: 3px; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 3px; height: 15%; transition: height 0.08s ease-out; box-shadow: 0 0 6px rgba(6, 182, 212, 0.3); }
+
+  /* Settings */
+  .settings-btn { position: fixed; top: 20px; right: 20px; z-index: 100; width: 44px; height: 44px; border-radius: 50%; background: rgba(15, 18, 28, 0.6); border: 1px solid rgba(255,255,255,.08); color: var(--muted); display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(10px); transition: all .3s; }
+  .settings-btn:hover { color: #fff; transform: rotate(90deg); background: rgba(255,255,255,.1); }
+  .settings-menu { position: fixed; top: 70px; right: 20px; z-index: 99; width: 240px; background: rgba(15, 18, 28, 0.85); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 16px; backdrop-filter: blur(30px); box-shadow: 0 10px 40px rgba(0,0,0,.9); opacity: 0; pointer-events: none; transform: translateY(-10px); transition: all .3s cubic-bezier(.2,.8,.2,1); }
+  .settings-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .settings-title { font-size: 11px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-weight: 700; letter-spacing: .05em; }
+  .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+  .s-btn { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); color: var(--muted); padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer; transition: all .2s; font-family: inherit; font-weight: 500; }
+  .s-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .s-btn.active { background: rgba(139,92,246,.2); border-color: rgba(139,92,246,.4); color: #fff; }
+
+  /* Desktop Triggers & Tabs */
+  .panel-trigger { position: fixed; top: 50%; transform: translateY(-50%); z-index: 98; width: 60px; height: 200px; }
+  .panel-trigger.left { left: 0; }
+  .panel-trigger.right { right: 0; }
+  .panel-tab { position: fixed; top: 50%; transform: translateY(-50%); z-index: 100; width: 24px; height: 60px; background: rgba(15, 18, 28, 0.6); border: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); backdrop-filter: blur(10px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s, background 0.3s; }
+  .panel-tab.left { left: 0; border-radius: 0 12px 12px 0; border-left: none; }
+  .panel-tab.right { right: 0; border-radius: 12px 0 0 12px; border-right: none; }
+  .panel-tab:hover { color: #fff; background: rgba(139, 92, 246, 0.2); }
+  .panel-tab.left.tab-hidden { transform: translate(-100%, -50%); opacity: 0; pointer-events: none; }
+  .panel-tab.right.tab-hidden { transform: translate(100%, -50%); opacity: 0; pointer-events: none; }
+  
+  /* Panels */
+  .social-panel, .music-panel { position: fixed; top: 50%; transform: translateY(-50%); z-index: 99; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: rgba(15, 18, 28, 0.85); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(30px); box-shadow: 0 10px 40px rgba(0,0,0,.8); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .social-panel { left: 0; transform: translate(-100%, -50%); border-radius: 0 24px 24px 0; border-left: none; }
+  .music-panel { right: 0; transform: translate(100%, -50%); border-radius: 24px 0 0 24px; border-right: none; width: 240px; }
+  .social-panel.open { transform: translate(0, -50%); }
+  .music-panel.open { transform: translate(0, -50%); }
+  .panel-title { font-size: 12px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .1em; text-align: center; margin-bottom: 8px; }
+  .soc-item { width: 48px; height: 48px; border-radius: 16px; background: rgba(255,255,255,.03); display: grid; place-items: center; color: var(--muted); cursor: pointer; transition: .3s; border: 1px solid transparent; }
+  .soc-item:hover { background: rgba(139,92,246,.15); color: #fff; border-color: rgba(139,92,246,.3); transform: scale(1.05); }
+  .soc-item svg { width: 22px; height: 22px; }
+
+  /* Floating Player */
+  .floating-player {
+    position: fixed; bottom: 24px; right: 24px; z-index: 100;
+    display: flex; flex-direction: column; gap: 8px; padding: 12px 20px;
+    background: rgba(15, 18, 28, 0.8); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px; backdrop-filter: blur(30px);
+    box-shadow: 0 10px 40px rgba(0,0,0,.8); cursor: grab;
+    min-width: 340px; transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .floating-player:active { cursor: grabbing; }
+  .floating-player:hover { border-color: rgba(255,255,255,.15); box-shadow: 0 10px 40px rgba(0,0,0,.8), 0 0 20px rgba(139, 92, 246, 0.1); }
+
+  /* Timeline */
+  .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,.08); border-radius: 2px; position: relative; cursor: pointer; display: none; margin-bottom: 8px; }
+  .progress-container.active { display: block; }
+  #progressSlider { -webkit-appearance: none; width: 100%; height: 100%; background: transparent; position: absolute; top: 0; left: 0; margin: 0; cursor: pointer; }
+  #progressSlider::-webkit-slider-runnable-track { width: 100%; height: 4px; background: linear-gradient(to right, var(--primary), var(--secondary)) 0 0 / var(--progress, 0%) 100% no-repeat; border-radius: 2px; }
+  #progressSlider::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #fff; margin-top: -4px; box-shadow: 0 0 8px rgba(255,255,255,.5); opacity: 0; transition: opacity .2s; }
+  .progress-container:hover #progressSlider::-webkit-slider-thumb { opacity: 1; }
+
+  /* Player Controls */
+  .player-controls { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
+  .main-controls { display: flex; align-items: center; gap: 16px; }
+
+  .ctrl-btn { position: relative; background: transparent; border: none; color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: .2s; pointer-events: auto; }
+  .ctrl-btn:hover { color: #fff; }
+  .ctrl-btn.active { color: var(--secondary); text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+  .ctrl-btn svg { width: 20px; height: 20px; }
+  
+  .play-btn { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 15px rgba(139,92,246,.3); }
+  .play-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(139,92,246,.5); }
+  .play-btn svg { width: 20px; height: 20px; }
+
+  #repeatOneDot { position: absolute; top: -4px; right: -4px; font-size: 10px; font-weight: 800; color: var(--bg); background: var(--secondary); border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: 0 0 8px rgba(6, 182, 212, 0.5); }
+
+  .track-info { display: flex; flex-direction: column; min-width: 80px; max-width: 110px; pointer-events: none; }
+  .track-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track-status { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+
+  /* Vertical Volume */
+  .vol-wrap { position: relative; display: flex; align-items: center; }
+  .vol-popover { position: absolute; bottom: 100%; right: -10px; background: rgba(15, 18, 28, 0.95); border: 1px solid rgba(255,255,255,.1); padding: 16px 8px; border-radius: 16px; backdrop-filter: blur(20px); opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); margin-bottom: 12px; box-shadow: 0 5px 20px rgba(0,0,0,.7); z-index: 102; width: 44px; height: 140px; display: flex; align-items: center; justify-content: center; }
+  .vol-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .vol-popover input[type=range] { -webkit-appearance: none; width: 100px; height: 6px; background: transparent; cursor: pointer; transform: rotate(-90deg); }
+  .vol-popover input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255,255,255,.15); border-radius: 3px; }
+  .vol-popover input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #fff; margin-top: -6px; box-shadow: 0 0 8px rgba(255,255,255,.6); transition: transform .1s; }
+  .vol-popover input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.1); }
+
+  /* Playlist Popover (внутри плеера) */
+  .playlist-popover {
+    position: absolute; bottom: 100%; right: 0; width: 100%; max-height: 250px;
+    background: rgba(15, 18, 28, 0.95); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 20px; padding: 12px; backdrop-filter: blur(30px);
+    box-shadow: 0 10px 40px rgba(0,0,0,.9);
+    opacity: 0; pointer-events: none; transform: translateY(10px) scale(0.98);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 12px; display: flex; flex-direction: column; z-index: 102;
+  }
+  .playlist-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+  .playlist-title { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 8px; padding-left: 8px; }
+  .playlist-list { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 200px; }
+  .playlist-item { text-align: left; padding: 10px 12px; font-size: 13px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: all 0.2s; font-family: inherit; }
+  .playlist-item:hover { background: rgba(255,255,255,.05); color: #fff; }
+  .playlist-item.active { background: rgba(139,92,246,.15); color: var(--primary); font-weight: 600; }
+
+  /* Context Menu */
+  #ctx-menu { display: none; position: fixed; z-index: 300; background: rgba(15, 18, 28, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 6px; min-width: 180px; box-shadow: 0 10px 40px rgba(0,0,0,.9); flex-direction: column; gap: 2px; animation: ctxIn 0.15s cubic-bezier(.2,.8,.2,1); }
+  @keyframes ctxIn { from { opacity: 0; transform: scale(.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .ctx-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--txt); font-size: 13px; font-weight: 500; text-decoration: none; border-radius: 10px; cursor: pointer; transition: background .2s; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
+  .ctx-item:hover { background: rgba(139,92,246,.15); }
+  .ctx-item svg { width: 16px; height: 16px; opacity: 0.7; }
+  .ctx-item:hover svg { opacity: 1; }
+  .ctx-sep { height: 1px; background: rgba(255,255,255,.08); margin: 4px 0; }
+
+  /* QR Modal */
+  .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.85); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: .3s; }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  
+  .qr-modal-content { background: rgba(15, 18, 28, 0.9); border: 1px solid rgba(255,255,255,.1); border-radius: 32px; padding: 32px; display: flex; flex-direction: column; align-items: center; transform: translateY(20px) scale(0.95); transition: .4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+  .modal-overlay.open .qr-modal-content { transform: translateY(0) scale(1); }
+  
+  .qr-wrapper { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 24px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,.05); position: relative; }
+  #qr-image { display: block; width: 200px; height: 200px; object-fit: contain; }
+  
+  .modal-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: 0.02em; }
+  .modal-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+  
+  .modal-btn { background: rgba(255,255,255,0.05); color: #fff; padding: 12px 32px; border-radius: 14px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all .3s; width: 100%; text-align: center; border: 1px solid rgba(255,255,255,.1); cursor: pointer; font-family: inherit; position: relative; overflow: hidden; z-index: 2; }
+  .modal-btn::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, var(--primary), var(--secondary)); opacity: 0; transition: opacity .3s; z-index: -1; }
+  .modal-btn:hover { border-color: transparent; }
+  .modal-btn:hover::before { opacity: 1; }
+
+  .mobile-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .mobile-backdrop.active { opacity: 1; pointer-events: auto; }
+
+  /* Mobile */
+  .mobile-header { display: none; }
+  @media (max-width: 768px) {
+    .mobile-header { display: flex; position: fixed; top: 15px; left: 15px; right: 15px; justify-content: space-between; z-index: 100; }
+    .m-header-group { display: flex; gap: 10px; }
+    .m-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--card-bg); border: 1px solid rgba(255,255,255,.1); display: grid; place-items: center; color: var(--txt); cursor: pointer; backdrop-filter: blur(10px); transition: transform .2s; }
+    .m-btn:active { transform: scale(0.95); }
+    
+    .settings-btn { display: none; }
+    .panel-trigger, .panel-tab { display: none; }
+    
+    .floating-player { bottom: 0; right: 0; left: 0; border-radius: 24px 24px 0 0; cursor: default; min-width: 100%; padding: 16px 20px 24px; box-shadow: 0 -10px 40px rgba(0,0,0,.5); z-index: 101; }
+    .track-info { display: none; } 
+    .player-controls { justify-content: space-between; gap: 0; padding: 0 10px; }
+    .main-controls { gap: 20px; }
+    .ctrl-btn svg { width: 22px; height: 22px; } 
+    .play-btn { width: 48px; height: 48px; }
+    .play-btn svg { width: 24px; height: 24px; }
+    .vol-popover { right: 0; }
+    
+    /* Playlist popover on mobile */
+    .playlist-popover { width: 100%; right: 0; max-height: 200px; }
+    
+    .social-panel, .music-panel { top: auto; bottom: 0; left: 0; right: 0; width: 100%; transform: translateY(100%); border-radius: 32px 32px 0 0; padding: 30px 20px 140px; z-index: 100; border: none; border-top: 1px solid rgba(255,255,255,.1); }
+    .social-panel.open, .music-panel.open { transform: translateY(0); }
+    .music-panel .grid-btns { grid-template-columns: 1fr 1fr; }
+    .social-panel { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; }
+    .social-panel .panel-title { width: 100%; margin-bottom: 10px; }
+    
+    .card { padding: 30px 20px 24px; width: 92vw; border-radius: 24px; margin-bottom: 100px; }
+    .avatar { width: 90px; height: 90px; }
+    .name { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+<div class="grain"></div>
+<canvas id="bg"></canvas>
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+<!-- Context Menu -->
+<div id="ctx-menu">
+  <button class="ctx-item" onclick="location.reload()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21v-5h-5"/></svg>
+    Обновить
+  </button>
+  <button class="ctx-item" id="copyLinkBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    Копировать ссылку
+  </button>
+  <div class="ctx-sep"></div>
+  <a class="ctx-item" href="https://github.com/noclipov" target="_blank">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+    GitHub
+  </a>
+</div>
+
+<!-- Mobile Header -->
+<div class="mobile-header">
+  <div class="m-header-group">
+    <div class="m-btn" id="mLeftBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    </div>
+  </div>
+  <div class="m-header-group">
+    <div class="m-btn" id="mRightBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </div>
+    <div class="m-btn" id="mSettingsBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </div>
+  </div>
+</div>
+
+<!-- Desktop Triggers & Tabs -->
+<div class="panel-trigger left" id="leftTrigger"></div>
+<div class="panel-trigger right" id="rightTrigger"></div>
+
+<div class="panel-tab left" id="leftTab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+</div>
+<div class="panel-tab right" id="rightTab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 18l-6-6 6-6"/></svg>
+</div>
+
+<!-- Profile Card -->
+<div class="card" id="tilt-card">
+  <div class="avatar-wrapper">
+    <div class="avatar">
+      <div class="avatar-inner">
+        <img src="https://github.com/noclipov.png" alt="avatar" onerror="this.style.display='none'; this.parentElement.innerText='n';">
+      </div>
+    </div>
+  </div>
+  
+  <h1 class="name">noclipov</h1>
+  <p class="tagline" id="tagline">where the light fades and echoes remain</p>
+
+  <div class="card-widget">
+    <div class="widget-info">
+      <div class="widget-label">Now Playing</div>
+      <div class="widget-track" id="widgetTrack">Ambient</div>
+    </div>
+    <div class="visualizer">
+      <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings -->
+<button class="settings-btn" id="settingsBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</button>
+
+<div class="settings-menu" id="settingsMenu">
+  <div class="settings-title">Фон</div>
+  <div class="grid-btns" id="bgModes">
+    <button class="s-btn active" data-effect="stars">Звезды</button>
+    <button class="s-btn" data-effect="snow">Пыль</button>
+    <button class="s-btn" data-effect="rain">Дождь</button>
+    <button class="s-btn" data-effect="vertices">Сеть</button>
+    <button class="s-btn" data-effect="warp">Warp</button>
+    <button class="s-btn" data-effect="bubbles">Пузыри</button>
+  </div>
+</div>
+
+<!-- Left Social Panel -->
+<div class="social-panel" id="socialPanel">
+  <div class="panel-title">Socials</div>
+  <div class="soc-item" data-url="https://github.com/noclipov" data-name="GitHub">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+  </div>
+  <div class="soc-item" data-url="https://t.me/noclipov" data-name="Telegram">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 3.4 2.9 10.7c-.94.37-.93 1.7.02 2.04l4.7 1.66 1.8 5.55c.27.84 1.32 1.03 1.86.34l2.5-3.2 4.72 3.48c.72.53 1.75.13 1.9-.75l2.9-15.2c.17-.9-.72-1.6-1.4-1.22zM9.6 14.1l-.3 3.2-1.2-3.7 9.2-6.3-7.7 6.8z"/></svg>
+  </div>
+</div>
+
+<!-- Right Music Panel -->
+<div class="music-panel" id="musicPanel">
+  <div class="panel-title">Music Mode</div>
+  <div class="grid-btns" id="musicModes" style="grid-template-columns: 1fr;">
+    <button class="s-btn active" data-mode="ambient">Ambient</button>
+    <button class="s-btn" data-mode="deep">Deep Space</button>
+    <button class="s-btn" data-mode="rain">Lo-Fi</button>
+    <button class="s-btn" data-mode="playlist">Playlist (Local)</button>
+  </div>
+</div>
+
+<!-- Draggable Player -->
+<div class="floating-player" id="player">
+  <!-- Playlist Popover -->
+  <div class="playlist-popover" id="playlistPopover">
+    <div class="playlist-title">Локальный плейлист</div>
+    <div class="playlist-list" id="playlistContainer"></div>
+  </div>
+
+  <div class="progress-container" id="progressContainer">
+    <input type="range" id="progressSlider" min="0" max="100" step="0.1" value="0">
+  </div>
+  
+  <div class="player-controls">
+    <!-- Shuffle -->
+    <button class="ctrl-btn" id="shuffleBtn" title="Случайный порядок">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+    </button>
+
+    <!-- Основные кнопки -->
+    <div class="main-controls">
+      <button class="ctrl-btn" id="prevBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      
+      <button class="ctrl-btn play-btn" id="playBtn">
+        <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      
+      <button class="ctrl-btn" id="nextBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+      </button>
+    </div>
+
+    <!-- Repeat -->
+    <button class="ctrl-btn" id="repeatBtn" title="Повтор">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+      <span id="repeatOneDot" style="display:none;">1</span>
+    </button>
+
+    <!-- Инфо о треке -->
+    <div class="track-info">
+      <div class="track-name" id="trackName">Ambient</div>
+      <div class="track-status" id="trackStatus">Генератор</div>
+    </div>
+    
+    <!-- Playlist Button -->
+    <button class="ctrl-btn" id="playlistBtn" title="Список треков">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+    </button>
+
+    <!-- Volume -->
+    <div class="vol-wrap">
+      <button class="ctrl-btn" id="volBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </button>
+      <div class="vol-popover" id="volPopover">
+        <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.5">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modern QR Modal -->
+<div class="modal-overlay" id="qrModal">
+  <div class="qr-modal-content">
+    <div class="qr-wrapper">
+      <img id="qr-image" src="" alt="QR Code" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><rect width=\'200\' height=\'200\' fill=\'#0c0d12\'/><text x=\'50%\' y=\'50%\' fill=\'#a78bfa\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'sans-serif\' font-size=\'14\'>Нет файла QR</text></svg>'">
+    </div>
+    <h3 id="qrTitle" class="modal-title">Профиль</h3>
+    <p class="modal-desc">Наведите камеру телефона для перехода</p>
+    <a href="#" id="qrLink" class="modal-btn" target="_blank">Открыть ссылку</a>
+  </div>
+</div>
+
+<audio id="webAudio" crossorigin="anonymous"></audio>
+
+<script>
+const CONFIG = {
+  playlist: [
+    { title: 'марионетка познала безумие', src: 'music/track1.mp3' },
+    { title: 'Набросок (Alternative Version).', src: 'music/track2.mp3' },
+    { title: 'волны', src: 'music/track3.mp3' },
+    { title: 'Слишком хороший', src: 'music/track4.mp3' },
+    { title: 'я понял что значит любить', src: 'music/track5.mp3' },
+    { title: 'Метеорит', src: 'music/track6.mp3' },
+    { title: 'provod', src: 'music/track7.mp3' },
+  ],
+  quotes: [
+    "where the light fades and echoes remain",
+    "lost in the cosmic silence",
+    "drifting through the astral plane",
+    "a soul wandering the neon void",
+    "dust in the wind of a dying star",
+    "echoes of a forgotten tomorrow",
+    "in search of a new horizon",
+    "beyond the edge of time"
+  ]
+};
+
+// 3D TILT EFFECT (Parallax) - очень мягкий
+const card = document.getElementById('tilt-card');
+const isFine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+let raf = null;
+
+if (isFine) {
+  document.addEventListener('mousemove', (e) => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const distX = e.clientX - centerX;
+      const distY = e.clientY - centerY;
+      
+      // Максимальный наклон всего 3 градуса
+      const rotateX = (distY / (window.innerHeight / 2)) * -3;
+      const rotateY = (distX / (window.innerWidth / 2)) * 3;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      raf = null;
+    });
+  });
+
+  document.addEventListener('mouseleave', () => {
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    card.style.transition = 'transform 0.5s ease';
+    setTimeout(() => card.style.transition = 'transform 0.1s ease-out', 500);
+  });
+}
+
+class BackgroundEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.w = 0; this.h = 0;
+    this.particles = [];
+    this.effect = 'stars';
+    this.animId = null;
+
+    window.addEventListener('resize', () => this.resize());
+    this.resize();
+    this.loop();
+  }
+
+  resize() {
+    this.w = this.canvas.width = innerWidth * (window.devicePixelRatio > 1 ? 2 : 1);
+    this.h = this.canvas.height = innerHeight * (window.devicePixelRatio > 1 ? 2 : 1);
+    this.canvas.style.width = innerWidth + "px";
+    this.canvas.style.height = innerHeight + "px";
+    this.initParticles();
+  }
+
+  setEffect(mode) {
+    this.effect = mode;
+    this.initParticles();
+  }
+
+  initParticles() {
+    this.particles = [];
+    let count = 0;
+    if (this.effect === 'rain') count = Math.min(200, innerWidth / 10);
+    else if (this.effect === 'vertices') count = Math.min(80, innerWidth / 20);
+    else if (this.effect === 'warp') count = Math.min(350, innerWidth / 5);
+    else if (this.effect === 'snow') count = Math.min(150, innerWidth / 12);
+    else count = Math.min(150, innerWidth / 15);
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * this.w,
+        y: Math.random() * this.h,
+        vx: (Math.random() - 0.5) * (this.effect === 'rain' ? 1.5 : 0.3),
+        vy: this.effect === 'rain' ? 18 + Math.random() * 10 : (this.effect === 'warp' ? 0 : -(Math.random() * 0.4 + 0.1)),
+        r: this.effect === 'snow' || this.effect === 'bubbles' ? Math.random() * 3 + 1 : Math.random() * 2,
+        a: Math.random() * 0.5 + 0.1,
+        length: Math.random() * 30 + 20,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.03 + 0.01,
+        z: Math.random() * this.w
+      });
+    }
+  }
+
+  draw() {
+    this.ctx.clearRect(0, 0, this.w, this.h);
+    this.ctx.shadowBlur = 0;
+    
+    if (this.effect === 'rain') {
+      this.ctx.strokeStyle = "rgba(180, 200, 230, 0.15)";
+      this.ctx.lineWidth = 1;
+      this.ctx.lineCap = 'round';
+    } else {
+      this.ctx.shadowBlur = 8;
+      this.ctx.shadowColor = "rgba(139, 92, 246, 0.3)";
+    }
+
+    for (let i = 0; i < this.particles.length; i++) {
+      let p = this.particles[i];
+      
+      if (this.effect === 'rain') { p.x += p.vx; p.y += p.vy; }
+      else if (this.effect === 'vertices') {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > this.w) p.vx *= -1;
+        if (p.y < 0 || p.y > this.h) p.vy *= -1;
+      } else if (this.effect === 'warp') {
+        p.z -= 8;
+        if (p.z <= 1) { p.z = this.w; p.x = (Math.random() - 0.5) * this.w; p.y = (Math.random() - 0.5) * this.h; }
+      } else if (this.effect === 'bubbles') {
+        p.phase += p.speed; p.x += Math.sin(p.phase) * 0.8; p.y -= 0.8;
+      } else { p.x += p.vx; p.y += p.vy; }
+
+      if (this.effect !== 'warp' && this.effect !== 'vertices') {
+        if (p.x < -50) p.x = this.w + 50;
+        if (p.x > this.w + 50) p.x = -50;
+        if (p.y < -50) p.y = this.h + 50;
+        if (p.y > this.h + 50) p.y = -50;
+      }
+
+      if (this.effect === 'rain') {
+        this.ctx.beginPath(); this.ctx.moveTo(p.x, p.y); this.ctx.lineTo(p.x - p.vx * 3, p.y - p.length); this.ctx.stroke();
+      } else if (this.effect === 'vertices') {
+        this.ctx.fillStyle = "rgba(6, 182, 212, 0.4)";
+        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); this.ctx.fill();
+        for (let j = i + 1; j < this.particles.length; j++) {
+          let p2 = this.particles[j];
+          let dx = p.x - p2.x, dy = p.y - p2.y;
+          let dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < this.w * 0.15) {
+            this.ctx.beginPath(); this.ctx.moveTo(p.x, p.y); this.ctx.lineTo(p2.x, p2.y);
+            this.ctx.strokeStyle = `rgba(6, 182, 212, ${0.15 * (1 - dist / (this.w * 0.15))})`;
+            this.ctx.lineWidth = 1; this.ctx.stroke();
+          }
+        }
+      } else if (this.effect === 'warp') {
+        const px = (p.x / p.z) * this.w + this.w / 2;
+        const py = (p.y / p.z) * this.h + this.h / 2;
+        const radius = Math.max(0.1, (1 - p.z / this.w) * 3);
+        this.ctx.fillStyle = `rgba(255,255,255,${(1 - p.z / this.w) * 0.6})`;
+        this.ctx.beginPath(); this.ctx.arc(px, py, radius, 0, Math.PI*2); this.ctx.fill();
+      } else if (this.effect === 'bubbles') {
+        this.ctx.strokeStyle = `rgba(139, 92, 246, ${p.a * 0.6})`;
+        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); this.ctx.stroke();
+      } else {
+        this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.5 + 0.5 * Math.sin(Date.now()*0.002 + i))})`;
+        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); this.ctx.fill();
+      }
+    }
+    this.ctx.shadowBlur = 0;
+    this.animId = requestAnimationFrame(() => this.draw());
+  }
+
+  loop() { cancelAnimationFrame(this.animId); this.draw(); }
+}
+
+class AudioEngine {
+  constructor() {
+    this.ac = null;
+    this.masterGain = null;
+    this.musicGain = null;
+    this.analyser = null;
+    this.isPlaying = false;
+    this.mode = "ambient";
+    this.playlist = CONFIG.playlist;
+    this.currentTrack = 0;
+    this.isPlaylistMode = false;
+    
+    this.repeatMode = 0; 
+    this.shuffleMode = false;
+
+    this.webAudio = document.getElementById('webAudio');
+    this.mediaSource = null;
+    
+    this.vibes = {
+      ambient: { chords: [[174.61, 220.00, 261.63], [130.81, 164.81, 196.00], [146.83, 174.61, 220.00]] },
+      deep: { chords: [[110.00, 130.81, 164.81], [87.31, 110.00, 130.81], [98.00, 123.47, 146.83]] },
+      rain: { chords: [[146.83, 174.61, 220.00], [130.81, 164.81, 196.00], [110.00, 130.81, 164.81]] }
+    };
+  }
+
+  init() {
+    if (this.ac) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    this.ac = new AC();
+    
+    this.masterGain = this.ac.createGain();
+    this.musicGain = this.ac.createGain();
+    this.analyser = this.ac.createAnalyser();
+    this.analyser.fftSize = 64;
+
+    this.musicGain.gain.value = 0.25;
+
+    this.musicGain.connect(this.masterGain);
+    this.masterGain.connect(this.analyser);
+    this.analyser.connect(this.ac.destination);
+  }
+
+  playChord(freqs) {
+    const t0 = this.ac.currentTime;
+    freqs.forEach((f, i) => {
+      const osc = this.ac.createOscillator();
+      osc.type = 'sine'; osc.frequency.value = f;
+      const g = this.ac.createGain();
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.08 / (i+1), t0 + 3);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 10);
+      osc.connect(g); g.connect(this.musicGain);
+      osc.start(t0); osc.stop(t0 + 11);
+    });
+  }
+
+  startGen() {
+    this.init();
+    if (this.ac.state === "suspended") this.ac.resume();
+    this.isPlaying = true;
+    const chords = this.vibes[this.mode].chords;
+    this.playChord(chords[0]);
+    let step = 1;
+    clearInterval(this.genTimer);
+    this.genTimer = setInterval(() => {
+      this.playChord(chords[step % chords.length]);
+      step++;
+    }, 8000);
+  }
+
+  stopGen() { this.isPlaying = false; clearInterval(this.genTimer); }
+
+  setMode(mode) {
+    this.stopGen();
+    this.webAudio.pause();
+    this.mode = mode;
+    this.isPlaylistMode = (mode === 'playlist');
+    
+    if (this.isPlaylistMode) {
+      this.init();
+      if (!this.mediaSource) {
+        this.mediaSource = this.ac.createMediaElementSource(this.webAudio);
+        this.mediaSource.connect(this.masterGain);
+      }
+    } else {
+      this.startGen();
+    }
+    UI.updatePlayState(this.isPlaying || !this.webAudio.paused);
+    UI.updateTimelineVisibility();
+  }
+
+  playTrack(index) {
+    this.currentTrack = index;
+    this.webAudio.src = this.playlist[index].src;
+    this.webAudio.volume = parseFloat(document.getElementById('volSlider').value);
+    this.webAudio.play().catch(() => UI.updateTrackInfo(this.playlist[index].title, "Ошибка файла"));
+    UI.updateTrackInfo(this.playlist[index].title, "Локальный трек");
+    UI.updatePlaylistActive(index);
+  }
+
+  togglePlay() {
+    if (this.isPlaylistMode) {
+      if (this.webAudio.paused) { this.webAudio.play(); return true; }
+      else { this.webAudio.pause(); return false; }
+    } else {
+      if (this.isPlaying) { this.stopGen(); return false; }
+      else { this.startGen(); return true; }
+    }
+  }
+
+  nextTrack() { 
+    if (!this.isPlaylistMode) return;
+    if (this.shuffleMode) {
+      let next = Math.floor(Math.random() * this.playlist.length);
+      while(next === this.currentTrack && this.playlist.length > 1) { next = Math.floor(Math.random() * this.playlist.length); }
+      this.playTrack(next);
+    } else {
+      this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
+      this.playTrack(this.currentTrack);
+    }
+  }
+
+  prevTrack() { 
+    if (!this.isPlaylistMode) return;
+    this.currentTrack = (this.currentTrack - 1 + this.playlist.length) % this.playlist.length;
+    this.playTrack(this.currentTrack); 
+  }
+  
+  setVolume(val) {
+    if (this.isPlaylistMode) this.webAudio.volume = val;
+    else if (this.ac) this.musicGain.gain.setTargetAtTime(val * 0.3, this.ac.currentTime, 0.1);
+  }
+}
+
+const UI = {
+  init() {
+    this.engine = new AudioEngine();
+    this.bg = new BackgroundEngine(document.getElementById('bg'));
+    
+    this.els = {
+      player: document.getElementById('player'),
+      settingsBtn: document.getElementById('settingsBtn'),
+      mSettingsBtn: document.getElementById('mSettingsBtn'),
+      settingsMenu: document.getElementById('settingsMenu'),
+      leftTrigger: document.getElementById('leftTrigger'),
+      rightTrigger: document.getElementById('rightTrigger'),
+      leftTab: document.getElementById('leftTab'),
+      rightTab: document.getElementById('rightTab'),
+      socialPanel: document.getElementById('socialPanel'),
+      musicPanel: document.getElementById('musicPanel'),
+      playlistContainer: document.getElementById('playlistContainer'),
+      playlistPopover: document.getElementById('playlistPopover'),
+      playlistBtn: document.getElementById('playlistBtn'),
+      mobileBackdrop: document.getElementById('mobileBackdrop'),
+      playBtn: document.getElementById('playBtn'),
+      iconPlay: document.getElementById('iconPlay'),
+      iconPause: document.getElementById('iconPause'),
+      trackName: document.getElementById('trackName'),
+      trackStatus: document.getElementById('trackStatus'),
+      widgetTrack: document.getElementById('widgetTrack'),
+      qrModal: document.getElementById('qrModal'),
+      qrTitle: document.getElementById('qrTitle'),
+      qrLink: document.getElementById('qrLink'),
+      qrImage: document.getElementById('qr-image'),
+      tagline: document.getElementById('tagline'),
+      ctxMenu: document.getElementById('ctx-menu'),
+      copyLinkBtn: document.getElementById('copyLinkBtn'),
+      visBars: document.querySelectorAll('.vis-bar'),
+      
+      progressContainer: document.getElementById('progressContainer'),
+      progressSlider: document.getElementById('progressSlider'),
+      shuffleBtn: document.getElementById('shuffleBtn'),
+      repeatBtn: document.getElementById('repeatBtn'),
+      repeatOneDot: document.getElementById('repeatOneDot'),
+      volBtn: document.getElementById('volBtn'),
+      volPopover: document.getElementById('volPopover')
+    };
+
+    this.els.tagline.innerText = CONFIG.quotes[Math.floor(Math.random() * CONFIG.quotes.length)];
+    this.isSeeking = false;
+
+    this.renderPlaylist();
+    this.setupDrag();
+    this.bindEvents();
+    this.updateVisualizer();
+  },
+
+  renderPlaylist() {
+    this.els.playlistContainer.innerHTML = '';
+    CONFIG.playlist.forEach((track, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'playlist-item';
+      btn.innerText = track.title;
+      btn.dataset.index = i;
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        
+        if (!this.engine.isPlaylistMode) {
+          document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+          document.querySelector('[data-mode="playlist"]').classList.add('active');
+          this.engine.setMode('playlist');
+        }
+        
+        this.engine.playTrack(i);
+        this.updatePlayState(true);
+        
+        this.els.playlistPopover.classList.remove('open');
+        this.closeAllUI();
+      };
+      this.els.playlistContainer.appendChild(btn);
+    });
+  },
+
+  updatePlaylistActive(index) {
+    document.querySelectorAll('.playlist-item').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector(`.playlist-item[data-index="${index}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+  },
+
+  closeAllUI() {
+    this.els.settingsMenu.classList.remove('open');
+    this.els.socialPanel.classList.remove('open');
+    this.els.musicPanel.classList.remove('open');
+    this.els.volPopover.classList.remove('open');
+    this.els.playlistPopover.classList.remove('open');
+    this.els.mobileBackdrop.classList.remove('active');
+    this.els.leftTab.classList.remove('tab-hidden');
+    this.els.rightTab.classList.remove('tab-hidden');
+  },
+
+  setupDrag() {
+    const player = this.els.player;
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
+
+    if (window.innerWidth < 768) return;
+
+    const savedPos = localStorage.getItem('playerPos');
+    if (savedPos) {
+      try {
+        const { left, top } = JSON.parse(savedPos);
+        player.style.bottom = 'auto'; player.style.right = 'auto';
+        player.style.left = left + 'px'; player.style.top = top + 'px';
+      } catch(e) {}
+    }
+
+    player.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.ctrl-btn') || e.target.closest('input') || e.target.closest('.vol-wrap') || e.target.closest('.progress-container') || e.target.closest('.playlist-popover')) return;
+      
+      isDragging = true;
+      const rect = player.getBoundingClientRect();
+      startX = e.clientX; startY = e.clientY;
+      startLeft = rect.left; startTop = rect.top;
+      
+      player.style.bottom = 'auto'; player.style.right = 'auto';
+      player.style.left = rect.left + 'px'; player.style.top = rect.top + 'px';
+      player.style.transition = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      let newX = startLeft + (e.clientX - startX);
+      let newY = startTop + (e.clientY - startY);
+      const maxX = window.innerWidth - player.offsetWidth;
+      const maxY = window.innerHeight - player.offsetHeight;
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
+      player.style.left = newX + 'px';
+      player.style.top = newY + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      player.style.transition = '';
+      const rect = player.getBoundingClientRect();
+      localStorage.setItem('playerPos', JSON.stringify({ left: rect.left, top: rect.top }));
+    });
+  },
+
+  updateVisualizer() {
+    requestAnimationFrame(() => this.updateVisualizer());
+    if (!this.engine.analyser || (!this.engine.isPlaying && this.engine.webAudio.paused)) {
+      this.els.visBars.forEach(bar => bar.style.height = '15%');
+      return;
+    }
+
+    const dataArray = new Uint8Array(this.engine.analyser.frequencyBinCount);
+    this.engine.analyser.getByteFrequencyData(dataArray);
+
+    const step = Math.floor(dataArray.length / 5);
+    for (let i = 0; i < 5; i++) {
+      let value = dataArray[i * step];
+      let height = Math.max(15, (value / 255) * 100);
+      this.els.visBars[i].style.height = height + '%';
+    }
+  },
+
+  updateTimelineVisibility() {
+    if (this.engine.isPlaylistMode) {
+      this.els.progressContainer.classList.add('active');
+    } else {
+      this.els.progressContainer.classList.remove('active');
+    }
+  },
+
+  bindEvents() {
+    const { els, engine, bg } = this;
+
+    const toggleSettings = (e) => { 
+      e.stopPropagation(); 
+      const isOpen = els.settingsMenu.classList.contains('open');
+      this.closeAllUI(); 
+      if (!isOpen) els.settingsMenu.classList.add('open');
+    };
+    els.settingsBtn.onclick = toggleSettings;
+    els.mSettingsBtn.onclick = toggleSettings;
+
+    document.querySelectorAll('[data-effect]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('[data-effect]').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        bg.setEffect(e.target.dataset.effect);
+      };
+    });
+
+    let leftTimer, rightTimer;
+    const openLeft = () => { if(window.innerWidth >= 768) { clearTimeout(leftTimer); els.socialPanel.classList.add('open'); els.leftTab.classList.add('tab-hidden'); } };
+    const closeLeft = () => { if(window.innerWidth >= 768) { leftTimer = setTimeout(() => { els.socialPanel.classList.remove('open'); els.leftTab.classList.remove('tab-hidden'); }, 400); } };
+    els.leftTrigger.addEventListener('mouseenter', openLeft);
+    els.leftTrigger.addEventListener('mouseleave', closeLeft);
+    els.socialPanel.addEventListener('mouseenter', openLeft);
+    els.socialPanel.addEventListener('mouseleave', closeLeft);
+    els.leftTab.addEventListener('mouseenter', openLeft);
+
+    const openRight = () => { if(window.innerWidth >= 768) { clearTimeout(rightTimer); els.musicPanel.classList.add('open'); els.rightTab.classList.add('tab-hidden'); } };
+    const closeRight = () => { if(window.innerWidth >= 768) { rightTimer = setTimeout(() => { els.musicPanel.classList.remove('open'); els.rightTab.classList.remove('tab-hidden'); }, 400); } };
+    els.rightTrigger.addEventListener('mouseenter', openRight);
+    els.rightTrigger.addEventListener('mouseleave', closeRight);
+    els.musicPanel.addEventListener('mouseenter', openRight);
+    els.musicPanel.addEventListener('mouseleave', closeRight);
+    els.rightTab.addEventListener('mouseenter', openRight);
+
+    document.getElementById('mLeftBtn').onclick = (e) => {
+      e.stopPropagation();
+      const isOpen = els.socialPanel.classList.contains('open');
+      this.closeAllUI();
+      if (!isOpen) {
+        els.socialPanel.classList.add('open');
+        els.mobileBackdrop.classList.add('active');
+      }
+    };
+    
+    document.getElementById('mRightBtn').onclick = (e) => {
+      e.stopPropagation();
+      const isOpen = els.musicPanel.classList.contains('open');
+      this.closeAllUI();
+      if (!isOpen) {
+        els.musicPanel.classList.add('open');
+        els.mobileBackdrop.classList.add('active');
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.settings-menu') && !e.target.closest('.social-panel') && 
+          !e.target.closest('.music-panel') && !e.target.closest('.vol-wrap') && 
+          !e.target.closest('.settings-btn') && !e.target.closest('.m-btn') &&
+          !e.target.closest('.playlist-popover') && !e.target.closest('#playlistBtn')) {
+        this.closeAllUI();
+      }
+    });
+
+    els.mobileBackdrop.onclick = () => this.closeAllUI();
+
+    document.querySelectorAll('[data-mode]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        const mode = e.target.dataset.mode;
+        engine.setMode(mode);
+        
+        if (mode !== 'playlist') {
+          const names = { ambient: "Ambient", deep: "Deep Space", rain: "Lo-Fi" };
+          this.updateTrackInfo(names[mode], "Генератор");
+        }
+      };
+    });
+
+    els.playlistBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.closeAllUI();
+      els.playlistPopover.classList.toggle('open');
+    };
+
+    els.playBtn.onclick = () => {
+      const isPlaying = engine.togglePlay();
+      this.updatePlayState(isPlaying);
+    };
+    
+    document.getElementById('nextBtn').onclick = () => engine.nextTrack();
+    document.getElementById('prevBtn').onclick = () => engine.prevTrack();
+
+    els.shuffleBtn.onclick = (e) => {
+      e.stopPropagation();
+      engine.shuffleMode = !engine.shuffleMode;
+      els.shuffleBtn.classList.toggle('active', engine.shuffleMode);
+    };
+
+    els.repeatBtn.onclick = (e) => {
+      e.stopPropagation();
+      engine.repeatMode = (engine.repeatMode + 1) % 3;
+      els.repeatBtn.classList.toggle('active', engine.repeatMode > 0);
+      els.repeatOneDot.style.display = engine.repeatMode === 2 ? 'flex' : 'none';
+    };
+
+    els.volBtn.onclick = (e) => {
+      e.stopPropagation();
+      els.volPopover.classList.toggle('open');
+    };
+    document.getElementById('volSlider').oninput = (e) => {
+      engine.setVolume(e.target.value);
+    };
+
+    const webAudio = document.getElementById('webAudio');
+    webAudio.onplay = () => this.updatePlayState(true);
+    webAudio.onpause = () => this.updatePlayState(false);
+    
+    webAudio.onended = () => {
+      if (engine.repeatMode === 2) {
+        webAudio.currentTime = 0;
+        webAudio.play();
+      } else if (engine.shuffleMode) {
+        engine.nextTrack();
+      } else {
+        if (engine.currentTrack === engine.playlist.length - 1 && engine.repeatMode === 0) {
+          this.updatePlayState(false);
+        } else {
+          engine.nextTrack();
+        }
+      }
+    };
+
+    webAudio.addEventListener('timeupdate', () => {
+      if (this.isSeeking || !engine.isPlaylistMode || isNaN(webAudio.duration)) return;
+      const percent = (webAudio.currentTime / webAudio.duration) * 100;
+      els.progressSlider.value = percent;
+      els.progressSlider.style.setProperty('--progress', `${percent}%`);
+    });
+
+    webAudio.addEventListener('loadedmetadata', () => {
+      els.progressSlider.value = 0;
+      els.progressSlider.style.setProperty('--progress', `0%`);
+    });
+
+    els.progressSlider.addEventListener('input', (e) => {
+      this.isSeeking = true;
+      e.target.style.setProperty('--progress', `${e.target.value}%`);
+    });
+
+    els.progressSlider.addEventListener('change', (e) => {
+      if (engine.isPlaylistMode && webAudio.duration) {
+        webAudio.currentTime = (e.target.value / 100) * webAudio.duration;
+      }
+      this.isSeeking = false;
+    });
+
+    document.querySelectorAll('.soc-item').forEach(item => {
+      item.onclick = () => {
+        const url = item.dataset.url;
+        const name = item.dataset.name;
+        
+        els.qrTitle.innerText = name;
+        els.qrLink.href = url;
+        
+        if (name === 'GitHub') {
+          els.qrImage.src = 'qr_github.png';
+        } else if (name === 'Telegram') {
+          els.qrImage.src = 'qr_telegram.png';
+        }
+        
+        els.qrModal.classList.add('open');
+      };
+    });
+    
+    els.qrModal.onclick = (e) => { if (e.target === els.qrModal) els.qrModal.classList.remove('open'); };
+
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      els.ctxMenu.style.display = "flex";
+      let x = e.clientX, y = e.clientY;
+      if (x + 180 > window.innerWidth) x -= 180;
+      if (y + 160 > window.innerHeight) y -= 160;
+      els.ctxMenu.style.left = `${x}px`;
+      els.ctxMenu.style.top = `${y}px`;
+    });
+    document.addEventListener("click", (e) => {
+      if (!els.ctxMenu.contains(e.target)) els.ctxMenu.style.display = "none";
+    });
+    
+    els.copyLinkBtn.onclick = () => {
+      navigator.clipboard.writeText(window.location.href);
+      const original = els.copyLinkBtn.innerHTML;
+      els.copyLinkBtn.innerText = 'Скопировано!';
+      setTimeout(() => els.copyLinkBtn.innerHTML = original, 2000);
+    };
+  },
+
+  updatePlayState(isPlaying) {
+    if (isPlaying) {
+      this.els.iconPlay.style.display = "none";
+      this.els.iconPause.style.display = "block";
+      this.els.player.classList.add("playing");
+    } else {
+      this.els.iconPlay.style.display = "block";
+      this.els.iconPause.style.display = "none";
+      this.els.player.classList.remove("playing");
+    }
+  },
+
+  updateTrackInfo(name, status) {
+    this.els.trackName.innerText = name;
+    this.els.trackStatus.innerText = status;
+    this.els.widgetTrack.innerText = name;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => UI.init());
+</script>
+</body>
 </html>

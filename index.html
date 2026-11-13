@@ -17,16 +17,17 @@
 			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
+		<!-- Надежная библиотека для генерации QR -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 		<style>
 			:root {
-				--primary: #c084fc;
-				--secondary: #38bdf8;
+				--primary: #a78bfa;
+				--secondary: #22d3ee;
 				--accent: #f472b6;
-				--txt: #e2e8f0;
-				--muted: #8b95a8;
-				--bg: #020006;
-				--card-bg: rgba(15, 10, 25, 0.7);
+				--txt: #cbd5e1;
+				--muted: #64748b;
+				--bg: #03040a;
+				--card-bg: rgba(13, 17, 28, 0.75);
 			}
 
 			* {
@@ -61,12 +62,12 @@
 				background:
 					radial-gradient(
 						1200px 800px at 50% -20%,
-						#170a2e 0%,
+						#0f1123 0%,
 						transparent 60%
 					),
 					radial-gradient(
 						1000px 600px at 100% 120%,
-						#061b2b 0%,
+						#07111a 0%,
 						transparent 60%
 					),
 					var(--bg);
@@ -77,7 +78,7 @@
 				-webkit-font-smoothing: antialiased;
 			}
 
-			/* Background & Vignette */
+			/* Background & Vignette & Grain */
 			.aurora {
 				position: fixed;
 				inset: 0;
@@ -85,7 +86,7 @@
 				pointer-events: none;
 				z-index: 0;
 				filter: blur(100px);
-				opacity: 0.25;
+				opacity: 0.15;
 			}
 			.blob {
 				position: absolute;
@@ -125,7 +126,6 @@
 				pointer-events: none;
 			}
 
-			/* Затемнение по краям (Vignette) */
 			.vignette {
 				position: fixed;
 				inset: 0;
@@ -133,21 +133,30 @@
 				pointer-events: none;
 				background: radial-gradient(
 					circle at center,
-					transparent 30%,
-					rgba(0, 0, 0, 0.7) 100%
+					transparent 20%,
+					rgba(0, 0, 0, 0.85) 100%
 				);
+			}
+
+			.grain {
+				position: fixed;
+				inset: 0;
+				z-index: 3;
+				pointer-events: none;
+				opacity: 0.04;
+				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 			}
 
 			/* Profile Card */
 			.card {
 				position: relative;
-				z-index: 3;
+				z-index: 4;
 				width: min(90vw, 380px);
 				border-radius: 28px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				backdrop-filter: blur(24px) saturate(160%);
-				box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9);
+				border: 1px solid rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(30px) saturate(150%);
+				box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.95);
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -183,17 +192,17 @@
 					var(--accent),
 					var(--primary)
 				);
-				filter: blur(10px);
-				opacity: 0.6;
-				animation: spin 10s linear infinite;
+				filter: blur(12px);
+				opacity: 0.4;
+				animation: spin 12s linear infinite;
 			}
 			.avatar-inner {
 				position: absolute;
 				inset: 0;
 				border-radius: 50%;
-				background: #020006;
+				background: #03040a;
 				overflow: hidden;
-				border: 2px solid rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.1);
 				z-index: 1;
 				display: grid;
 				place-items: center;
@@ -204,6 +213,11 @@
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
+				filter: brightness(0.8);
+				transition: filter 0.3s;
+			}
+			.avatar:hover .avatar-inner img {
+				filter: brightness(1);
 			}
 			@keyframes spin {
 				to {
@@ -217,15 +231,15 @@
 				background: linear-gradient(
 					100deg,
 					#fff 10%,
-					#d8b4fe 40%,
-					#7dd3fc 60%,
+					#c4b5fd 40%,
+					#67e8f9 60%,
 					#fff 90%
 				);
 				background-size: 250% 100%;
 				-webkit-background-clip: text;
 				background-clip: text;
 				color: transparent;
-				animation: shimmer 6s linear infinite;
+				animation: shimmer 8s linear infinite;
 			}
 			@keyframes shimmer {
 				to {
@@ -236,6 +250,8 @@
 				margin-top: 6px;
 				font-size: 13px;
 				color: var(--muted);
+				font-weight: 500;
+				letter-spacing: 0.02em;
 			}
 
 			/* Settings (Top Right) */
@@ -248,7 +264,7 @@
 				height: 44px;
 				border-radius: 50%;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(255, 255, 255, 0.05);
 				color: var(--muted);
 				display: grid;
 				place-items: center;
@@ -259,23 +275,24 @@
 			.settings-btn:hover {
 				color: #fff;
 				transform: rotate(90deg);
+				background: rgba(255, 255, 255, 0.1);
 			}
 			.settings-menu {
 				position: fixed;
 				top: 70px;
 				right: 20px;
 				z-index: 99;
-				width: 220px;
+				width: 240px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(255, 255, 255, 0.05);
 				border-radius: 20px;
 				padding: 16px;
-				backdrop-filter: blur(24px);
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+				backdrop-filter: blur(30px);
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
 				opacity: 0;
 				pointer-events: none;
 				transform: translateY(-10px);
-				transition: all 0.3s;
+				transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 			}
 			.settings-menu.open {
 				opacity: 1;
@@ -288,6 +305,7 @@
 				color: var(--muted);
 				margin-bottom: 8px;
 				font-weight: 600;
+				letter-spacing: 0.05em;
 			}
 			.grid-btns {
 				display: grid;
@@ -296,7 +314,7 @@
 				margin-bottom: 16px;
 			}
 			.s-btn {
-				background: rgba(255, 255, 255, 0.03);
+				background: rgba(255, 255, 255, 0.02);
 				border: 1px solid rgba(255, 255, 255, 0.05);
 				color: var(--muted);
 				padding: 8px;
@@ -311,8 +329,8 @@
 				color: #fff;
 			}
 			.s-btn.active {
-				background: rgba(192, 132, 252, 0.15);
-				border-color: rgba(192, 132, 252, 0.4);
+				background: rgba(167, 139, 250, 0.15);
+				border-color: rgba(167, 139, 250, 0.4);
 				color: #fff;
 			}
 
@@ -323,7 +341,7 @@
 				align-items: center;
 				font-size: 12px;
 				padding-top: 10px;
-				border-top: 1px solid rgba(255, 255, 255, 0.08);
+				border-top: 1px solid rgba(255, 255, 255, 0.05);
 			}
 			.switch {
 				position: relative;
@@ -359,12 +377,12 @@
 				transform: translateX(16px);
 			}
 
-			/* Hover Zones for Panels */
+			/* Hover Zones */
 			.hover-zone {
 				position: fixed;
 				top: 0;
 				bottom: 0;
-				width: 25px;
+				width: 40px;
 				z-index: 98;
 			}
 			.hover-zone.left {
@@ -386,15 +404,15 @@
 				gap: 12px;
 				padding: 16px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(255, 255, 255, 0.05);
 				border-left: none;
 				border-radius: 0 24px 24px 0;
-				backdrop-filter: blur(24px);
+				backdrop-filter: blur(30px);
 				transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 			}
 			.social-panel.open {
 				transform: translate(0, -50%);
-				box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+				box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
 			}
 
 			/* Right Music Panel */
@@ -408,17 +426,17 @@
 				flex-direction: column;
 				gap: 12px;
 				padding: 16px;
-				width: 200px;
+				width: 220px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(255, 255, 255, 0.05);
 				border-right: none;
 				border-radius: 24px 0 0 24px;
-				backdrop-filter: blur(24px);
+				backdrop-filter: blur(30px);
 				transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 			}
 			.music-panel.open {
 				transform: translate(0, -50%);
-				box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+				box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
 			}
 
 			.panel-title {
@@ -435,7 +453,7 @@
 				width: 44px;
 				height: 44px;
 				border-radius: 14px;
-				background: rgba(255, 255, 255, 0.03);
+				background: rgba(255, 255, 255, 0.02);
 				display: grid;
 				place-items: center;
 				color: var(--muted);
@@ -443,7 +461,7 @@
 				transition: 0.3s;
 			}
 			.soc-item:hover {
-				background: rgba(192, 132, 252, 0.15);
+				background: rgba(167, 139, 250, 0.15);
 				color: #fff;
 				transform: scale(1.05);
 			}
@@ -452,7 +470,7 @@
 				height: 20px;
 			}
 
-			/* Floating Player */
+			/* Draggable Player */
 			.floating-player {
 				position: fixed;
 				bottom: 24px;
@@ -465,12 +483,31 @@
 				background: var(--card-bg);
 				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-radius: 24px;
-				backdrop-filter: blur(24px);
-				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-				transition: all 0.3s;
+				backdrop-filter: blur(30px);
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+				cursor: grab;
+				user-select: none;
+				transition: border-color 0.3s;
+			}
+			.floating-player:active {
+				cursor: grabbing;
 			}
 			.floating-player:hover {
 				border-color: rgba(255, 255, 255, 0.15);
+			}
+
+			.drag-handle {
+				display: flex;
+				gap: 3px;
+				cursor: grab;
+				padding-right: 10px;
+				border-right: 1px solid rgba(255, 255, 255, 0.1);
+			}
+			.drag-dot {
+				width: 3px;
+				height: 3px;
+				background: var(--muted);
+				border-radius: 50%;
 			}
 
 			.visualizer {
@@ -518,6 +555,7 @@
 				display: grid;
 				place-items: center;
 				transition: 0.2s;
+				pointer-events: auto;
 			}
 			.ctrl-btn:hover {
 				color: #fff;
@@ -528,11 +566,11 @@
 				border-radius: 50%;
 				background: linear-gradient(135deg, var(--primary), var(--secondary));
 				color: #fff;
-				box-shadow: 0 4px 15px rgba(192, 132, 252, 0.4);
+				box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3);
 			}
 			.play-btn:hover {
 				transform: scale(1.05);
-				box-shadow: 0 6px 20px rgba(192, 132, 252, 0.6);
+				box-shadow: 0 6px 20px rgba(167, 139, 250, 0.5);
 			}
 			.play-btn svg {
 				width: 18px;
@@ -544,6 +582,7 @@
 				flex-direction: column;
 				min-width: 90px;
 				max-width: 120px;
+				pointer-events: none;
 			}
 			.track-name {
 				font-size: 13px;
@@ -565,6 +604,7 @@
 				align-items: center;
 				gap: 8px;
 				width: 70px;
+				pointer-events: auto;
 			}
 			.vol-wrap svg {
 				width: 14px;
@@ -575,6 +615,7 @@
 				-webkit-appearance: none;
 				width: 100%;
 				background: transparent;
+				cursor: pointer;
 			}
 			input[type='range']::-webkit-slider-runnable-track {
 				width: 100%;
@@ -597,7 +638,7 @@
 				position: fixed;
 				inset: 0;
 				z-index: 200;
-				background: rgba(0, 0, 0, 0.7);
+				background: rgba(0, 0, 0, 0.8);
 				backdrop-filter: blur(10px);
 				display: flex;
 				align-items: center;
@@ -612,7 +653,7 @@
 			}
 			.modal-content {
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-radius: 24px;
 				padding: 24px;
 				display: flex;
@@ -631,9 +672,10 @@
 				margin-bottom: 16px;
 				border: 1px solid rgba(255, 255, 255, 0.05);
 			}
-			#qr-canvas {
+			#qr-image {
 				display: block;
-				border-radius: 8px;
+				width: 180px;
+				height: 180px;
 			}
 			.modal-btn {
 				background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -643,9 +685,36 @@
 				text-decoration: none;
 				font-weight: 600;
 				font-size: 14px;
+				transition: transform 0.2s;
+			}
+			.modal-btn:hover {
+				transform: translateY(-2px);
 			}
 
 			/* Mobile Adaptations */
+			.mobile-panel-trigger {
+				display: none;
+				position: fixed;
+				z-index: 100;
+				width: 44px;
+				height: 44px;
+				background: var(--card-bg);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 50%;
+				place-items: center;
+				cursor: pointer;
+				color: var(--muted);
+				backdrop-filter: blur(10px);
+			}
+			.m-left {
+				left: 10px;
+				bottom: 100px;
+			}
+			.m-right {
+				right: 10px;
+				bottom: 160px;
+			}
+
 			@media (max-width: 768px) {
 				.floating-player {
 					bottom: 0;
@@ -654,13 +723,17 @@
 					border-radius: 24px 24px 0 0;
 					justify-content: space-between;
 					padding: 16px 20px;
+					cursor: default;
+				}
+				.drag-handle {
+					display: none;
 				}
 				.vol-wrap {
 					display: none;
 				}
 				.hover-zone {
 					display: none;
-				} /* Отключаем hover-зоны на мобильных */
+				}
 				.settings-btn {
 					top: 10px;
 					right: 10px;
@@ -670,39 +743,36 @@
 					right: 10px;
 				}
 
-				/* На мобильных панели открываются по тапу на маленькие кнопки (добавлены в HTML) */
 				.mobile-panel-trigger {
-					display: grid !important;
+					display: grid;
 				}
-			}
 
-			.mobile-panel-trigger {
-				display: none;
-				position: fixed;
-				z-index: 100;
-				width: 40px;
-				height: 40px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 50%;
-				place-items: center;
-				cursor: pointer;
-			}
-			.m-left {
-				left: 10px;
-				bottom: 100px;
-				color: var(--muted);
-			}
-			.m-right {
-				right: 10px;
-				bottom: 160px;
-				color: var(--muted);
+				.social-panel {
+					top: auto;
+					bottom: 120px;
+					transform: translate(-100%, 0);
+					border-radius: 0 24px 24px 0;
+				}
+				.social-panel.open {
+					transform: translate(0, 0);
+				}
+
+				.music-panel {
+					top: auto;
+					bottom: 180px;
+					transform: translate(100%, 0);
+					border-radius: 24px 0 0 24px;
+				}
+				.music-panel.open {
+					transform: translate(0, 0);
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<!-- Vignette & Background -->
 		<div class="vignette"></div>
+		<div class="grain"></div>
 		<canvas id="bg"></canvas>
 		<div class="aurora">
 			<div class="blob b1"></div>
@@ -720,8 +790,8 @@
 				fill="none"
 				stroke="currentColor"
 				stroke-width="2"
-				width="16"
-				height="16"
+				width="18"
+				height="18"
 			>
 				<path d="M9 18l6-6-6-6" />
 			</svg>
@@ -732,8 +802,8 @@
 				fill="none"
 				stroke="currentColor"
 				stroke-width="2"
-				width="16"
-				height="16"
+				width="18"
+				height="18"
 			>
 				<path d="M15 18l-6-6 6-6" />
 			</svg>
@@ -781,6 +851,8 @@
 				<button class="s-btn" data-effect="snow">Пыль</button>
 				<button class="s-btn" data-effect="rain">Дождь</button>
 				<button class="s-btn" data-effect="vertices">Сеть</button>
+				<button class="s-btn" data-effect="warp">Warp</button>
+				<button class="s-btn" data-effect="bubbles">Пузыри</button>
 			</div>
 			<div class="toggle-row">
 				<span>Звук дождя</span>
@@ -828,8 +900,17 @@
 			</div>
 		</div>
 
-		<!-- Player -->
+		<!-- Draggable Player -->
 		<div class="floating-player" id="player">
+			<div class="drag-handle">
+				<div class="drag-dot"></div>
+				<div class="drag-dot"></div>
+				<div class="drag-dot"></div>
+				<div class="drag-dot"></div>
+				<div class="drag-dot"></div>
+				<div class="drag-dot"></div>
+			</div>
+
 			<div class="visualizer">
 				<div class="vis-bar"></div>
 				<div class="vis-bar"></div>
@@ -893,7 +974,9 @@
 		<!-- QR Modal -->
 		<div class="modal-overlay" id="qrModal">
 			<div class="modal-content">
-				<div class="qr-wrapper"><canvas id="qr-canvas"></canvas></div>
+				<div class="qr-wrapper">
+					<img id="qr-image" src="" alt="QR Code" />
+				</div>
 				<h3 id="qrTitle" style="margin-bottom: 20px; color: #fff">Профиль</h3>
 				<a href="#" id="qrLink" class="modal-btn" target="_blank">Перейти</a>
 			</div>
@@ -913,18 +996,6 @@
 					{ title: 'provod', src: 'music/track7.mp3' },
 				],
 			};
-
-			function debounce(func, wait) {
-				let timeout;
-				return function executedFunction(...args) {
-					const later = () => {
-						clearTimeout(timeout);
-						func(...args);
-					};
-					clearTimeout(timeout);
-					timeout = setTimeout(later, wait);
-				};
-			}
 
 			class BackgroundEngine {
 				constructor(canvas) {
@@ -962,26 +1033,29 @@
 					if (this.effect === 'rain') count = Math.min(100, innerWidth / 15);
 					else if (this.effect === 'vertices')
 						count = Math.min(40, innerWidth / 30);
+					else if (this.effect === 'warp')
+						count = Math.min(150, innerWidth / 10);
 					else count = Math.min(80, innerWidth / 20);
 
 					for (let i = 0; i < count; i++) {
 						this.particles.push({
 							x: Math.random() * this.w,
 							y: Math.random() * this.h,
-							vx:
-								this.effect === 'rain'
-									? -2 - Math.random() * 2
-									: (Math.random() - 0.5) * 0.2,
+							vx: (Math.random() - 0.5) * (this.effect === 'warp' ? 0.5 : 0.2),
 							vy:
 								this.effect === 'rain'
 									? 15 + Math.random() * 10
-									: Math.random() * 0.3 + 0.1,
+									: this.effect === 'warp'
+										? (Math.random() - 0.5) * 0.5
+										: -(Math.random() * 0.3 + 0.1),
 							r:
-								this.effect === 'snow'
-									? Math.random() * 2 + 1
+								this.effect === 'snow' || this.effect === 'bubbles'
+									? Math.random() * 3 + 1
 									: Math.random() * 1.5,
 							a: Math.random() * 0.5 + 0.2,
 							length: Math.random() * 20 + 15,
+							phase: Math.random() * Math.PI * 2,
+							speed: Math.random() * 0.02 + 0.01,
 						});
 					}
 				}
@@ -990,58 +1064,30 @@
 					this.ctx.clearRect(0, 0, this.w, this.h);
 
 					if (this.effect === 'rain') {
-						this.ctx.strokeStyle = 'rgba(200, 210, 230, 0.25)';
+						this.ctx.strokeStyle = 'rgba(160, 175, 200, 0.2)';
 						this.ctx.lineWidth = 1.5;
 						this.ctx.lineCap = 'round';
 					} else {
 						this.ctx.shadowBlur = 10;
-						this.ctx.shadowColor = 'rgba(192,132,252,0.3)';
+						this.ctx.shadowColor = 'rgba(167, 139, 250, 0.3)';
 					}
 
 					for (let i = 0; i < this.particles.length; i++) {
 						let p = this.particles[i];
 
 						if (this.effect === 'rain') {
-							p.x += p.vx * 2;
+							p.x -= 2;
 							p.y += p.vy;
+							this.ctx.beginPath();
+							this.ctx.moveTo(p.x, p.y);
+							this.ctx.lineTo(p.x + 4, p.y - p.length);
+							this.ctx.stroke();
 						} else if (this.effect === 'vertices') {
 							p.x += p.vx;
 							p.y += p.vy;
 							if (p.x < 0 || p.x > this.w) p.vx *= -1;
 							if (p.y < 0 || p.y > this.h) p.vy *= -1;
-						} else {
-							p.x += p.vx;
-							p.y += p.vy;
-						}
-
-						if (p.y > this.h + 50) {
-							p.y = -50;
-							p.x = Math.random() * this.w;
-						}
-						if (p.y < -50) {
-							p.y = this.h + 50;
-							p.x = Math.random() * this.w;
-						}
-						if (p.x < -50) p.x = this.w + 50;
-						if (p.x > this.w + 50) p.x = -50;
-
-						if (this.effect === 'rain') {
-							this.ctx.beginPath();
-							this.ctx.moveTo(p.x, p.y);
-							this.ctx.lineTo(p.x - p.vx * 2, p.y - p.length);
-							this.ctx.stroke();
-						} else if (this.effect === 'snow') {
-							this.ctx.fillStyle = `rgba(255,255,255,${p.a})`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-						} else if (this.effect === 'stars') {
-							this.ctx.fillStyle = `rgba(192,132,252,${p.a * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i))})`;
-							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-							this.ctx.fill();
-						} else if (this.effect === 'vertices') {
-							this.ctx.fillStyle = 'rgba(56,189,248,0.6)';
+							this.ctx.fillStyle = 'rgba(34, 211, 238, 0.5)';
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.fill();
@@ -1054,11 +1100,52 @@
 									this.ctx.beginPath();
 									this.ctx.moveTo(p.x, p.y);
 									this.ctx.lineTo(p2.x, p2.y);
-									this.ctx.strokeStyle = `rgba(56,189,248,${0.15 * (1 - dist / (this.w * 0.15))})`;
+									this.ctx.strokeStyle = `rgba(34, 211, 238, ${0.1 * (1 - dist / (this.w * 0.15))})`;
 									this.ctx.lineWidth = 1;
 									this.ctx.stroke();
 								}
 							}
+						} else if (this.effect === 'warp') {
+							p.x += p.vx * 5;
+							p.y += p.vy * 5;
+							let dist = Math.sqrt(
+								Math.pow(p.x - this.w / 2, 2) + Math.pow(p.y - this.h / 2, 2),
+							);
+							if (dist > this.w) {
+								p.x = this.w / 2 + (Math.random() - 0.5) * 10;
+								p.y = this.h / 2 + (Math.random() - 0.5) * 10;
+							}
+							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (dist / this.w)})`;
+							this.ctx.beginPath();
+							this.ctx.arc(p.x, p.y, p.r * (dist / this.w), 0, Math.PI * 2);
+							this.ctx.fill();
+						} else if (this.effect === 'bubbles') {
+							p.phase += p.speed;
+							p.x += Math.sin(p.phase) * 0.5;
+							p.y -= 0.5;
+							if (p.y < -50) {
+								p.y = this.h + 50;
+								p.x = Math.random() * this.w;
+							}
+							this.ctx.strokeStyle = `rgba(167, 139, 250, ${p.a})`;
+							this.ctx.beginPath();
+							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+							this.ctx.stroke();
+						} else {
+							p.x += p.vx;
+							p.y += p.vy;
+							if (p.y < -50) {
+								p.y = this.h + 50;
+								p.x = Math.random() * this.w;
+							}
+							if (p.y > this.h + 50) {
+								p.y = -50;
+								p.x = Math.random() * this.w;
+							}
+							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i))})`;
+							this.ctx.beginPath();
+							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+							this.ctx.fill();
 						}
 					}
 					this.ctx.shadowBlur = 0;
@@ -1320,15 +1407,89 @@
 						qrModal: document.getElementById('qrModal'),
 						qrTitle: document.getElementById('qrTitle'),
 						qrLink: document.getElementById('qrLink'),
+						qrImage: document.getElementById('qr-image'),
 					};
 
+					this.setupDrag();
 					this.bindEvents();
+				},
+
+				setupDrag() {
+					const player = this.els.player;
+					let isDragging = false;
+					let startX, startY, startLeft, startTop;
+
+					// Восстановление позиции
+					const savedPos = localStorage.getItem('playerPos');
+					if (savedPos) {
+						try {
+							const { left, top } = JSON.parse(savedPos);
+							player.style.bottom = 'auto';
+							player.style.right = 'auto';
+							player.style.left = left + 'px';
+							player.style.top = top + 'px';
+						} catch (e) {}
+					}
+
+					player.addEventListener('mousedown', (e) => {
+						// Игнорируем клики по кнопкам и ползунку
+						if (
+							e.target.closest('.ctrl-btn') ||
+							e.target.closest('input') ||
+							e.target.closest('.drag-handle') ||
+							window.innerWidth < 768
+						)
+							return;
+
+						isDragging = true;
+						const rect = player.getBoundingClientRect();
+						startX = e.clientX;
+						startY = e.clientY;
+						startLeft = rect.left;
+						startTop = rect.top;
+
+						player.style.bottom = 'auto';
+						player.style.right = 'auto';
+						player.style.left = rect.left + 'px';
+						player.style.top = rect.top + 'px';
+						player.style.transition = 'none';
+					});
+
+					document.addEventListener('mousemove', (e) => {
+						if (!isDragging) return;
+
+						let newX = startLeft + (e.clientX - startX);
+						let newY = startTop + (e.clientY - startY);
+
+						// Ограничиваем пределами экрана
+						const maxX = window.innerWidth - player.offsetWidth;
+						const maxY = window.innerHeight - player.offsetHeight;
+
+						newX = Math.max(0, Math.min(newX, maxX));
+						newY = Math.max(0, Math.min(newY, maxY));
+
+						player.style.left = newX + 'px';
+						player.style.top = newY + 'px';
+					});
+
+					document.addEventListener('mouseup', () => {
+						if (!isDragging) return;
+						isDragging = false;
+						player.style.transition = '';
+
+						// Сохранение позиции
+						const rect = player.getBoundingClientRect();
+						localStorage.setItem(
+							'playerPos',
+							JSON.stringify({ left: rect.left, top: rect.top }),
+						);
+					});
 				},
 
 				bindEvents() {
 					const { els, engine, bg } = this;
 
-					// Настройки (Фон)
+					// Настройки
 					els.settingsBtn.onclick = () =>
 						els.settingsMenu.classList.toggle('open');
 					document.querySelectorAll('[data-effect]').forEach((btn) => {
@@ -1346,44 +1507,45 @@
 						else engine.stopRainSounds();
 					};
 
-					// Панели (Hover с дебаунсом)
-					const openLeft = debounce(
-						() => els.socialPanel.classList.add('open'),
-						150,
-					);
-					const closeLeft = debounce(
-						() => els.socialPanel.classList.remove('open'),
-						300,
-					);
+					// Панели (Hover с задержкой)
+					let leftTimer, rightTimer;
+					const openLeft = () => {
+						clearTimeout(leftTimer);
+						els.socialPanel.classList.add('open');
+					};
+					const closeLeft = () => {
+						leftTimer = setTimeout(
+							() => els.socialPanel.classList.remove('open'),
+							400,
+						);
+					};
 					els.leftZone.addEventListener('mouseenter', openLeft);
 					els.leftZone.addEventListener('mouseleave', closeLeft);
-					els.socialPanel.addEventListener('mouseenter', () => {
-						els.socialPanel.classList.add('open');
-					});
+					els.socialPanel.addEventListener('mouseenter', openLeft);
 					els.socialPanel.addEventListener('mouseleave', closeLeft);
 
-					const openRight = debounce(
-						() => els.musicPanel.classList.add('open'),
-						150,
-					);
-					const closeRight = debounce(
-						() => els.musicPanel.classList.remove('open'),
-						300,
-					);
+					const openRight = () => {
+						clearTimeout(rightTimer);
+						els.musicPanel.classList.add('open');
+					};
+					const closeRight = () => {
+						rightTimer = setTimeout(
+							() => els.musicPanel.classList.remove('open'),
+							400,
+						);
+					};
 					els.rightZone.addEventListener('mouseenter', openRight);
 					els.rightZone.addEventListener('mouseleave', closeRight);
-					els.musicPanel.addEventListener('mouseenter', () => {
-						els.musicPanel.classList.add('open');
-					});
+					els.musicPanel.addEventListener('mouseenter', openRight);
 					els.musicPanel.addEventListener('mouseleave', closeRight);
 
-					// Мобильные кнопки для панелей
+					// Мобильные триггеры
 					document.getElementById('mLeftBtn').onclick = () =>
 						els.socialPanel.classList.toggle('open');
 					document.getElementById('mRightBtn').onclick = () =>
 						els.musicPanel.classList.toggle('open');
 
-					// Музыка (Режимы)
+					// Музыка
 					document.querySelectorAll('[data-mode]').forEach((btn) => {
 						btn.onclick = (e) => {
 							document
@@ -1417,7 +1579,7 @@
 					webAudio.onpause = () => this.updatePlayState(false);
 					webAudio.onended = () => engine.nextTrack();
 
-					// Соцсети (QR)
+					// Соцсети (QR через Data URL)
 					document.querySelectorAll('.soc-item').forEach((item) => {
 						item.onclick = () => {
 							const url = item.dataset.url;
@@ -1425,11 +1587,17 @@
 							els.qrLink.href = url;
 							els.qrModal.classList.add('open');
 
-							QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
-								width: 180,
-								margin: 2,
-								color: { dark: '#c084fc', light: '#0c0d12' },
-							});
+							QRCode.toDataURL(
+								url,
+								{
+									width: 200,
+									margin: 2,
+									color: { dark: '#a78bfa', light: '#0d111c' },
+								},
+								(err, url) => {
+									if (!err) els.qrImage.src = url;
+								},
+							);
 						};
 					});
 

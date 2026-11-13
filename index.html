@@ -14,18 +14,17 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
-		<!-- Надежная библиотека для генерации QR -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 		<style>
 			:root {
 				--primary: #a78bfa;
 				--secondary: #22d3ee;
 				--accent: #f472b6;
-				--txt: #cbd5e1;
-				--muted: #64748b;
+				--txt: #f8fafc;
+				--muted: #94a3b8;
 				--bg: #03040a;
 				--card-bg: rgba(13, 17, 28, 0.75);
 			}
@@ -35,6 +34,8 @@
 				margin: 0;
 				padding: 0;
 				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				-webkit-user-select: none;
 			}
 
 			::-webkit-scrollbar {
@@ -56,7 +57,7 @@
 
 			body {
 				font-family:
-					'Inter',
+					'Outfit',
 					-apple-system,
 					sans-serif;
 				background:
@@ -78,7 +79,7 @@
 				-webkit-font-smoothing: antialiased;
 			}
 
-			/* Background & Vignette & Grain */
+			/* Background & Atmosphere */
 			.aurora {
 				position: fixed;
 				inset: 0;
@@ -143,8 +144,36 @@
 				inset: 0;
 				z-index: 3;
 				pointer-events: none;
-				opacity: 0.04;
+				opacity: 0.03;
 				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+			}
+
+			.ambient-glow {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(
+					circle,
+					rgba(167, 139, 250, 0.08) 0%,
+					transparent 60%
+				);
+				pointer-events: none;
+				z-index: 0;
+				filter: blur(40px);
+				animation: pulseGlow 8s infinite alternate;
+			}
+			@keyframes pulseGlow {
+				0% {
+					opacity: 0.5;
+					transform: translate(-50%, -50%) scale(1);
+				}
+				100% {
+					opacity: 1;
+					transform: translate(-50%, -50%) scale(1.1);
+				}
 			}
 
 			/* Profile Card */
@@ -154,7 +183,7 @@
 				width: min(90vw, 380px);
 				border-radius: 28px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				backdrop-filter: blur(30px) saturate(150%);
 				box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.95);
 				display: flex;
@@ -193,7 +222,7 @@
 					var(--primary)
 				);
 				filter: blur(12px);
-				opacity: 0.4;
+				opacity: 0.5;
 				animation: spin 12s linear infinite;
 			}
 			.avatar-inner {
@@ -213,7 +242,7 @@
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-				filter: brightness(0.8);
+				filter: brightness(0.85);
 				transition: filter 0.3s;
 			}
 			.avatar:hover .avatar-inner img {
@@ -226,8 +255,8 @@
 			}
 
 			.name {
-				font-size: 26px;
-				font-weight: 700;
+				font-size: 28px;
+				font-weight: 600;
 				background: linear-gradient(
 					100deg,
 					#fff 10%,
@@ -247,11 +276,12 @@
 				}
 			}
 			.tagline {
-				margin-top: 6px;
-				font-size: 13px;
+				margin-top: 8px;
+				font-size: 14px;
 				color: var(--muted);
-				font-weight: 500;
+				font-weight: 400;
 				letter-spacing: 0.02em;
+				text-align: center;
 			}
 
 			/* Settings (Top Right) */
@@ -264,7 +294,7 @@
 				height: 44px;
 				border-radius: 50%;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				color: var(--muted);
 				display: grid;
 				place-items: center;
@@ -284,7 +314,7 @@
 				z-index: 99;
 				width: 240px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-radius: 20px;
 				padding: 16px;
 				backdrop-filter: blur(30px);
@@ -300,7 +330,7 @@
 				transform: translateY(0);
 			}
 			.settings-title {
-				font-size: 11px;
+				font-size: 12px;
 				text-transform: uppercase;
 				color: var(--muted);
 				margin-bottom: 8px;
@@ -314,15 +344,16 @@
 				margin-bottom: 16px;
 			}
 			.s-btn {
-				background: rgba(255, 255, 255, 0.02);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				background: rgba(255, 255, 255, 0.03);
+				border: 1px solid rgba(255, 255, 255, 0.06);
 				color: var(--muted);
 				padding: 8px;
 				border-radius: 10px;
-				font-size: 11px;
+				font-size: 12px;
 				cursor: pointer;
 				transition: all 0.2s;
 				font-family: inherit;
+				font-weight: 500;
 			}
 			.s-btn:hover {
 				background: rgba(255, 255, 255, 0.08);
@@ -339,9 +370,9 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				font-size: 12px;
-				padding-top: 10px;
-				border-top: 1px solid rgba(255, 255, 255, 0.05);
+				font-size: 13px;
+				padding-top: 12px;
+				border-top: 1px solid rgba(255, 255, 255, 0.08);
 			}
 			.switch {
 				position: relative;
@@ -377,22 +408,67 @@
 				transform: translateX(16px);
 			}
 
-			/* Hover Zones */
-			.hover-zone {
+			/* Trigger Zones & Tabs */
+			.panel-trigger {
 				position: fixed;
-				top: 0;
-				bottom: 0;
-				width: 40px;
+				top: 50%;
+				transform: translateY(-50%);
 				z-index: 98;
+				width: 60px;
+				height: 200px;
 			}
-			.hover-zone.left {
+			.panel-trigger.left {
 				left: 0;
 			}
-			.hover-zone.right {
+			.panel-trigger.right {
 				right: 0;
 			}
 
-			/* Left Social Panel */
+			.panel-tab {
+				position: fixed;
+				top: 50%;
+				transform: translateY(-50%);
+				z-index: 100;
+				width: 24px;
+				height: 60px;
+				background: var(--card-bg);
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				color: var(--muted);
+				backdrop-filter: blur(10px);
+				transition:
+					transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+					opacity 0.3s;
+			}
+			.panel-tab.left {
+				left: 0;
+				border-radius: 0 12px 12px 0;
+				border-left: none;
+			}
+			.panel-tab.right {
+				right: 0;
+				border-radius: 12px 0 0 12px;
+				border-right: none;
+			}
+			.panel-tab:hover {
+				color: #fff;
+			}
+
+			/* Анимация скрытия закладок */
+			.panel-tab.left.tab-hidden {
+				transform: translate(-100%, -50%);
+				opacity: 0;
+				pointer-events: none;
+			}
+			.panel-tab.right.tab-hidden {
+				transform: translate(100%, -50%);
+				opacity: 0;
+				pointer-events: none;
+			}
+
 			.social-panel {
 				position: fixed;
 				left: 0;
@@ -404,7 +480,7 @@
 				gap: 12px;
 				padding: 16px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-left: none;
 				border-radius: 0 24px 24px 0;
 				backdrop-filter: blur(30px);
@@ -415,7 +491,6 @@
 				box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
 			}
 
-			/* Right Music Panel */
 			.music-panel {
 				position: fixed;
 				right: 0;
@@ -428,7 +503,7 @@
 				padding: 16px;
 				width: 220px;
 				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.05);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 				border-right: none;
 				border-radius: 24px 0 0 24px;
 				backdrop-filter: blur(30px);
@@ -440,7 +515,7 @@
 			}
 
 			.panel-title {
-				font-size: 11px;
+				font-size: 12px;
 				text-transform: uppercase;
 				color: var(--muted);
 				font-weight: 600;
@@ -453,7 +528,7 @@
 				width: 44px;
 				height: 44px;
 				border-radius: 14px;
-				background: rgba(255, 255, 255, 0.02);
+				background: rgba(255, 255, 255, 0.03);
 				display: grid;
 				place-items: center;
 				color: var(--muted);
@@ -486,8 +561,6 @@
 				backdrop-filter: blur(30px);
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 				cursor: grab;
-				user-select: none;
-				transition: border-color 0.3s;
 			}
 			.floating-player:active {
 				cursor: grabbing;
@@ -496,20 +569,7 @@
 				border-color: rgba(255, 255, 255, 0.15);
 			}
 
-			.drag-handle {
-				display: flex;
-				gap: 3px;
-				cursor: grab;
-				padding-right: 10px;
-				border-right: 1px solid rgba(255, 255, 255, 0.1);
-			}
-			.drag-dot {
-				width: 3px;
-				height: 3px;
-				background: var(--muted);
-				border-radius: 50%;
-			}
-
+			/* Рабочий визуализатор */
 			.visualizer {
 				display: flex;
 				align-items: flex-end;
@@ -521,30 +581,8 @@
 				width: 3px;
 				background: var(--secondary);
 				border-radius: 3px;
-				height: 20%;
-				transition: height 0.2s;
-			}
-			.playing .vis-bar:nth-child(1) {
-				animation: eq 0.8s infinite alternate;
-			}
-			.playing .vis-bar:nth-child(2) {
-				animation: eq 0.5s infinite alternate 0.2s;
-				background: var(--primary);
-			}
-			.playing .vis-bar:nth-child(3) {
-				animation: eq 0.7s infinite alternate 0.1s;
-			}
-			.playing .vis-bar:nth-child(4) {
-				animation: eq 0.6s infinite alternate 0.3s;
-				background: var(--accent);
-			}
-			@keyframes eq {
-				0% {
-					height: 20%;
-				}
-				100% {
-					height: 100%;
-				}
+				height: 10%;
+				transition: height 0.05s ease-out;
 			}
 
 			.ctrl-btn {
@@ -593,10 +631,11 @@
 				text-overflow: ellipsis;
 			}
 			.track-status {
-				font-size: 10px;
+				font-size: 11px;
 				color: var(--muted);
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
+				font-weight: 500;
 			}
 
 			.vol-wrap {
@@ -631,6 +670,67 @@
 				background: #fff;
 				margin-top: -3px;
 				box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+			}
+
+			/* Контекстное меню */
+			#ctx-menu {
+				display: none;
+				position: fixed;
+				z-index: 300;
+				background: rgba(15, 17, 26, 0.9);
+				backdrop-filter: blur(16px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 16px;
+				padding: 6px;
+				min-width: 180px;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+				flex-direction: column;
+				gap: 2px;
+				animation: ctxIn 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+			}
+			@keyframes ctxIn {
+				from {
+					opacity: 0;
+					transform: scale(0.95) translateY(-5px);
+				}
+				to {
+					opacity: 1;
+					transform: scale(1) translateY(0);
+				}
+			}
+			.ctx-item {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 14px;
+				color: var(--txt);
+				font-size: 13px;
+				font-weight: 500;
+				text-decoration: none;
+				border-radius: 10px;
+				cursor: pointer;
+				transition: background 0.2s;
+				border: none;
+				background: transparent;
+				width: 100%;
+				text-align: left;
+				font-family: inherit;
+			}
+			.ctx-item:hover {
+				background: rgba(167, 139, 250, 0.15);
+			}
+			.ctx-item svg {
+				width: 16px;
+				height: 16px;
+				opacity: 0.7;
+			}
+			.ctx-item:hover svg {
+				opacity: 1;
+			}
+			.ctx-sep {
+				height: 1px;
+				background: rgba(255, 255, 255, 0.08);
+				margin: 4px 0;
 			}
 
 			/* QR Modal */
@@ -725,13 +825,11 @@
 					padding: 16px 20px;
 					cursor: default;
 				}
-				.drag-handle {
-					display: none;
-				}
 				.vol-wrap {
 					display: none;
 				}
-				.hover-zone {
+				.panel-trigger,
+				.panel-tab {
 					display: none;
 				}
 				.settings-btn {
@@ -770,7 +868,8 @@
 		</style>
 	</head>
 	<body>
-		<!-- Vignette & Background -->
+		<!-- Atmosphere & Background -->
+		<div class="ambient-glow"></div>
 		<div class="vignette"></div>
 		<div class="grain"></div>
 		<canvas id="bg"></canvas>
@@ -779,9 +878,80 @@
 			<div class="blob b2"></div>
 		</div>
 
-		<!-- Hover Zones -->
-		<div class="hover-zone left" id="leftZone"></div>
-		<div class="hover-zone right" id="rightZone"></div>
+		<!-- Custom Context Menu -->
+		<div id="ctx-menu">
+			<button class="ctx-item" onclick="location.reload()">
+				<!-- Обновленная иконка обновления -->
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+					<path d="M3 3v5h5" />
+					<path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+					<path d="M16 21v-5h-5" />
+				</svg>
+				Обновить
+			</button>
+			<button class="ctx-item" id="copyLinkBtn">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path
+						d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+					/>
+					<path
+						d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+					/>
+				</svg>
+				Копировать ссылку
+			</button>
+			<div class="ctx-sep"></div>
+			<a class="ctx-item" href="https://github.com/noclipov" target="_blank">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path
+						d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"
+					/>
+				</svg>
+				GitHub
+			</a>
+		</div>
+
+		<!-- Triggers & Tabs -->
+		<div class="panel-trigger left" id="leftTrigger"></div>
+		<div class="panel-trigger right" id="rightTrigger"></div>
+
+		<div class="panel-tab left" id="leftTab">
+			<svg
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				width="16"
+				height="16"
+			>
+				<path d="M9 18l6-6-6-6" />
+			</svg>
+		</div>
+		<div class="panel-tab right" id="rightTab">
+			<svg
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				width="16"
+				height="16"
+			>
+				<path d="M15 18l-6-6 6-6" />
+			</svg>
+		</div>
 
 		<!-- Mobile Triggers -->
 		<div class="mobile-panel-trigger m-left" id="mLeftBtn">
@@ -824,10 +994,12 @@
 				</div>
 			</div>
 			<h1 class="name">noclipov</h1>
-			<p class="tagline">where the light fades and echoes remain</p>
+			<p class="tagline" id="tagline">
+				where the light fades and echoes remain
+			</p>
 		</div>
 
-		<!-- Settings (Top Right) -->
+		<!-- Settings -->
 		<button class="settings-btn" id="settingsBtn">
 			<svg
 				viewBox="0 0 24 24"
@@ -902,15 +1074,6 @@
 
 		<!-- Draggable Player -->
 		<div class="floating-player" id="player">
-			<div class="drag-handle">
-				<div class="drag-dot"></div>
-				<div class="drag-dot"></div>
-				<div class="drag-dot"></div>
-				<div class="drag-dot"></div>
-				<div class="drag-dot"></div>
-				<div class="drag-dot"></div>
-			</div>
-
 			<div class="visualizer">
 				<div class="vis-bar"></div>
 				<div class="vis-bar"></div>
@@ -982,7 +1145,7 @@
 			</div>
 		</div>
 
-		<audio id="webAudio" loop></audio>
+		<audio id="webAudio" loop crossorigin="anonymous"></audio>
 
 		<script>
 			const CONFIG = {
@@ -994,6 +1157,16 @@
 					{ title: 'я понял что значит любить', src: 'music/track5.mp3' },
 					{ title: 'Метеорит', src: 'music/track6.mp3' },
 					{ title: 'provod', src: 'music/track7.mp3' },
+				],
+				quotes: [
+					'where the light fades and echoes remain',
+					'lost in the cosmic silence',
+					'drifting through the astral plane',
+					'a soul wandering the neon void',
+					'dust in the wind of a dying star',
+					'echoes of a forgotten tomorrow',
+					'in search of a new horizon',
+					'beyond the edge of time',
 				],
 			};
 
@@ -1030,64 +1203,95 @@
 				initParticles() {
 					this.particles = [];
 					let count = 0;
-					if (this.effect === 'rain') count = Math.min(100, innerWidth / 15);
+					if (this.effect === 'rain') count = Math.min(120, innerWidth / 12);
 					else if (this.effect === 'vertices')
-						count = Math.min(40, innerWidth / 30);
+						count = Math.min(50, innerWidth / 25);
 					else if (this.effect === 'warp')
-						count = Math.min(150, innerWidth / 10);
-					else count = Math.min(80, innerWidth / 20);
+						count = Math.min(250, innerWidth / 6);
+					else count = Math.min(90, innerWidth / 18);
 
 					for (let i = 0; i < count; i++) {
 						this.particles.push({
 							x: Math.random() * this.w,
 							y: Math.random() * this.h,
-							vx: (Math.random() - 0.5) * (this.effect === 'warp' ? 0.5 : 0.2),
+							vx: (Math.random() - 0.5) * (this.effect === 'rain' ? 1.5 : 0.3),
 							vy:
 								this.effect === 'rain'
-									? 15 + Math.random() * 10
+									? 18 + Math.random() * 10
 									: this.effect === 'warp'
-										? (Math.random() - 0.5) * 0.5
-										: -(Math.random() * 0.3 + 0.1),
+										? 0
+										: -(Math.random() * 0.4 + 0.1),
 							r:
 								this.effect === 'snow' || this.effect === 'bubbles'
 									? Math.random() * 3 + 1
-									: Math.random() * 1.5,
-							a: Math.random() * 0.5 + 0.2,
-							length: Math.random() * 20 + 15,
+									: Math.random() * 2,
+							a: Math.random() * 0.6 + 0.2,
+							length: Math.random() * 30 + 20,
 							phase: Math.random() * Math.PI * 2,
-							speed: Math.random() * 0.02 + 0.01,
+							speed: Math.random() * 0.03 + 0.01,
+							z: Math.random() * this.w,
 						});
 					}
 				}
 
 				draw() {
 					this.ctx.clearRect(0, 0, this.w, this.h);
+					this.ctx.shadowBlur = 0;
 
 					if (this.effect === 'rain') {
-						this.ctx.strokeStyle = 'rgba(160, 175, 200, 0.2)';
-						this.ctx.lineWidth = 1.5;
+						this.ctx.strokeStyle = 'rgba(180, 200, 230, 0.25)';
+						this.ctx.lineWidth = 1.2;
 						this.ctx.lineCap = 'round';
 					} else {
-						this.ctx.shadowBlur = 10;
-						this.ctx.shadowColor = 'rgba(167, 139, 250, 0.3)';
+						this.ctx.shadowBlur = 12;
+						this.ctx.shadowColor = 'rgba(167, 139, 250, 0.4)';
 					}
 
 					for (let i = 0; i < this.particles.length; i++) {
 						let p = this.particles[i];
 
+						// Общая логика физики и зацикливания
 						if (this.effect === 'rain') {
-							p.x -= 2;
+							p.x += p.vx;
 							p.y += p.vy;
-							this.ctx.beginPath();
-							this.ctx.moveTo(p.x, p.y);
-							this.ctx.lineTo(p.x + 4, p.y - p.length);
-							this.ctx.stroke();
 						} else if (this.effect === 'vertices') {
 							p.x += p.vx;
 							p.y += p.vy;
 							if (p.x < 0 || p.x > this.w) p.vx *= -1;
 							if (p.y < 0 || p.y > this.h) p.vy *= -1;
-							this.ctx.fillStyle = 'rgba(34, 211, 238, 0.5)';
+						} else if (this.effect === 'warp') {
+							p.z -= 8; // Скорость полета
+							if (p.z <= 1) {
+								p.z = this.w;
+								p.x = (Math.random() - 0.5) * this.w;
+								p.y = (Math.random() - 0.5) * this.h;
+							}
+						} else if (this.effect === 'bubbles') {
+							p.phase += p.speed;
+							p.x += Math.sin(p.phase) * 0.8;
+							p.y -= 0.8;
+						} else {
+							// stars, snow
+							p.x += p.vx;
+							p.y += p.vy;
+						}
+
+						// Границы (кроме warp и vertices)
+						if (this.effect !== 'warp' && this.effect !== 'vertices') {
+							if (p.x < -50) p.x = this.w + 50;
+							if (p.x > this.w + 50) p.x = -50;
+							if (p.y < -50) p.y = this.h + 50;
+							if (p.y > this.h + 50) p.y = -50;
+						}
+
+						// Отрисовка
+						if (this.effect === 'rain') {
+							this.ctx.beginPath();
+							this.ctx.moveTo(p.x, p.y);
+							this.ctx.lineTo(p.x - p.vx * 3, p.y - p.length);
+							this.ctx.stroke();
+						} else if (this.effect === 'vertices') {
+							this.ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.fill();
@@ -1100,49 +1304,26 @@
 									this.ctx.beginPath();
 									this.ctx.moveTo(p.x, p.y);
 									this.ctx.lineTo(p2.x, p2.y);
-									this.ctx.strokeStyle = `rgba(34, 211, 238, ${0.1 * (1 - dist / (this.w * 0.15))})`;
+									this.ctx.strokeStyle = `rgba(34, 211, 238, ${0.2 * (1 - dist / (this.w * 0.15))})`;
 									this.ctx.lineWidth = 1;
 									this.ctx.stroke();
 								}
 							}
 						} else if (this.effect === 'warp') {
-							p.x += p.vx * 5;
-							p.y += p.vy * 5;
-							let dist = Math.sqrt(
-								Math.pow(p.x - this.w / 2, 2) + Math.pow(p.y - this.h / 2, 2),
-							);
-							if (dist > this.w) {
-								p.x = this.w / 2 + (Math.random() - 0.5) * 10;
-								p.y = this.h / 2 + (Math.random() - 0.5) * 10;
-							}
-							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (dist / this.w)})`;
+							const px = (p.x / p.z) * this.w + this.w / 2;
+							const py = (p.y / p.z) * this.h + this.h / 2;
+							const radius = Math.max(0.1, (1 - p.z / this.w) * 4);
+							this.ctx.fillStyle = `rgba(255,255,255,${1 - p.z / this.w})`;
 							this.ctx.beginPath();
-							this.ctx.arc(p.x, p.y, p.r * (dist / this.w), 0, Math.PI * 2);
+							this.ctx.arc(px, py, radius, 0, Math.PI * 2);
 							this.ctx.fill();
 						} else if (this.effect === 'bubbles') {
-							p.phase += p.speed;
-							p.x += Math.sin(p.phase) * 0.5;
-							p.y -= 0.5;
-							if (p.y < -50) {
-								p.y = this.h + 50;
-								p.x = Math.random() * this.w;
-							}
 							this.ctx.strokeStyle = `rgba(167, 139, 250, ${p.a})`;
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.stroke();
 						} else {
-							p.x += p.vx;
-							p.y += p.vy;
-							if (p.y < -50) {
-								p.y = this.h + 50;
-								p.x = Math.random() * this.w;
-							}
-							if (p.y > this.h + 50) {
-								p.y = -50;
-								p.x = Math.random() * this.w;
-							}
-							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i))})`;
+							this.ctx.fillStyle = `rgba(255,255,255,${p.a * (0.6 + 0.4 * Math.sin(Date.now() * 0.002 + i))})`;
 							this.ctx.beginPath();
 							this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 							this.ctx.fill();
@@ -1161,8 +1342,10 @@
 			class AudioEngine {
 				constructor() {
 					this.ac = null;
+					this.masterGain = null;
 					this.musicGain = null;
 					this.rainGain = null;
+					this.analyser = null;
 					this.isPlaying = false;
 					this.mode = 'ambient';
 					this.playlist = CONFIG.playlist;
@@ -1170,6 +1353,7 @@
 					this.isPlaylistMode = false;
 					this.webAudio = document.getElementById('webAudio');
 					this.rainTimer = null;
+					this.mediaSource = null;
 
 					this.vibes = {
 						ambient: {
@@ -1200,12 +1384,20 @@
 					if (this.ac) return;
 					const AC = window.AudioContext || window.webkitAudioContext;
 					this.ac = new AC();
+
+					this.masterGain = this.ac.createGain();
 					this.musicGain = this.ac.createGain();
 					this.rainGain = this.ac.createGain();
+					this.analyser = this.ac.createAnalyser();
+					this.analyser.fftSize = 64;
+
 					this.musicGain.gain.value = 0.3;
 					this.rainGain.gain.value = 0;
-					this.musicGain.connect(this.ac.destination);
-					this.rainGain.connect(this.ac.destination);
+
+					this.musicGain.connect(this.masterGain);
+					this.rainGain.connect(this.masterGain);
+					this.masterGain.connect(this.analyser);
+					this.analyser.connect(this.ac.destination);
 				}
 
 				buildRain() {
@@ -1254,6 +1446,8 @@
 				}
 
 				startRainSounds() {
+					this.init();
+					if (this.ac.state === 'suspended') this.ac.resume();
 					this.buildRain();
 					this.rainGain.gain.setTargetAtTime(0.4, this.ac.currentTime, 1);
 					const scheduleThunder = () => {
@@ -1320,6 +1514,13 @@
 					this.isPlaylistMode = mode === 'playlist';
 
 					if (this.isPlaylistMode) {
+						this.init();
+						if (!this.mediaSource) {
+							this.mediaSource = this.ac.createMediaElementSource(
+								this.webAudio,
+							);
+							this.mediaSource.connect(this.masterGain);
+						}
 						if (this.playlist.length > 0) this.playTrack(this.currentTrack);
 						else this.setMode('ambient');
 					} else {
@@ -1394,8 +1595,10 @@
 						player: document.getElementById('player'),
 						settingsBtn: document.getElementById('settingsBtn'),
 						settingsMenu: document.getElementById('settingsMenu'),
-						leftZone: document.getElementById('leftZone'),
-						rightZone: document.getElementById('rightZone'),
+						leftTrigger: document.getElementById('leftTrigger'),
+						rightTrigger: document.getElementById('rightTrigger'),
+						leftTab: document.getElementById('leftTab'),
+						rightTab: document.getElementById('rightTab'),
 						socialPanel: document.getElementById('socialPanel'),
 						musicPanel: document.getElementById('musicPanel'),
 						rainToggle: document.getElementById('rainToggle'),
@@ -1408,10 +1611,18 @@
 						qrTitle: document.getElementById('qrTitle'),
 						qrLink: document.getElementById('qrLink'),
 						qrImage: document.getElementById('qr-image'),
+						tagline: document.getElementById('tagline'),
+						ctxMenu: document.getElementById('ctx-menu'),
+						copyLinkBtn: document.getElementById('copyLinkBtn'),
+						visBars: document.querySelectorAll('.vis-bar'),
 					};
+
+					this.els.tagline.innerText =
+						CONFIG.quotes[Math.floor(Math.random() * CONFIG.quotes.length)];
 
 					this.setupDrag();
 					this.bindEvents();
+					this.updateVisualizer();
 				},
 
 				setupDrag() {
@@ -1419,7 +1630,6 @@
 					let isDragging = false;
 					let startX, startY, startLeft, startTop;
 
-					// Восстановление позиции
 					const savedPos = localStorage.getItem('playerPos');
 					if (savedPos) {
 						try {
@@ -1432,11 +1642,9 @@
 					}
 
 					player.addEventListener('mousedown', (e) => {
-						// Игнорируем клики по кнопкам и ползунку
 						if (
 							e.target.closest('.ctrl-btn') ||
 							e.target.closest('input') ||
-							e.target.closest('.drag-handle') ||
 							window.innerWidth < 768
 						)
 							return;
@@ -1461,7 +1669,6 @@
 						let newX = startLeft + (e.clientX - startX);
 						let newY = startTop + (e.clientY - startY);
 
-						// Ограничиваем пределами экрана
 						const maxX = window.innerWidth - player.offsetWidth;
 						const maxY = window.innerHeight - player.offsetHeight;
 
@@ -1477,7 +1684,6 @@
 						isDragging = false;
 						player.style.transition = '';
 
-						// Сохранение позиции
 						const rect = player.getBoundingClientRect();
 						localStorage.setItem(
 							'playerPos',
@@ -1486,10 +1692,32 @@
 					});
 				},
 
+				updateVisualizer() {
+					requestAnimationFrame(() => this.updateVisualizer());
+					if (
+						!this.engine.analyser ||
+						(!this.engine.isPlaying && this.engine.webAudio.paused)
+					) {
+						this.els.visBars.forEach((bar) => (bar.style.height = '10%'));
+						return;
+					}
+
+					const dataArray = new Uint8Array(
+						this.engine.analyser.frequencyBinCount,
+					);
+					this.engine.analyser.getByteFrequencyData(dataArray);
+
+					const step = Math.floor(dataArray.length / 4);
+					for (let i = 0; i < 4; i++) {
+						let value = dataArray[i * step];
+						let height = Math.max(10, (value / 255) * 100);
+						this.els.visBars[i].style.height = height + '%';
+					}
+				},
+
 				bindEvents() {
 					const { els, engine, bg } = this;
 
-					// Настройки
 					els.settingsBtn.onclick = () =>
 						els.settingsMenu.classList.toggle('open');
 					document.querySelectorAll('[data-effect]').forEach((btn) => {
@@ -1507,43 +1735,50 @@
 						else engine.stopRainSounds();
 					};
 
-					// Панели (Hover с задержкой)
+					// Панели (Hover)
 					let leftTimer, rightTimer;
+
 					const openLeft = () => {
 						clearTimeout(leftTimer);
 						els.socialPanel.classList.add('open');
+						els.leftTab.classList.add('tab-hidden');
 					};
 					const closeLeft = () => {
-						leftTimer = setTimeout(
-							() => els.socialPanel.classList.remove('open'),
-							400,
-						);
+						leftTimer = setTimeout(() => {
+							els.socialPanel.classList.remove('open');
+							els.leftTab.classList.remove('tab-hidden');
+						}, 400);
 					};
-					els.leftZone.addEventListener('mouseenter', openLeft);
-					els.leftZone.addEventListener('mouseleave', closeLeft);
+					els.leftTrigger.addEventListener('mouseenter', openLeft);
+					els.leftTrigger.addEventListener('mouseleave', closeLeft);
 					els.socialPanel.addEventListener('mouseenter', openLeft);
 					els.socialPanel.addEventListener('mouseleave', closeLeft);
+					els.leftTab.addEventListener('mouseenter', openLeft); // Открытие при наведении на закладку
 
 					const openRight = () => {
 						clearTimeout(rightTimer);
 						els.musicPanel.classList.add('open');
+						els.rightTab.classList.add('tab-hidden');
 					};
 					const closeRight = () => {
-						rightTimer = setTimeout(
-							() => els.musicPanel.classList.remove('open'),
-							400,
-						);
+						rightTimer = setTimeout(() => {
+							els.musicPanel.classList.remove('open');
+							els.rightTab.classList.remove('tab-hidden');
+						}, 400);
 					};
-					els.rightZone.addEventListener('mouseenter', openRight);
-					els.rightZone.addEventListener('mouseleave', closeRight);
+					els.rightTrigger.addEventListener('mouseenter', openRight);
+					els.rightTrigger.addEventListener('mouseleave', closeRight);
 					els.musicPanel.addEventListener('mouseenter', openRight);
 					els.musicPanel.addEventListener('mouseleave', closeRight);
+					els.rightTab.addEventListener('mouseenter', openRight); // Открытие при наведении на закладку
 
 					// Мобильные триггеры
-					document.getElementById('mLeftBtn').onclick = () =>
+					document.getElementById('mLeftBtn').onclick = () => {
 						els.socialPanel.classList.toggle('open');
-					document.getElementById('mRightBtn').onclick = () =>
+					};
+					document.getElementById('mRightBtn').onclick = () => {
 						els.musicPanel.classList.toggle('open');
+					};
 
 					// Музыка
 					document.querySelectorAll('[data-mode]').forEach((btn) => {
@@ -1579,7 +1814,7 @@
 					webAudio.onpause = () => this.updatePlayState(false);
 					webAudio.onended = () => engine.nextTrack();
 
-					// Соцсети (QR через Data URL)
+					// Соцсети (QR)
 					document.querySelectorAll('.soc-item').forEach((item) => {
 						item.onclick = () => {
 							const url = item.dataset.url;
@@ -1603,6 +1838,29 @@
 
 					els.qrModal.onclick = (e) => {
 						if (e.target === els.qrModal) els.qrModal.classList.remove('open');
+					};
+
+					// Кастомное контекстное меню
+					document.addEventListener('contextmenu', (e) => {
+						e.preventDefault();
+						els.ctxMenu.style.display = 'flex';
+						let x = e.clientX,
+							y = e.clientY;
+						if (x + 180 > window.innerWidth) x -= 180;
+						if (y + 160 > window.innerHeight) y -= 160;
+						els.ctxMenu.style.left = `${x}px`;
+						els.ctxMenu.style.top = `${y}px`;
+					});
+					document.addEventListener('click', (e) => {
+						if (!els.ctxMenu.contains(e.target))
+							els.ctxMenu.style.display = 'none';
+					});
+
+					els.copyLinkBtn.onclick = () => {
+						navigator.clipboard.writeText(window.location.href);
+						const original = els.copyLinkBtn.innerHTML;
+						els.copyLinkBtn.innerText = 'Скопировано!';
+						setTimeout(() => (els.copyLinkBtn.innerHTML = original), 2000);
 					};
 				},
 

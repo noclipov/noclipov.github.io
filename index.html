@@ -17,7 +17,6 @@
 			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
-		<!-- Локальный генератор QR-кодов -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 		<style>
 			:root {
@@ -27,7 +26,7 @@
 				--txt: #e2e8f0;
 				--muted: #8b95a8;
 				--bg: #020006;
-				--card-bg: rgba(15, 10, 25, 0.65);
+				--card-bg: rgba(15, 10, 25, 0.7);
 			}
 
 			* {
@@ -78,7 +77,7 @@
 				-webkit-font-smoothing: antialiased;
 			}
 
-			/* Background */
+			/* Background & Vignette */
 			.aurora {
 				position: fixed;
 				inset: 0;
@@ -126,10 +125,23 @@
 				pointer-events: none;
 			}
 
+			/* Затемнение по краям (Vignette) */
+			.vignette {
+				position: fixed;
+				inset: 0;
+				z-index: 2;
+				pointer-events: none;
+				background: radial-gradient(
+					circle at center,
+					transparent 30%,
+					rgba(0, 0, 0, 0.7) 100%
+				);
+			}
+
 			/* Profile Card */
 			.card {
 				position: relative;
-				z-index: 2;
+				z-index: 3;
 				width: min(90vw, 380px);
 				border-radius: 28px;
 				background: var(--card-bg);
@@ -226,7 +238,7 @@
 				color: var(--muted);
 			}
 
-			/* Settings Panel */
+			/* Settings (Top Right) */
 			.settings-btn {
 				position: fixed;
 				top: 20px;
@@ -292,6 +304,7 @@
 				font-size: 11px;
 				cursor: pointer;
 				transition: all 0.2s;
+				font-family: inherit;
 			}
 			.s-btn:hover {
 				background: rgba(255, 255, 255, 0.08);
@@ -346,6 +359,99 @@
 				transform: translateX(16px);
 			}
 
+			/* Hover Zones for Panels */
+			.hover-zone {
+				position: fixed;
+				top: 0;
+				bottom: 0;
+				width: 25px;
+				z-index: 98;
+			}
+			.hover-zone.left {
+				left: 0;
+			}
+			.hover-zone.right {
+				right: 0;
+			}
+
+			/* Left Social Panel */
+			.social-panel {
+				position: fixed;
+				left: 0;
+				top: 50%;
+				transform: translate(-100%, -50%);
+				z-index: 99;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				padding: 16px;
+				background: var(--card-bg);
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				border-left: none;
+				border-radius: 0 24px 24px 0;
+				backdrop-filter: blur(24px);
+				transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+			.social-panel.open {
+				transform: translate(0, -50%);
+				box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+			}
+
+			/* Right Music Panel */
+			.music-panel {
+				position: fixed;
+				right: 0;
+				top: 50%;
+				transform: translate(100%, -50%);
+				z-index: 99;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				padding: 16px;
+				width: 200px;
+				background: var(--card-bg);
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				border-right: none;
+				border-radius: 24px 0 0 24px;
+				backdrop-filter: blur(24px);
+				transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+			.music-panel.open {
+				transform: translate(0, -50%);
+				box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+			}
+
+			.panel-title {
+				font-size: 11px;
+				text-transform: uppercase;
+				color: var(--muted);
+				font-weight: 600;
+				letter-spacing: 0.1em;
+				text-align: center;
+				margin-bottom: 4px;
+			}
+
+			.soc-item {
+				width: 44px;
+				height: 44px;
+				border-radius: 14px;
+				background: rgba(255, 255, 255, 0.03);
+				display: grid;
+				place-items: center;
+				color: var(--muted);
+				cursor: pointer;
+				transition: 0.3s;
+			}
+			.soc-item:hover {
+				background: rgba(192, 132, 252, 0.15);
+				color: #fff;
+				transform: scale(1.05);
+			}
+			.soc-item svg {
+				width: 20px;
+				height: 20px;
+			}
+
 			/* Floating Player */
 			.floating-player {
 				position: fixed;
@@ -361,6 +467,10 @@
 				border-radius: 24px;
 				backdrop-filter: blur(24px);
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+				transition: all 0.3s;
+			}
+			.floating-player:hover {
+				border-color: rgba(255, 255, 255, 0.15);
 			}
 
 			.visualizer {
@@ -482,74 +592,6 @@
 				box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 			}
 
-			/* Slide-out Social Panel */
-			.social-trigger {
-				position: fixed;
-				left: 0;
-				top: 50%;
-				transform: translateY(-50%);
-				z-index: 100;
-				width: 20px;
-				height: 80px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-left: none;
-				border-radius: 0 12px 12px 0;
-				display: grid;
-				place-items: center;
-				cursor: pointer;
-				color: var(--muted);
-				transition: 0.3s;
-			}
-			.social-trigger:hover {
-				color: #fff;
-				width: 24px;
-				background: rgba(192, 132, 252, 0.2);
-			}
-
-			.social-panel {
-				position: fixed;
-				left: 0;
-				top: 50%;
-				transform: translate(-100%, -50%);
-				z-index: 99;
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-				padding: 16px;
-				background: var(--card-bg);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				border-left: none;
-				border-radius: 0 20px 20px 0;
-				backdrop-filter: blur(24px);
-				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-			}
-			.social-panel.open {
-				transform: translate(0, -50%);
-				box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-			}
-
-			.soc-item {
-				width: 44px;
-				height: 44px;
-				border-radius: 14px;
-				background: rgba(255, 255, 255, 0.03);
-				display: grid;
-				place-items: center;
-				color: var(--muted);
-				cursor: pointer;
-				transition: 0.3s;
-			}
-			.soc-item:hover {
-				background: rgba(192, 132, 252, 0.15);
-				color: #fff;
-				transform: scale(1.05);
-			}
-			.soc-item svg {
-				width: 20px;
-				height: 20px;
-			}
-
 			/* QR Modal */
 			.modal-overlay {
 				position: fixed;
@@ -616,23 +658,9 @@
 				.vol-wrap {
 					display: none;
 				}
-				.social-trigger {
-					top: auto;
-					bottom: 100px;
-					transform: none;
-					width: 44px;
-					height: 44px;
-					border-radius: 0 12px 12px 0;
-				}
-				.social-panel {
-					top: auto;
-					bottom: 160px;
-					transform: translate(-100%, 0);
-					border-radius: 0 20px 20px 0;
-				}
-				.social-panel.open {
-					transform: translate(0, 0);
-				}
+				.hover-zone {
+					display: none;
+				} /* Отключаем hover-зоны на мобильных */
 				.settings-btn {
 					top: 10px;
 					right: 10px;
@@ -641,15 +669,74 @@
 					top: 60px;
 					right: 10px;
 				}
+
+				/* На мобильных панели открываются по тапу на маленькие кнопки (добавлены в HTML) */
+				.mobile-panel-trigger {
+					display: grid !important;
+				}
+			}
+
+			.mobile-panel-trigger {
+				display: none;
+				position: fixed;
+				z-index: 100;
+				width: 40px;
+				height: 40px;
+				background: var(--card-bg);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 50%;
+				place-items: center;
+				cursor: pointer;
+			}
+			.m-left {
+				left: 10px;
+				bottom: 100px;
+				color: var(--muted);
+			}
+			.m-right {
+				right: 10px;
+				bottom: 160px;
+				color: var(--muted);
 			}
 		</style>
 	</head>
 	<body>
-		<!-- Canvas Background -->
+		<!-- Vignette & Background -->
+		<div class="vignette"></div>
 		<canvas id="bg"></canvas>
 		<div class="aurora">
 			<div class="blob b1"></div>
 			<div class="blob b2"></div>
+		</div>
+
+		<!-- Hover Zones -->
+		<div class="hover-zone left" id="leftZone"></div>
+		<div class="hover-zone right" id="rightZone"></div>
+
+		<!-- Mobile Triggers -->
+		<div class="mobile-panel-trigger m-left" id="mLeftBtn">
+			<svg
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				width="16"
+				height="16"
+			>
+				<path d="M9 18l6-6-6-6" />
+			</svg>
+		</div>
+		<div class="mobile-panel-trigger m-right" id="mRightBtn">
+			<svg
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				width="16"
+				height="16"
+			>
+				<path d="M15 18l-6-6 6-6" />
+			</svg>
 		</div>
 
 		<!-- Profile Card -->
@@ -670,7 +757,7 @@
 			<p class="tagline">where the light fades and echoes remain</p>
 		</div>
 
-		<!-- Settings -->
+		<!-- Settings (Top Right) -->
 		<button class="settings-btn" id="settingsBtn">
 			<svg
 				viewBox="0 0 24 24"
@@ -688,13 +775,6 @@
 		</button>
 
 		<div class="settings-menu" id="settingsMenu">
-			<div class="settings-title">Музыка</div>
-			<div class="grid-btns" id="musicModes">
-				<button class="s-btn active" data-mode="ambient">Ambient</button>
-				<button class="s-btn" data-mode="deep">Deep Space</button>
-				<button class="s-btn" data-mode="rain">Lo-Fi</button>
-				<button class="s-btn" data-mode="playlist">Playlist</button>
-			</div>
 			<div class="settings-title">Фон</div>
 			<div class="grid-btns" id="bgModes">
 				<button class="s-btn active" data-effect="stars">Звезды</button>
@@ -710,20 +790,9 @@
 			</div>
 		</div>
 
-		<!-- Socials Trigger & Panel -->
-		<div class="social-trigger" id="socialTrigger">
-			<svg
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				width="16"
-				height="16"
-			>
-				<path d="M9 18l6-6-6-6" />
-			</svg>
-		</div>
+		<!-- Left Social Panel -->
 		<div class="social-panel" id="socialPanel">
+			<div class="panel-title">Socials</div>
 			<div
 				class="soc-item"
 				data-url="https://github.com/noclipov"
@@ -745,6 +814,17 @@
 						d="M21.6 3.4 2.9 10.7c-.94.37-.93 1.7.02 2.04l4.7 1.66 1.8 5.55c.27.84 1.32 1.03 1.86.34l2.5-3.2 4.72 3.48c.72.53 1.75.13 1.9-.75l2.9-15.2c.17-.9-.72-1.6-1.4-1.22zM9.6 14.1l-.3 3.2-1.2-3.7 9.2-6.3-7.7 6.8z"
 					/>
 				</svg>
+			</div>
+		</div>
+
+		<!-- Right Music Panel -->
+		<div class="music-panel" id="musicPanel">
+			<div class="panel-title">Music Mode</div>
+			<div class="grid-btns" id="musicModes" style="grid-template-columns: 1fr">
+				<button class="s-btn active" data-mode="ambient">Ambient</button>
+				<button class="s-btn" data-mode="deep">Deep Space</button>
+				<button class="s-btn" data-mode="rain">Lo-Fi</button>
+				<button class="s-btn" data-mode="playlist">Playlist (Local)</button>
 			</div>
 		</div>
 
@@ -833,6 +913,18 @@
 					{ title: 'provod', src: 'music/track7.mp3' },
 				],
 			};
+
+			function debounce(func, wait) {
+				let timeout;
+				return function executedFunction(...args) {
+					const later = () => {
+						clearTimeout(timeout);
+						func(...args);
+					};
+					clearTimeout(timeout);
+					timeout = setTimeout(later, wait);
+				};
+			}
 
 			class BackgroundEngine {
 				constructor(canvas) {
@@ -1029,12 +1121,9 @@
 					this.rainGain.connect(this.ac.destination);
 				}
 
-				// Инициализация звука дождя и грома
 				buildRain() {
 					if (this.rainInitialized) return;
 					this.rainInitialized = true;
-
-					// Гул дождя (Brown noise)
 					const bufferSize = this.ac.sampleRate * 2;
 					const buffer = this.ac.createBuffer(
 						1,
@@ -1054,7 +1143,7 @@
 					rainNode.loop = true;
 					const filter = this.ac.createBiquadFilter();
 					filter.type = 'lowpass';
-					filter.frequency.value = 600; // Убрали резкие частоты
+					filter.frequency.value = 600;
 					rainNode.connect(filter);
 					filter.connect(this.rainGain);
 					rainNode.start(0);
@@ -1068,11 +1157,9 @@
 					osc.type = 'sine';
 					osc.frequency.setValueAtTime(60, t0);
 					osc.frequency.exponentialRampToValueAtTime(30, t0 + 1.5);
-
 					gain.gain.setValueAtTime(0, t0);
-					gain.gain.linearRampToValueAtTime(0.8, t0 + 0.2); // Резкий раскат
-					gain.gain.exponentialRampToValueAtTime(0.01, t0 + 2.5); // Долгое затухание
-
+					gain.gain.linearRampToValueAtTime(0.8, t0 + 0.2);
+					gain.gain.exponentialRampToValueAtTime(0.01, t0 + 2.5);
 					osc.connect(gain);
 					gain.connect(this.rainGain);
 					osc.start(t0);
@@ -1082,12 +1169,13 @@
 				startRainSounds() {
 					this.buildRain();
 					this.rainGain.gain.setTargetAtTime(0.4, this.ac.currentTime, 1);
-
 					const scheduleThunder = () => {
 						if (!this.isPlayingRain) return;
 						this.playThunder();
-						const nextThunder = 15000 + Math.random() * 20000; // Гром раз в 15-35 сек
-						this.rainTimer = setTimeout(scheduleThunder, nextThunder);
+						this.rainTimer = setTimeout(
+							scheduleThunder,
+							15000 + Math.random() * 20000,
+						);
 					};
 					if (!this.rainTimer)
 						this.rainTimer = setTimeout(scheduleThunder, 5000);
@@ -1123,11 +1211,9 @@
 					this.init();
 					if (this.ac.state === 'suspended') this.ac.resume();
 					this.isPlaying = true;
-
 					const chords = this.vibes[this.mode].chords;
 					this.playChord(chords[0]);
 					let step = 1;
-
 					clearInterval(this.genTimer);
 					this.genTimer = setInterval(() => {
 						this.playChord(chords[step % chords.length]);
@@ -1164,7 +1250,7 @@
 					this.webAudio
 						.play()
 						.catch(() =>
-							UI.updateTrackInfo(this.playlist[index].title, 'Ошибка'),
+							UI.updateTrackInfo(this.playlist[index].title, 'Ошибка файла'),
 						);
 					UI.updateTrackInfo(this.playlist[index].title, 'Локальный трек');
 				}
@@ -1221,8 +1307,10 @@
 						player: document.getElementById('player'),
 						settingsBtn: document.getElementById('settingsBtn'),
 						settingsMenu: document.getElementById('settingsMenu'),
-						socialTrigger: document.getElementById('socialTrigger'),
+						leftZone: document.getElementById('leftZone'),
+						rightZone: document.getElementById('rightZone'),
 						socialPanel: document.getElementById('socialPanel'),
+						musicPanel: document.getElementById('musicPanel'),
 						rainToggle: document.getElementById('rainToggle'),
 						playBtn: document.getElementById('playBtn'),
 						iconPlay: document.getElementById('iconPlay'),
@@ -1240,9 +1328,62 @@
 				bindEvents() {
 					const { els, engine, bg } = this;
 
-					// Настройки
+					// Настройки (Фон)
 					els.settingsBtn.onclick = () =>
 						els.settingsMenu.classList.toggle('open');
+					document.querySelectorAll('[data-effect]').forEach((btn) => {
+						btn.onclick = (e) => {
+							document
+								.querySelectorAll('[data-effect]')
+								.forEach((b) => b.classList.remove('active'));
+							e.target.classList.add('active');
+							bg.setEffect(e.target.dataset.effect);
+						};
+					});
+
+					els.rainToggle.onchange = (e) => {
+						if (e.target.checked) engine.startRainSounds();
+						else engine.stopRainSounds();
+					};
+
+					// Панели (Hover с дебаунсом)
+					const openLeft = debounce(
+						() => els.socialPanel.classList.add('open'),
+						150,
+					);
+					const closeLeft = debounce(
+						() => els.socialPanel.classList.remove('open'),
+						300,
+					);
+					els.leftZone.addEventListener('mouseenter', openLeft);
+					els.leftZone.addEventListener('mouseleave', closeLeft);
+					els.socialPanel.addEventListener('mouseenter', () => {
+						els.socialPanel.classList.add('open');
+					});
+					els.socialPanel.addEventListener('mouseleave', closeLeft);
+
+					const openRight = debounce(
+						() => els.musicPanel.classList.add('open'),
+						150,
+					);
+					const closeRight = debounce(
+						() => els.musicPanel.classList.remove('open'),
+						300,
+					);
+					els.rightZone.addEventListener('mouseenter', openRight);
+					els.rightZone.addEventListener('mouseleave', closeRight);
+					els.musicPanel.addEventListener('mouseenter', () => {
+						els.musicPanel.classList.add('open');
+					});
+					els.musicPanel.addEventListener('mouseleave', closeRight);
+
+					// Мобильные кнопки для панелей
+					document.getElementById('mLeftBtn').onclick = () =>
+						els.socialPanel.classList.toggle('open');
+					document.getElementById('mRightBtn').onclick = () =>
+						els.musicPanel.classList.toggle('open');
+
+					// Музыка (Режимы)
 					document.querySelectorAll('[data-mode]').forEach((btn) => {
 						btn.onclick = (e) => {
 							document
@@ -1261,21 +1402,6 @@
 						};
 					});
 
-					document.querySelectorAll('[data-effect]').forEach((btn) => {
-						btn.onclick = (e) => {
-							document
-								.querySelectorAll('[data-effect]')
-								.forEach((b) => b.classList.remove('active'));
-							e.target.classList.add('active');
-							bg.setEffect(e.target.dataset.effect);
-						};
-					});
-
-					els.rainToggle.onchange = (e) => {
-						if (e.target.checked) engine.startRainSounds();
-						else engine.stopRainSounds();
-					};
-
 					// Плеер
 					els.playBtn.onclick = () => {
 						const isPlaying = engine.togglePlay();
@@ -1286,14 +1412,12 @@
 
 					document.getElementById('volSlider').oninput = (e) =>
 						engine.setVolume(e.target.value);
-					els.webAudio = document.getElementById('webAudio');
-					els.webAudio.onplay = () => this.updatePlayState(true);
-					els.webAudio.onpause = () => this.updatePlayState(false);
-					els.webAudio.onended = () => engine.nextTrack();
+					const webAudio = document.getElementById('webAudio');
+					webAudio.onplay = () => this.updatePlayState(true);
+					webAudio.onpause = () => this.updatePlayState(false);
+					webAudio.onended = () => engine.nextTrack();
 
-					// Соцсети
-					els.socialTrigger.onclick = () =>
-						els.socialPanel.classList.toggle('open');
+					// Соцсети (QR)
 					document.querySelectorAll('.soc-item').forEach((item) => {
 						item.onclick = () => {
 							const url = item.dataset.url;
@@ -1301,20 +1425,11 @@
 							els.qrLink.href = url;
 							els.qrModal.classList.add('open');
 
-							// Локальная генерация QR-кода
-							const canvas = document.getElementById('qr-canvas');
-							QRCode.toCanvas(
-								canvas,
-								url,
-								{
-									width: 180,
-									margin: 2,
-									color: { dark: '#c084fc', light: '#0c0d12' },
-								},
-								(err) => {
-									if (err) console.error(err);
-								},
-							);
+							QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
+								width: 180,
+								margin: 2,
+								color: { dark: '#c084fc', light: '#0c0d12' },
+							});
 						};
 					});
 

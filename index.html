@@ -15,8 +15,8 @@
     --accent: #ec4899;
     --txt: #e2e8f0;
     --muted: #64748b;
-    --bg: #010204; /* Более глубокий фон */
-    --card-bg: rgba(12, 15, 24, 0.35); /* Прозрачная карточка */
+    --bg: #010204;
+    --card-bg: rgba(15, 18, 28, 0.25);
   }
 
   * { 
@@ -35,6 +35,7 @@
 
   html, body { height: 100%; overflow: hidden; }
 
+  /* Фикс FOUC (мерцания неоформленного контента) */
   body {
     font-family: "Outfit", -apple-system, sans-serif;
     background: radial-gradient(1000px 700px at 50% -20%, #0a0c13 0%, transparent 60%),
@@ -45,47 +46,52 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     perspective: 1000px;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
   }
+  @keyframes fadeIn { to { opacity: 1; } }
 
   /* Background */
-  .aurora { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; filter: blur(120px); opacity: .15; } /* Приглушено */
+  .aurora { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; filter: blur(100px); opacity: .25; }
   .blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
   .b1 { width: 60vw; height: 60vw; background: #4c1d95; top: -20%; left: -10%; animation: drift 25s infinite alternate; }
   .b2 { width: 50vw; height: 50vw; background: #0e7490; bottom: -20%; right: -10%; animation: drift 30s infinite alternate-reverse; }
+  .b3 { width: 40vw; height: 40vw; background: #831843; top: 40%; left: 40%; opacity: 0.4; animation: drift 35s infinite alternate; }
   @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(10%, 10%) scale(1.1); } }
 
   #bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-  .vignette { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%); }
-  .grain { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+  .vignette { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%); }
+  .grain { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
   /* Profile Card */
   .card {
     position: relative; z-index: 4; width: min(90vw, 380px); border-radius: 32px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), var(--card-bg);
+    background: var(--card-bg);
     border: 1px solid rgba(255,255,255,.08);
-    backdrop-filter: blur(25px) saturate(150%); 
+    backdrop-filter: blur(30px) saturate(200%); 
     box-shadow: 
       0 30px 80px -20px rgba(0,0,0,.9), 
-      0 0 0 1px rgba(255,255,255,.02) inset;
+      0 0 0 1px rgba(255,255,255,.03) inset,
+      0 0 40px rgba(139, 92, 246, 0.1);
     display: flex; flex-direction: column; align-items: center; padding: 40px 24px 32px;
     animation: rise 1s cubic-bezier(.2,.85,.25,1) both;
     transform-style: preserve-3d;
     transition: transform 0.1s ease-out;
   }
-  .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent); }
+  .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), transparent); }
   @keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
   .avatar-wrapper { position: relative; margin-bottom: 24px; transform: translateZ(30px); }
-  .avatar { position: relative; width: 110px; height: 110px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent)); box-shadow: 0 0 25px rgba(139, 92, 246, 0.25); }
-  .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #010204; overflow: hidden; display: grid; place-items: center; font-size: 40px; font-weight: 800; border: 2px solid #010204; }
-  .avatar-inner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.9); transition: none; }
+  .avatar { position: relative; width: 110px; height: 110px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent)); box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }
+  .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #010204; overflow: hidden; display: grid; place-items: center; font-size: 40px; font-weight: 800; border: 2px solid #010204; color: #fff; }
+  .avatar-inner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.95); }
 
   .name { font-size: 30px; font-weight: 700; letter-spacing: -.03em; background: linear-gradient(100deg, #fff 10%, #c4b5fd 40%, #67e8f9 60%, #fff 90%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 8s linear infinite; text-shadow: 0 4px 20px rgba(0,0,0,0.8); transform: translateZ(20px); }
   @keyframes shimmer { to { background-position: -250% 0; } }
   .tagline { margin-top: 8px; font-size: 14px; color: #94a3b8; font-weight: 400; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); transform: translateZ(10px); }
 
   /* Now Playing Widget */
-  .card-widget { margin-top: 28px; width: 100%; padding: 16px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; border: 1px solid rgba(255,255,255,.04); display: flex; align-items: center; justify-content: space-between; transform: translateZ(15px); backdrop-filter: blur(10px); }
+  .card-widget { margin-top: 28px; width: 100%; padding: 16px 20px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(255,255,255,.04); display: flex; align-items: center; justify-content: space-between; transform: translateZ(15px); backdrop-filter: blur(10px); }
   .widget-info { display: flex; flex-direction: column; max-width: 60%; }
   .widget-label { font-size: 10px; text-transform: uppercase; color: var(--secondary); font-weight: 700; letter-spacing: .1em; text-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
   .widget-track { font-size: 14px; font-weight: 500; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
@@ -117,11 +123,29 @@
   .panel-tab.right.tab-hidden { transform: translate(100%, -50%); opacity: 0; pointer-events: none; }
   
   /* Panels */
-  .social-panel, .music-panel { position: fixed; top: 50%; transform: translateY(-50%); z-index: 99; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: rgba(15, 18, 28, 0.85); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(30px); box-shadow: 0 10px 40px rgba(0,0,0,.8); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .social-panel, .music-panel { 
+    position: fixed; top: 50%; z-index: 99; 
+    display: flex; flex-direction: column; gap: 12px; padding: 24px; 
+    background: rgba(15, 18, 28, 0.75); 
+    border: 1px solid rgba(255,255,255,.08); 
+    backdrop-filter: blur(30px); 
+    box-shadow: 0 20px 50px rgba(0,0,0,.8); 
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    opacity: 0;
+  }
+  .social-panel::before, .music-panel::before {
+    content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; 
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+  }
   .social-panel { left: 0; transform: translate(-100%, -50%); border-radius: 0 24px 24px 0; border-left: none; }
-  .music-panel { right: 0; transform: translate(100%, -50%); border-radius: 24px 0 0 24px; border-right: none; width: 240px; }
-  .social-panel.open { transform: translate(0, -50%); }
-  .music-panel.open { transform: translate(0, -50%); }
+  .music-panel { right: 0; transform: translate(100%, -50%); border-radius: 24px 0 0 24px; border-right: none; width: 250px; }
+  
+  .social-panel.open, .music-panel.open { 
+    transform: translate(0, -50%); 
+    opacity: 1;
+    box-shadow: 0 20px 50px rgba(0,0,0,.8), 0 0 30px rgba(139, 92, 246, 0.15);
+  }
+  
   .panel-title { font-size: 12px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .1em; text-align: center; margin-bottom: 8px; }
   .soc-item { width: 48px; height: 48px; border-radius: 16px; background: rgba(255,255,255,.03); display: grid; place-items: center; color: var(--muted); cursor: pointer; transition: .3s; border: 1px solid transparent; }
   .soc-item:hover { background: rgba(139,92,246,.15); color: #fff; border-color: rgba(139,92,246,.3); transform: scale(1.05); }
@@ -134,10 +158,27 @@
     background: rgba(15, 18, 28, 0.8); border: 1px solid rgba(255,255,255,.08);
     border-radius: 24px; backdrop-filter: blur(30px);
     box-shadow: 0 10px 40px rgba(0,0,0,.8); cursor: grab;
-    min-width: 340px; transition: border-color 0.3s, box-shadow 0.3s;
+    min-width: 340px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .floating-player:active { cursor: grabbing; }
   .floating-player:hover { border-color: rgba(255,255,255,.15); box-shadow: 0 10px 40px rgba(0,0,0,.8), 0 0 20px rgba(139, 92, 246, 0.1); }
+
+  /* Скрываем управление в генеративном режиме */
+  .floating-player.mode-generative #prevBtn,
+  .floating-player.mode-generative #nextBtn,
+  .floating-player.mode-generative #shuffleBtn,
+  .floating-player.mode-generative #repeatBtn,
+  .floating-player.mode-generative #playlistBtn,
+  .floating-player.mode-generative .track-info,
+  .floating-player.mode-generative .progress-container { display: none !important; }
+
+  .floating-player.mode-generative {
+    min-width: 220px;
+  }
+  .floating-player.mode-generative .player-controls {
+    justify-content: center;
+    gap: 24px;
+  }
 
   /* Timeline */
   .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,.08); border-radius: 2px; position: relative; cursor: pointer; display: none; margin-bottom: 8px; }
@@ -175,41 +216,42 @@
   .vol-popover input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #fff; margin-top: -6px; box-shadow: 0 0 8px rgba(255,255,255,.6); transition: transform .1s; }
   .vol-popover input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.1); }
 
-  /* Playlist Popover (внутри плеера) */
-  .playlist-popover {
-    position: absolute; bottom: 100%; right: 0; width: 100%; max-height: 250px;
-    background: rgba(15, 18, 28, 0.95); border: 1px solid rgba(255,255,255,.1);
-    border-radius: 20px; padding: 12px; backdrop-filter: blur(30px);
-    box-shadow: 0 10px 40px rgba(0,0,0,.9);
-    opacity: 0; pointer-events: none; transform: translateY(10px) scale(0.98);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    margin-bottom: 12px; display: flex; flex-direction: column; z-index: 102;
-  }
-  .playlist-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
-  .playlist-title { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 8px; padding-left: 8px; }
-  .playlist-list { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 200px; }
-  .playlist-item { text-align: left; padding: 10px 12px; font-size: 13px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: all 0.2s; font-family: inherit; }
-  .playlist-item:hover { background: rgba(255,255,255,.05); color: #fff; }
-  .playlist-item.active { background: rgba(139,92,246,.15); color: var(--primary); font-weight: 600; }
+  /* Скрываем кнопку плейлиста по умолчанию */
+  #playlistBtn { display: none; }
+  #playlistBtn.visible { display: grid; }
 
-  /* Context Menu */
-  #ctx-menu { display: none; position: fixed; z-index: 300; background: rgba(15, 18, 28, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 6px; min-width: 180px; box-shadow: 0 10px 40px rgba(0,0,0,.9); flex-direction: column; gap: 2px; animation: ctxIn 0.15s cubic-bezier(.2,.8,.2,1); }
-  @keyframes ctxIn { from { opacity: 0; transform: scale(.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .ctx-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--txt); font-size: 13px; font-weight: 500; text-decoration: none; border-radius: 10px; cursor: pointer; transition: background .2s; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
-  .ctx-item:hover { background: rgba(139,92,246,.15); }
-  .ctx-item svg { width: 16px; height: 16px; opacity: 0.7; }
-  .ctx-item:hover svg { opacity: 1; }
-  .ctx-sep { height: 1px; background: rgba(255,255,255,.08); margin: 4px 0; }
-
-  /* QR Modal */
+  /* Modals */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.85); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: .3s; }
   .modal-overlay.open { opacity: 1; pointer-events: auto; }
   
-  .qr-modal-content { background: rgba(15, 18, 28, 0.9); border: 1px solid rgba(255,255,255,.1); border-radius: 32px; padding: 32px; display: flex; flex-direction: column; align-items: center; transform: translateY(20px) scale(0.95); transition: .4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+  .qr-modal-content { background: rgba(15, 18, 28, 0.9); border-radius: 32px; padding: 32px; display: flex; flex-direction: column; align-items: center; transform: translateY(20px) scale(0.95); transition: .4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
   .modal-overlay.open .qr-modal-content { transform: translateY(0) scale(1); }
   
-  .qr-wrapper { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 24px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,.05); position: relative; }
-  #qr-image { display: block; width: 200px; height: 200px; object-fit: contain; }
+  .qr-wrapper { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 3px; 
+    border-radius: 24px; 
+    margin-bottom: 24px; 
+    width: 206px; height: 206px; 
+    display: grid; place-items: center; 
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+  .qr-inner {
+    background: #0c0d12;
+    border-radius: 21px;
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #qr-image { display: none; width: 180px; height: 180px; object-fit: contain; }
+  #qr-placeholder { font-size: 14px; color: var(--muted); text-align: center; display: grid; z-index: 2; }
+  .scanline {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--secondary); opacity: 0.5; box-shadow: 0 0 10px var(--secondary);
+    animation: scan 3s linear infinite; pointer-events: none;
+  }
+  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
   
   .modal-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: 0.02em; }
   .modal-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
@@ -218,6 +260,50 @@
   .modal-btn::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, var(--primary), var(--secondary)); opacity: 0; transition: opacity .3s; z-index: -1; }
   .modal-btn:hover { border-color: transparent; }
   .modal-btn:hover::before { opacity: 1; }
+
+  /* Playlist Modal Specific */
+  .playlist-modal-content { background: rgba(15, 18, 28, 0.95); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; align-items: center; transform: translateY(20px); transition: .3s; width: min(90vw, 400px); max-height: 80vh; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+  .modal-overlay.open .playlist-modal-content { transform: translateY(0); }
+  .playlist-list { width: 100%; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; padding-right: 4px; margin-bottom: 16px; }
+  .playlist-item { text-align: left; padding: 14px 16px; font-size: 14px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid transparent; color: var(--muted); transition: all .2s; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: inherit; }
+  .playlist-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .playlist-item.active { background: rgba(139,92,246,.15); border-color: rgba(139,92,246,.4); color: var(--secondary); font-weight: 600; }
+
+  /* --- КОНТЕКСТНОЕ МЕНЮ --- */
+  #ctx-menu {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    min-width: 180px;
+    background: rgba(15, 18, 28, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95) translateY(10px);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+    transform-origin: top left;
+  }
+  #ctx-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
+  }
+  .ctx-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; background: transparent; border: none; border-radius: 8px;
+    color: var(--txt); font-size: 13px; font-weight: 500; text-decoration: none;
+    cursor: pointer; transition: background 0.2s; text-align: left; font-family: inherit;
+  }
+  .ctx-item:hover { background: rgba(139, 92, 246, 0.2); color: #fff; }
+  .ctx-item svg { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
+  .ctx-item:hover svg { opacity: 1; }
+  .ctx-sep { height: 1px; background: rgba(255, 255, 255, 0.08); margin: 4px 0; }
 
   .mobile-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   .mobile-backdrop.active { opacity: 1; pointer-events: auto; }
@@ -235,15 +321,12 @@
     
     .floating-player { bottom: 0; right: 0; left: 0; border-radius: 24px 24px 0 0; cursor: default; min-width: 100%; padding: 16px 20px 24px; box-shadow: 0 -10px 40px rgba(0,0,0,.5); z-index: 101; }
     .track-info { display: none; } 
-    .player-controls { justify-content: space-between; gap: 0; padding: 0 10px; }
+    .player-controls { justify-content: space-evenly; gap: 0; padding: 0 10px; }
     .main-controls { gap: 20px; }
     .ctrl-btn svg { width: 22px; height: 22px; } 
     .play-btn { width: 48px; height: 48px; }
     .play-btn svg { width: 24px; height: 24px; }
     .vol-popover { right: 0; }
-    
-    /* Playlist popover on mobile */
-    .playlist-popover { width: 100%; right: 0; max-height: 200px; }
     
     .social-panel, .music-panel { top: auto; bottom: 0; left: 0; right: 0; width: 100%; transform: translateY(100%); border-radius: 32px 32px 0 0; padding: 30px 20px 140px; z-index: 100; border: none; border-top: 1px solid rgba(255,255,255,.1); }
     .social-panel.open, .music-panel.open { transform: translateY(0); }
@@ -262,7 +345,7 @@
 <div class="vignette"></div>
 <div class="grain"></div>
 <canvas id="bg"></canvas>
-<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div></div>
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <div class="mobile-backdrop" id="mobileBackdrop"></div>
 
@@ -316,7 +399,8 @@
   <div class="avatar-wrapper">
     <div class="avatar">
       <div class="avatar-inner">
-        <img src="https://github.com/noclipov.png" alt="avatar" onerror="this.style.display='none'; this.parentElement.innerText='n';">
+        <img src="https://github.com/noclipov.png" alt="avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span style="display:none;">n</span>
       </div>
     </div>
   </div>
@@ -374,25 +458,26 @@
   </div>
 </div>
 
-<!-- Draggable Player -->
-<div class="floating-player" id="player">
-  <!-- Playlist Popover -->
-  <div class="playlist-popover" id="playlistPopover">
-    <div class="playlist-title">Локальный плейлист</div>
+<!-- Playlist Modal -->
+<div class="modal-overlay" id="playlistModal">
+  <div class="playlist-modal-content">
+    <h3 style="margin-bottom: 20px; color: #fff; font-weight:700; font-size: 18px;">Локальный плейлист</h3>
     <div class="playlist-list" id="playlistContainer"></div>
+    <button class="modal-btn" id="closePlaylistBtn">Закрыть</button>
   </div>
+</div>
 
+<!-- Draggable Player -->
+<div class="floating-player mode-generative" id="player">
   <div class="progress-container" id="progressContainer">
     <input type="range" id="progressSlider" min="0" max="100" step="0.1" value="0">
   </div>
   
   <div class="player-controls">
-    <!-- Shuffle -->
     <button class="ctrl-btn" id="shuffleBtn" title="Случайный порядок">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
     </button>
 
-    <!-- Основные кнопки -->
     <div class="main-controls">
       <button class="ctrl-btn" id="prevBtn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
@@ -408,24 +493,20 @@
       </button>
     </div>
 
-    <!-- Repeat -->
     <button class="ctrl-btn" id="repeatBtn" title="Повтор">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
       <span id="repeatOneDot" style="display:none;">1</span>
     </button>
 
-    <!-- Инфо о треке -->
     <div class="track-info">
       <div class="track-name" id="trackName">Ambient</div>
       <div class="track-status" id="trackStatus">Генератор</div>
     </div>
     
-    <!-- Playlist Button -->
     <button class="ctrl-btn" id="playlistBtn" title="Список треков">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
     </button>
 
-    <!-- Volume -->
     <div class="vol-wrap">
       <button class="ctrl-btn" id="volBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
@@ -437,14 +518,18 @@
   </div>
 </div>
 
-<!-- Modern QR Modal -->
+<!-- QR Modal -->
 <div class="modal-overlay" id="qrModal">
   <div class="qr-modal-content">
     <div class="qr-wrapper">
-      <img id="qr-image" src="" alt="QR Code" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><rect width=\'200\' height=\'200\' fill=\'#0c0d12\'/><text x=\'50%\' y=\'50%\' fill=\'#a78bfa\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'sans-serif\' font-size=\'14\'>Нет файла QR</text></svg>'">
+      <div class="qr-inner">
+        <img id="qr-image" src="" alt="QR Code">
+        <div id="qr-placeholder">Наведите камеру<br>телефона</div>
+        <div class="scanline"></div>
+      </div>
     </div>
     <h3 id="qrTitle" class="modal-title">Профиль</h3>
-    <p class="modal-desc">Наведите камеру телефона для перехода</p>
+    <p class="modal-desc">Отсканируйте код для перехода</p>
     <a href="#" id="qrLink" class="modal-btn" target="_blank">Открыть ссылку</a>
   </div>
 </div>
@@ -474,7 +559,7 @@ const CONFIG = {
   ]
 };
 
-// 3D TILT EFFECT (Parallax) - очень мягкий
+// 3D TILT EFFECT (Parallax)
 const card = document.getElementById('tilt-card');
 const isFine = matchMedia("(hover: hover) and (pointer: fine)").matches;
 let raf = null;
@@ -490,7 +575,6 @@ if (isFine) {
       const distX = e.clientX - centerX;
       const distY = e.clientY - centerY;
       
-      // Максимальный наклон всего 3 градуса
       const rotateX = (distY / (window.innerHeight / 2)) * -3;
       const rotateY = (distX / (window.innerWidth / 2)) * 3;
       
@@ -713,18 +797,27 @@ class AudioEngine {
         this.mediaSource = this.ac.createMediaElementSource(this.webAudio);
         this.mediaSource.connect(this.masterGain);
       }
+      // Загружаем первый трек, но НЕ играем его
+      this.playTrack(this.currentTrack, false);
+      UI.updatePlayState(false);
     } else {
       this.startGen();
     }
-    UI.updatePlayState(this.isPlaying || !this.webAudio.paused);
     UI.updateTimelineVisibility();
   }
 
-  playTrack(index) {
+  playTrack(index, shouldPlay = true) {
+    this.stopGen(); // Автостоп генератора
     this.currentTrack = index;
     this.webAudio.src = this.playlist[index].src;
     this.webAudio.volume = parseFloat(document.getElementById('volSlider').value);
-    this.webAudio.play().catch(() => UI.updateTrackInfo(this.playlist[index].title, "Ошибка файла"));
+    
+    if (shouldPlay) {
+      this.webAudio.play().catch(() => UI.updateTrackInfo(this.playlist[index].title, "Ошибка файла"));
+    } else {
+      this.webAudio.pause();
+    }
+    
     UI.updateTrackInfo(this.playlist[index].title, "Локальный трек");
     UI.updatePlaylistActive(index);
   }
@@ -780,7 +873,8 @@ const UI = {
       socialPanel: document.getElementById('socialPanel'),
       musicPanel: document.getElementById('musicPanel'),
       playlistContainer: document.getElementById('playlistContainer'),
-      playlistPopover: document.getElementById('playlistPopover'),
+      playlistModal: document.getElementById('playlistModal'),
+      closePlaylistBtn: document.getElementById('closePlaylistBtn'),
       playlistBtn: document.getElementById('playlistBtn'),
       mobileBackdrop: document.getElementById('mobileBackdrop'),
       playBtn: document.getElementById('playBtn'),
@@ -793,6 +887,7 @@ const UI = {
       qrTitle: document.getElementById('qrTitle'),
       qrLink: document.getElementById('qrLink'),
       qrImage: document.getElementById('qr-image'),
+      qrPlaceholder: document.getElementById('qr-placeholder'),
       tagline: document.getElementById('tagline'),
       ctxMenu: document.getElementById('ctx-menu'),
       copyLinkBtn: document.getElementById('copyLinkBtn'),
@@ -809,6 +904,16 @@ const UI = {
 
     this.els.tagline.innerText = CONFIG.quotes[Math.floor(Math.random() * CONFIG.quotes.length)];
     this.isSeeking = false;
+
+    // Настройка обработки картинки QR
+    this.els.qrImage.onload = () => {
+      this.els.qrImage.style.display = 'block';
+      this.els.qrPlaceholder.style.display = 'none';
+    };
+    this.els.qrImage.onerror = () => {
+      this.els.qrImage.style.display = 'none';
+      this.els.qrPlaceholder.style.display = 'grid';
+    };
 
     this.renderPlaylist();
     this.setupDrag();
@@ -832,10 +937,10 @@ const UI = {
           this.engine.setMode('playlist');
         }
         
-        this.engine.playTrack(i);
+        this.engine.playTrack(i, true); // Принудительно играем
         this.updatePlayState(true);
         
-        this.els.playlistPopover.classList.remove('open');
+        this.els.playlistModal.classList.remove('open');
         this.closeAllUI();
       };
       this.els.playlistContainer.appendChild(btn);
@@ -853,7 +958,7 @@ const UI = {
     this.els.socialPanel.classList.remove('open');
     this.els.musicPanel.classList.remove('open');
     this.els.volPopover.classList.remove('open');
-    this.els.playlistPopover.classList.remove('open');
+    this.els.playlistModal.classList.remove('open');
     this.els.mobileBackdrop.classList.remove('active');
     this.els.leftTab.classList.remove('tab-hidden');
     this.els.rightTab.classList.remove('tab-hidden');
@@ -876,7 +981,7 @@ const UI = {
     }
 
     player.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.ctrl-btn') || e.target.closest('input') || e.target.closest('.vol-wrap') || e.target.closest('.progress-container') || e.target.closest('.playlist-popover')) return;
+      if (e.target.closest('.ctrl-btn') || e.target.closest('input') || e.target.closest('.vol-wrap') || e.target.closest('.progress-container')) return;
       
       isDragging = true;
       const rect = player.getBoundingClientRect();
@@ -930,8 +1035,14 @@ const UI = {
   updateTimelineVisibility() {
     if (this.engine.isPlaylistMode) {
       this.els.progressContainer.classList.add('active');
+      this.els.playlistBtn.classList.add('visible');
+      this.els.player.classList.remove('mode-generative');
+      this.els.player.classList.add('mode-playlist');
     } else {
       this.els.progressContainer.classList.remove('active');
+      this.els.playlistBtn.classList.remove('visible');
+      this.els.player.classList.remove('mode-playlist');
+      this.els.player.classList.add('mode-generative');
     }
   },
 
@@ -997,7 +1108,7 @@ const UI = {
       if (!e.target.closest('.settings-menu') && !e.target.closest('.social-panel') && 
           !e.target.closest('.music-panel') && !e.target.closest('.vol-wrap') && 
           !e.target.closest('.settings-btn') && !e.target.closest('.m-btn') &&
-          !e.target.closest('.playlist-popover') && !e.target.closest('#playlistBtn')) {
+          !e.target.closest('.playlist-modal-content') && !e.target.closest('#playlistBtn')) {
         this.closeAllUI();
       }
     });
@@ -1023,7 +1134,15 @@ const UI = {
     els.playlistBtn.onclick = (e) => {
       e.stopPropagation();
       this.closeAllUI();
-      els.playlistPopover.classList.toggle('open');
+      els.playlistModal.classList.add('open');
+    };
+
+    els.closePlaylistBtn.onclick = () => {
+      els.playlistModal.classList.remove('open');
+    };
+
+    els.playlistModal.onclick = (e) => {
+      if (e.target === els.playlistModal) els.playlistModal.classList.remove('open');
     };
 
     els.playBtn.onclick = () => {
@@ -1106,6 +1225,10 @@ const UI = {
         els.qrTitle.innerText = name;
         els.qrLink.href = url;
         
+        // Сброс перед новой загрузкой
+        els.qrImage.style.display = 'none';
+        els.qrPlaceholder.style.display = 'grid';
+        
         if (name === 'GitHub') {
           els.qrImage.src = 'qr_github.png';
         } else if (name === 'Telegram') {
@@ -1118,17 +1241,33 @@ const UI = {
     
     els.qrModal.onclick = (e) => { if (e.target === els.qrModal) els.qrModal.classList.remove('open'); };
 
+    // Обновленное контекстное меню с анимацией
     document.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      els.ctxMenu.style.display = "flex";
+      const menu = els.ctxMenu;
+      
       let x = e.clientX, y = e.clientY;
-      if (x + 180 > window.innerWidth) x -= 180;
-      if (y + 160 > window.innerHeight) y -= 160;
-      els.ctxMenu.style.left = `${x}px`;
-      els.ctxMenu.style.top = `${y}px`;
+      
+      // Позиционирование с учетом размеров окна
+      const menuWidth = 180; 
+      const menuHeight = 160; 
+      
+      if (x + menuWidth > window.innerWidth) x -= menuWidth;
+      if (y + menuHeight > window.innerHeight) y -= menuHeight;
+      
+      menu.style.left = `${x}px`;
+      menu.style.top = `${y}px`;
+      
+      // Устанавливаем точку трансформации в зависимости от положения
+      const originX = e.clientX > window.innerWidth / 2 ? 'right' : 'left';
+      const originY = e.clientY > window.innerHeight / 2 ? 'bottom' : 'top';
+      menu.style.transformOrigin = `${originX} ${originY}`;
+      
+      menu.classList.add('show');
     });
+    
     document.addEventListener("click", (e) => {
-      if (!els.ctxMenu.contains(e.target)) els.ctxMenu.style.display = "none";
+      if (!els.ctxMenu.contains(e.target)) els.ctxMenu.classList.remove('show');
     });
     
     els.copyLinkBtn.onclick = () => {
